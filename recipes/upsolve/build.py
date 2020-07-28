@@ -51,6 +51,7 @@ df.columns = [i.lower().replace(" ", "_") for i in df.columns]
         assert col in df.columns
 
 # Get boro and limit to NYC
+    df["zipcode"] = df["zipcode"].str[:5]
     df = df.loc[df.zipcode.isin(czb.zipcode.tolist()), :]
     df["borough"] = df.zipcode.apply(
         lambda x: czb.loc[czb.zipcode == x, "boro"].tolist()[0]
