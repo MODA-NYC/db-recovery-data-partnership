@@ -28,7 +28,7 @@ VERSION=$DATE
         ) TO stdout DELIMITER ',' CSV HEADER;" > upsolve_count_by_zip.csv
 
         # Export to ShapeFile
-        SHP_export $RDP_DATA upsolve.count_by_zip
+        SHP_export $RDP_DATA upsolve.count_by_zip MULTIPOLYGON count_by_zip
 
         # Write VERSION info
         echo "$VERSION" > version.txt
