@@ -44,11 +44,17 @@ CREATE TEMP TABLE tmp(
 
 \COPY tmp FROM PSTDIN DELIMITER '|' CSV HEADER;
 
--- Create response table and pivot gender
+-- Create response table, pivot gender, order columns
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
 SELECT 
-    *,
+    interview_date,
+    birth_year,
+    race_white,
+    race_black,
+    race_hispanic,
+    race_asian,
+    race_nativeamer,
     CASE 
         WHEN gender_male IS TRUE THEN 'male'
         WHEN gender_female IS TRUE THEN 'female'
@@ -57,7 +63,35 @@ SELECT
         WHEN gender_queer IS TRUE THEN 'queer'
         WHEN gender_other IS TRUE THEN 'other'
         ELSE NULL
-    END as gender
+    END as gender,
+    r_lostjob,
+    r_paycut,
+    r_familyincome,
+    r_injured,
+    r_medbills,
+    r_spending,
+    r_genbills,
+    r_garnishedwages,
+    r_divorce,
+    r_housing,
+    r_car,
+    r_other,
+    r_otherdesc,
+    r_top,
+    r_covid19,
+    o_gencutback,
+    o_bills,
+    o_sold,
+    o_borrowed,
+    o_nomedcare,
+    o_soughtjob,
+    o_counseling,
+    o_negotiated,
+    o_lawyer,
+    alt_option,
+    state,
+    zipcode,
+    borough
 INTO :NAME.:"VERSION"
 FROM tmp;
 
@@ -70,8 +104,14 @@ DROP COLUMN gender_tfemale,
 DROP COLUMN gender_queer,
 DROP COLUMN gender_other;
 
+DROP VIEW IF EXISTS :NAME.latest;
+CREATE VIEW :NAME.latest AS (
+    SELECT :'VERSION' as v, * 
+    FROM :NAME.:"VERSION"
+); 
+
 -- Create zip-week aggregation
-CREATE VIEW :NAME.count_by_zip(
+CREATE VIEW :NAME.count_by_zip AS
     SELECT 
         a.zipcode, a.year_week, a.count, b.wkb_geometry
     FROM(
@@ -79,10 +119,10 @@ CREATE VIEW :NAME.count_by_zip(
             zipcode, 
             to_char(interview_date, 'IYYY-IW') as year_week,
             count(*) as count
-        FROM :NAME."VERSION"
+        FROM :NAME.latest
         GROUP BY zipcode, to_char(interview_date, 'IYYY-IW')
         ORDER BY zipcode, to_char(interview_date, 'IYYY-IW')  
     ) a 
     LEFT JOIN doitt_zipcodeboundaries b
     ON a.zipcode::text = b.zipcode::text
-);
+;
