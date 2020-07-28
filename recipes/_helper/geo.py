@@ -82,6 +82,7 @@ def geocode(input):
     except:
         geo = parse_output({})
 
+    geo.update(dict(zipcode=zipcode))
     geo.update(input)
     return geo
 
