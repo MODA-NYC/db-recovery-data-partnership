@@ -44,7 +44,7 @@ cols = [
     ]
 
 df = pd.read_csv("input/upsolve_latest.csv")
-czb = pd.read_csv("input/city_zip_boro.csv", dtype=str, engine="c")
+czb = pd.read_csv("../_data/city_zip_boro.csv", dtype=str, engine="c")
 
 df.columns = [i.lower().replace(" ", "_") for i in df.columns]
     for col in cols:
