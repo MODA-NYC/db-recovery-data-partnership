@@ -1,4 +1,4 @@
-CREATE TMP TABLE tmp(
+CREATE TEMP TABLE tmp(
         interview_date timestamp,
         birth_year smallint,
         race_white boolean,
@@ -38,14 +38,15 @@ CREATE TMP TABLE tmp(
         o_lawyer boolean,
         alt_option text,
         state varchar(2),
-        zip int,
+        zipcode int,
         borough varchar(2)
 );
 
-COPY tmp FROM PSTDIN DELIMITER ',' CSV HEADER;
+\COPY tmp FROM PSTDIN DELIMITER '|' CSV HEADER;
 
 -- Create response table and pivot gender
-DROP TABLE IF EXISTS upsolve_responses.:"VERSION" CASCADE;
+CREATE SCHEMA IF NOT EXISTS :NAME;
+DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
 SELECT 
     *,
     CASE 
@@ -57,11 +58,11 @@ SELECT
         WHEN gender_other IS TRUE THEN 'other'
         ELSE NULL
     END as gender
-INTO upsolve_responses.:"VERSION"
+INTO :NAME.:"VERSION"
 FROM tmp;
 
 -- Remove bool gender columns
-ALTER TABLE upsolve_responses.:"VERSION"
+ALTER TABLE :NAME.:"VERSION"
 DROP COLUMN gender_male,
 DROP COLUMN gender_female,
 DROP COLUMN gender_tmale,
@@ -70,7 +71,7 @@ DROP COLUMN gender_queer,
 DROP COLUMN gender_other;
 
 -- Create zip-week aggregation
-CREATE VIEW upsolve.count_by_zip(
+CREATE VIEW :NAME.count_by_zip(
     SELECT 
         a.zipcode, a.year_week, a.count, b.wkb_geometry
     FROM(
@@ -78,7 +79,7 @@ CREATE VIEW upsolve.count_by_zip(
             zipcode, 
             to_char(interview_date, 'IYYY-IW') as year_week,
             count(*) as count
-        FROM upsolve.latest
+        FROM :NAME."VERSION"
         GROUP BY zipcode, to_char(interview_date, 'IYYY-IW')
         ORDER BY zipcode, to_char(interview_date, 'IYYY-IW')  
     ) a 

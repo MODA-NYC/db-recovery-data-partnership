@@ -1,11 +1,11 @@
+import sys
 import pandas as pd
 
 # Read input data
 cols = [
         "interview_start_time",
         "birth_year",
-        "race:_white",
-        "race:_black_or_african_american",
+        "race:_white","race:_black_or_african_american",
         "race:_hispanic_or_latino_american",
         "race:_asian",
         "race:_native_american",
@@ -13,7 +13,7 @@ cols = [
         "gender:_female/woman",
         "gender:_transmale/transman",
         "gender:_transfemale/transwoman",
-        "gender:_genderqueer/gendernonconforming",
+        "gender:_genderqueer/gender_nonconforming",
         "gender:_something_else",
         "reason_for_filing_bankruptcy:_i_lost_my_job",
         "reason_for_filing_bankruptcy:_my_hours_or_pay_was_cut_at_my_job",
@@ -23,14 +23,15 @@ cols = [
         "reason_for_filing_bankruptcy:_i_spent_money_irresponsibly",
         "reason_for_filing_bankruptcy:_i_got_behind_on_other_bills_(e.g._utilities)",
         "reason_for_filing_bankruptcy:_my_wages_are_being_garnished",
-        "reason_for_filing_bankruptcy:_i'm_going_through_separation_or_divorce",
-        "reason_for_filing_bankruptcy:_i'm_being_evicted_or_my_house_is_being_forclosed_on",
+        "reason_for_filing_bankruptcy:_i'm_going_through_a_separation_or_divorce",
+        "reason_for_filing_bankruptcy:_i'm_being_evicted_or_my_house_is_being_foreclosed_on",
         "reason_for_filing_bankruptcy:_my_car_is_being_repossessed",
         "reason_for_filing_bankruptcy:_other_(please_specify)",
         "other_reason_for_filing_bankruptcy",
         "most_important_reason",
         "this_reason_is_related_to_covid-19",
         "option_tried:_cut_back_on_basic_necessities_(e.g._groceries,_rent,_utilities)",
+        "option_tried:_stopped_paying_bills",
         "option_tried:_sold_or_pawned_things_i_own",
         "option_tried:_borrowed_money_from_family_and_friends",
         "option_tried:_didn't_get_medical_care_i_needed",
@@ -47,14 +48,14 @@ df = pd.read_csv("input/upsolve_latest.csv")
 czb = pd.read_csv("../_data/city_zip_boro.csv", dtype=str, engine="c")
 
 df.columns = [i.lower().replace(" ", "_") for i in df.columns]
-    for col in cols:
-        assert col in df.columns
+for col in cols:
+    assert col in df.columns
 
 # Get boro and limit to NYC
-    df["zipcode"] = df["zipcode"].str[:5]
-    df = df.loc[df.zipcode.isin(czb.zipcode.tolist()), :]
-    df["borough"] = df.zipcode.apply(
+    df["zip"] = df["zip"].str[:5]
+    df = df.loc[df.zip.isin(czb.zipcode.tolist()), :]
+    df["borough"] = df.zip.apply(
         lambda x: czb.loc[czb.zipcode == x, "boro"].tolist()[0]
     )
 
-df.to_csv(sys.stdout, index=False)
+df.to_csv(sys.stdout, sep='|', index=False)
