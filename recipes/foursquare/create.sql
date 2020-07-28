@@ -5,9 +5,9 @@ CREATE TEMP TABLE tmp (
     categoryid text,
     categoryname text,
     demo text,
-    visits double precision,
-    avgDuration double precision,
-    p50Duration double precision
+    visits numeric,
+    avgDuration numeric,
+    p50Duration numeric
 );
 
 \COPY tmp FROM PSTDIN DELIMITER ',' CSV HEADER;
