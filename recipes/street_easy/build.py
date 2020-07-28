@@ -30,4 +30,12 @@ df.columns = [i.lower().replace(" ", "_") for i in df.columns]
 for col in cols:
     assert col in df.columns
 
-df.to_csv(sys.stdout, sep='|', index=False)
+for col in ["no._of_new_sale_listings",
+            "no._of_pending_sale_listings",
+            "no._of_sale_listings",
+            "no._of_new_rental_listings",
+            "no._of_pending_listings",
+            "no._of_rental_listings"]:
+    df[col] = df[col].fillna(0).astype(int)
+    
+df[cols].to_csv(sys.stdout, sep='|', index=False)

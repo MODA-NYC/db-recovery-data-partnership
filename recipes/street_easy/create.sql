@@ -4,22 +4,21 @@ CREATE TEMP TABLE tmp(
     s_newlist int,
     s_pendlist int,
     s_list int,
-    s_pct_inc double precision,
-    s_pct_dec double precision,
-    s_wksonmkt double precision,
+    s_pct_inc decimal,
+    s_pct_dec decimal,
+    s_wksonmkt decimal,
     r_newlist int,
     r_pendlist int,
     r_list int,
-    r_pct_inc double precision,
-    r_pct_dec double precision,
-    r_pct_furn double precision,
-    r_pct_shor double precision,
-    r_pct_con double precision,
-    r_wksonmkt double precision,
+    r_pct_inc decimal,
+    r_pct_dec decimal,
+    r_pct_furn decimal,
+    r_pct_shor decimal,
+    r_pct_con decimal,
+    r_wksonmkt decimal,
     week_start timestamp,
     week_end timestamp
-)
-
+);
 
 \COPY tmp FROM PSTDIN DELIMITER '|' CSV HEADER;
 
@@ -44,9 +43,9 @@ SELECT
     ROUND(a.r_pct_shor*100, 2) as r_pct_shor,
     ROUND(a.r_pct_con*100, 2) as r_pct_con,
     ROUND(a.r_wksonmkt, 1) as r_wksonmkt,
-    week_start timestamp,
-    week_end timestamp,
-    b.geom
+    week_start,
+    week_end,
+    b.wkb_geometry as geom
 INTO :NAME.:"VERSION"
 FROM tmp a
 JOIN dcp_ntaboundaries b
