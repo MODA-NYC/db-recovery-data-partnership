@@ -47,7 +47,8 @@ CREATE TEMP TABLE tmp(
 -- Create response table, pivot gender, order columns
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
-SELECT 
+SELECT
+    md5(CAST((tmp.*)AS text)) as id,
     interview_date,
     birth_year,
     race_white,
@@ -104,13 +105,14 @@ DROP COLUMN gender_tfemale,
 DROP COLUMN gender_queer,
 DROP COLUMN gender_other;
 
-DROP VIEW IF EXISTS :NAME.latest;
+DROP VIEW IF EXISTS :NAME.latest CASCADE;
 CREATE VIEW :NAME.latest AS (
     SELECT :'VERSION' as v, * 
     FROM :NAME.:"VERSION"
 ); 
 
 -- Create zip-week aggregation
+DROP VIEW IF EXISTS :NAME.count_by_zip;
 CREATE VIEW :NAME.count_by_zip AS
     SELECT 
         a.zipcode, a.year_week, a.count, b.wkb_geometry
@@ -119,7 +121,7 @@ CREATE VIEW :NAME.count_by_zip AS
             zipcode, 
             to_char(interview_date, 'IYYY-IW') as year_week,
             count(*) as count
-        FROM :NAME.latest
+        FROM :NAME.:"VERSION"
         GROUP BY zipcode, to_char(interview_date, 'IYYY-IW')
         ORDER BY zipcode, to_char(interview_date, 'IYYY-IW')  
     ) a 
