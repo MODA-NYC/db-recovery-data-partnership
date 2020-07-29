@@ -23,6 +23,9 @@ VERSION=$DATE
             SELECT * FROM $NAME.\"$VERSION\"
         ) TO stdout DELIMITER ',' CSV HEADER;" > street_easy_nta.csv
 
+        # Export to ShapeFile
+        SHP_export $RDP_DATA $NAME.latest MULTIPOLYGON street_easy_nta
+
         # Write VERSION info
         echo "$VERSION" > version.txt
 
