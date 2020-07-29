@@ -26,6 +26,7 @@ CREATE TEMP TABLE tmp(
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
 SELECT 
+    to_char(a.week_start, 'IYYY-IW') as year_week,
     a.nta_name,
     a.nta_code,
     a.s_newlist,
@@ -43,8 +44,6 @@ SELECT
     ROUND(a.r_pct_shor*100, 2) as r_pct_shor,
     ROUND(a.r_pct_con*100, 2) as r_pct_con,
     ROUND(a.r_wksonmkt, 1) as r_wksonmkt,
-    week_start,
-    week_end,
     b.wkb_geometry as geom
 INTO :NAME.:"VERSION"
 FROM tmp a
