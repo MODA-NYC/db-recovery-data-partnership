@@ -29,39 +29,39 @@ WITH unpivot AS(
         categoryname,
         (CASE
             WHEN demo = 'All' THEN visits
-            ELSE 0
+            ELSE NULL
         END) AS visits_all,
         (CASE
             WHEN demo = 'Below65' THEN visits 
-            ELSE 0 
+            ELSE NULL
         END) AS visits_u65,
         (CASE
             WHEN demo = 'Above65' THEN visits 
-            ELSE 0 
+            ELSE NULL 
         END) AS visits_o65,
         (CASE
             WHEN demo = 'All' THEN avgduration 
-            ELSE 0 
+            ELSE NULL 
         END) AS avgdur_all,
         (CASE
             WHEN demo = 'Below65' THEN avgduration 
-            ELSE 0 
+            ELSE NULL 
         END) AS avgdur_u65,
         (CASE
             WHEN demo = 'Above65' THEN avgduration 
-            ELSE 0 
+            ELSE NULL
         END) AS avgdur_o65,
         (CASE
             WHEN demo = 'All' THEN p50duration 
-            ELSE 0 
+            ELSE NULL 
         END) AS p50dur_all,
         (CASE
             WHEN demo = 'Below65' THEN p50duration 
-            ELSE 0 
+            ELSE NULL 
         END) AS p50dur_u65,
         (CASE
             WHEN demo = 'Above65' THEN p50duration 
-            ELSE 0 
+            ELSE NULL 
         END) AS p50dur_o65
     FROM tmp
 )
