@@ -12,24 +12,87 @@ CREATE TEMP TABLE tmp (
 
 \COPY tmp FROM PSTDIN DELIMITER ',' CSV HEADER;
 
-UPDATE tmp
-SET borough = 
-    (CASE 
-        WHEN borough = 'Bronx County' THEN 'BX'
-        WHEN borough = 'Brooklyn' THEN 'BK'
-        WHEN borough = 'New York' THEN 'MN'
-        WHEN borough = 'Queens' THEN 'QN'
-        WHEN borough = 'Staten Island' THEN 'SI'
-    END);
-
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
-SELECT *
+WITH unpivot AS(
+    SELECT 
+        date,
+        state,
+        (CASE 
+            WHEN borough = 'Bronx County' THEN 'BX'
+            WHEN borough = 'Brooklyn' THEN 'BK'
+            WHEN borough = 'New York' THEN 'MN'
+            WHEN borough = 'Queens' THEN 'QN'
+            WHEN borough = 'Staten Island' THEN 'SI'
+        END) as borough,
+        categoryid,
+        categoryname,
+        (CASE
+            WHEN demo = 'All' THEN visits
+            ELSE NULL
+        END) AS visits_all,
+        (CASE
+            WHEN demo = 'Below65' THEN visits 
+            ELSE NULL
+        END) AS visits_u65,
+        (CASE
+            WHEN demo = 'Above65' THEN visits 
+            ELSE NULL 
+        END) AS visits_o65,
+        (CASE
+            WHEN demo = 'All' THEN avgduration 
+            ELSE NULL 
+        END) AS avgdur_all,
+        (CASE
+            WHEN demo = 'Below65' THEN avgduration 
+            ELSE NULL 
+        END) AS avgdur_u65,
+        (CASE
+            WHEN demo = 'Above65' THEN avgduration 
+            ELSE NULL
+        END) AS avgdur_o65,
+        (CASE
+            WHEN demo = 'All' THEN p50duration 
+            ELSE NULL 
+        END) AS p50dur_all
+    FROM tmp
+)
+
+SELECT date,
+        state,
+        borough,
+        categoryid,
+        categoryname,
+        SUM(visits_all) as visits_all,
+        SUM(visits_u65) as visits_u65,
+        SUM(visits_o65) as visits_o65,
+        SUM(avgdur_all) as avgdur_all,
+        SUM(avgdur_u65) as avgdur_u65,
+        SUM(avgdur_o65) as avgdur_o65,
+        SUM(p50dur_all) as p50dur_all
 INTO :NAME.:"VERSION"
-FROM tmp;
+FROM unpivot
+GROUP BY date, state, borough, categoryid, categoryname;
+
+CREATE SCHEMA IF NOT EXISTS foursquare_grouped;
+DROP TABLE IF EXISTS foursquare_grouped.:"VERSION" CASCADE;
+SELECT *
+INTO foursquare_grouped.:"VERSION"
+FROM :NAME.:"VERSION"
+WHERE categoryid='Group';
+
+DELETE
+FROM :NAME.:"VERSION"
+WHERE categoryid='Group';
 
 DROP VIEW IF EXISTS :NAME.latest;
 CREATE VIEW :NAME.latest AS (
     SELECT :'VERSION' as v, * 
     FROM :NAME.:"VERSION"
+);
+
+DROP VIEW IF EXISTS foursquare_grouped.latest;
+CREATE VIEW foursquare_grouped.latest AS (
+    SELECT :'VERSION' as v, * 
+    FROM foursquare_grouped.:"VERSION"
 );

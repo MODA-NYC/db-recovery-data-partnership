@@ -6,7 +6,14 @@ ACL=public-read
 
 (
     cd $BASEDIR
-    VERSION=$(python3 asof.py)
+    VERSION=$(
+        docker run --rm\
+            -v $(pwd)/../:/recipes\
+            -w /recipes/$NAME\
+            python:3.8.5-alpine3.12 sh -c "
+                pip install -q --disable-pip-version-check requests bs4
+                python asof.py"
+        )
 
     echo "pulling version: $VERSION"
 
@@ -38,6 +45,10 @@ ACL=public-read
         psql $RDP_DATA -c "\COPY (
             SELECT * FROM $NAME.\"$VERSION\"
         ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+
+        psql $RDP_DATA -c "\COPY (
+            SELECT * FROM foursquare_grouped.\"$VERSION\"
+        ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_grouped.csv
 
         # Write VERSION info
         echo "$VERSION" > version.txt
