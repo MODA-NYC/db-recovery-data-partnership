@@ -85,15 +85,15 @@ FROM unpivot
 GROUP BY date, state, borough, categoryid, categoryname;
 
 CREATE SCHEMA IF NOT EXISTS foursquare_grouped;
-DROP TABLE IF EXISTS foursquare_grouped.:"VERSION";
+DROP TABLE IF EXISTS foursquare_grouped.:"VERSION" CASCADE;
 SELECT *
 INTO foursquare_grouped.:"VERSION"
 FROM :NAME.:"VERSION"
-WHERE categoryid='Grouped';
+WHERE categoryid='Group';
 
 DELETE
 FROM :NAME.:"VERSION"
-WHERE categoryid='Grouped';
+WHERE categoryid='Group';
 
 DROP VIEW IF EXISTS :NAME.latest;
 CREATE VIEW :NAME.latest AS (
@@ -104,5 +104,5 @@ CREATE VIEW :NAME.latest AS (
 DROP VIEW IF EXISTS foursquare_grouped.latest;
 CREATE VIEW foursquare_grouped.latest AS (
     SELECT :'VERSION' as v, * 
-    FROM foursquare_grouped:"VERSION"
+    FROM foursquare_grouped.:"VERSION"
 );
