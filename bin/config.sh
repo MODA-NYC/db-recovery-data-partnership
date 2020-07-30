@@ -46,3 +46,13 @@ function CSV_export {
     SELECT * FROM $2
   ) TO STDOUT DELIMITER ',' CSV HEADER;" > $3.csv
 }
+
+function Upload {
+  mc rm -r --force spaces/recovery-data-partnership/$1/$2
+  for file in output/*
+  do
+    name=$(basename $file)
+    mc cp --attr x-amz-acl=$3 $file spaces/recovery-data-partnership/$1/$2/$name
+  done
+  wait
+}
