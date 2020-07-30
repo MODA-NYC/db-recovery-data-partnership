@@ -6,7 +6,7 @@ ACL=public-read
 
 (
     cd $BASEDIR
-      VERSION=$(
+    VERSION=$(
         docker run --rm\
             -v $(pwd)/../:/recipes\
             -w /recipes/$NAME\
