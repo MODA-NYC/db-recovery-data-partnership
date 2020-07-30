@@ -46,3 +46,16 @@ function CSV_export {
     SELECT * FROM $2
   ) TO STDOUT DELIMITER ',' CSV HEADER;" > $3.csv
 }
+
+function Upload {
+  if [$3="Public"]
+  then
+    mc rm -r --force spaces/rdp-staging/$1/$2
+    for file in output/*
+    do
+      name=$(basename $file)
+      mc cp $file spaces/rdp-staging/$1/$2/$name
+    done
+    wait
+  fi
+}
