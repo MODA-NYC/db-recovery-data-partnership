@@ -9,8 +9,8 @@ CREATE TEMP TABLE tmp (
     geo_grc2 text,
     zipcode text,
     name text,
-    category text,
-    subcategory text,
+    betanyc_category text,
+    betanyc_subcategory text,
     phone text,
     status text,
     pickup text,
@@ -43,38 +43,116 @@ CREATE TEMP TABLE cleaned as (
                 ELSE 'original' 
             END) as geomsource
         FROM tmp
-    ) 
-    SELECT 
-        name,
-        (CASE 
-            WHEN category ~* 'Groceries|Grocery' then 'Grocery'
-            WHEN category ~* 'Shops|Retail|shipping' then 'Shop or Service' 
-            WHEN category ~* 'cafe|bakeries|bakery|dessert|coffee' then 'Restaurant or Cafe'  
-            WHEN category ~* 'Restaurant|bar' then 'Restaurant or Bar'  
-            WHEN category ~* 'Pharmacies|Pharmacy|health|doctor|wellness' then 'Health and Wellness'
-            WHEN category ~* 'Laundromat' then 'Laundromat'
-            WHEN category ~* 'Community|pantry|free food|Soup Kitchen' then 'Community Services'
-            WHEN category ~* 'Wine|Liquor' then 'Liquor Store'
-            WHEN category ~* 'hardware' then 'Hardware Store'
-            WHEN category ~* 'bike|bicyle' then 'Bike Shop'
+    ),
+    -- Create normalized categories
+    cat AS (SELECT DISTINCT 
+            (CASE 
+                WHEN betanyc_subcategory ~* 'wine|beer|tea|market|food|bakery|bar|restaurant|grocery|cafe' 
+                OR betanyc_category ~* 'bakery|bar|grocer|restaurant|liquor|dessert|coffee|pantry|soup kitchen|food' 
+                    THEN 'Food and beverage'
+                WHEN betanyc_subcategory ~* 'clothing|fashion|shoe|goods|electronics|hardware|books|home|bicycle|supplies|pet|stationar|building|dollar store|appliance|pharma'
+                OR betanyc_category ~* 'retail|bike|bicycle|store|pet|pharmacy|art|yarn' 
+                    THEN 'Dry retail' 
+                WHEN betanyc_subcategory ~* 'bank|finance|government|repair|shipping|fitness|copies|law|flor'
+                OR betanyc_category ~*  'laundromat|wellness|health|doctor|community service|shipping' 
+                    THEN 'Services'
+                ELSE 'Other'
+            END) AS category, 
+            betanyc_category, 
+            betanyc_subcategory
+        FROM tmp),
+    -- Create normalized subcategories
+    subcat AS (
+        SELECT
+            *, 
+            (CASE 
+                WHEN category='Food and beverage'
+                THEN CASE
+                    WHEN betanyc_subcategory ~* 'diner|meal*takaway|meal*delivery|restaurant'
+                        OR betanyc_category ~* 'restaurant' 
+                    THEN 'Restaurant'
+                    WHEN betanyc_subcategory ~* 'bakery|cafe|coffee|cream|tea|cake|bagel|sandwich'
+                        OR betanyc_category ~* 'bakery|dessert|coffee' 
+                    THEN 'Bakeries cafes and desserts'
+                    WHEN betanyc_subcategory ~* 'grocer|market|convenience|spice|butcher'
+                        OR betanyc_category ~* 'grocer' 
+                    THEN 'Grocery and market'
+                    WHEN betanyc_subcategory ~* 'wine|bar|beer|liquor|night*club' 
+                        OR betanyc_category ~* 'bar|liquor'
+                    THEN 'Alcohol and bars'
+                    WHEN betanyc_subcategory ~* 'pantry|soup kitchen|free' 
+                    THEN 'Free food'
+                    ELSE 'Other food and beverage'
+                END
+                WHEN category='Dry retail'
+                THEN CASE
+                    WHEN betanyc_subcategory ~* 'bike|bicycle'
+                        OR betanyc_category ~* 'bike|bicycle' 
+                    THEN 'Bike'
+                    WHEN betanyc_subcategory ~* 'hardware|garden|home|furniature|flor|appliance|dollar'
+                        OR betanyc_category ~* 'hardware' 
+                    THEN 'Hardware and home goods'			
+                    WHEN betanyc_subcategory ~* 'pet'
+                        OR betanyc_category ~* 'pet' 
+                    THEN 'Pet supplies'
+                    WHEN betanyc_subcategory ~* 'pharma|health|drug'
+                        OR betanyc_category ~* 'pharma' 
+                    THEN 'Health and beauty'	
+                    WHEN betanyc_subcategory ~* 'cloth|fashion|shoe|jewel' 
+                    THEN 'Apparel'
+                    WHEN betanyc_subcategory ~* 'electronic|computer'
+                    THEN 'Electronics'
+                    WHEN betanyc_subcategory ~* 'book|stationery|gifts|art'
+                    THEN 'Books art and gifts'
+                    ELSE 'Other retail'
+                END
+                WHEN category='Services'
+                THEN CASE
+                    WHEN betanyc_subcategory ~* 'fitness|gym|pilates|yoga|martial arts'
+                    THEN 'Fitness'
+                    WHEN betanyc_subcategory ~* 'doctor|dentist|health|medic'
+                    THEN 'Healthcare'
+                    WHEN betanyc_subcategory ~* 'financ|bank|tax|account|insurance|law'
+                    THEN 'Finance and legal'
+                    WHEN betanyc_subcategory ~* 'hair|beauty|salon'
+                    THEN 'Beauty'
+                    WHEN betanyc_subcategory ~* 'laundr'
+                    THEN 'Laundry'
+                    WHEN betanyc_subcategory ~* 'copies|copy|shipping|post|photo'
+                    THEN 'Copies and shipping'
+                    WHEN betanyc_subcategory ~* 'repair'
+                    THEN 'Repair'
+                    WHEN betanyc_subcategory ~* 'veter'
+                    THEN 'Veterinary'
+                    WHEN betanyc_subcategory ~* 'flor'
+                    THEN 'Floral'
+                    ELSE 'Other service'
+                END
             ELSE 'Other'
-        END) as category,
-        subcategory,
-        phone,
-        address,
+            END) as subcategory
+        FROM cat) 
+
+    SELECT 
+        a.name,
+        c.category,
+        c.subcategory,
+        a.betanyc_category,
+        a.betanyc_subcategory,
+        a.phone,
+        a.address,
         COALESCE(
-            zipcode, 
+            a.zipcode, 
             (SELECT b.zipcode::text 
             FROM doitt_zipcodeboundaries b 
-            WHERE st_within(geom, b.wkb_geometry))
+            WHERE st_within(a.geom, b.wkb_geometry))
         ) as zipcode,
         COALESCE(
             (CASE 
-                WHEN geo_borough = 'BRONX' THEN 'BX'
-                WHEN geo_borough = 'BROOKLYN' THEN 'BK'
-                WHEN geo_borough = 'MANHATTAN' THEN 'MN'
-                WHEN geo_borough = 'QUEENS' THEN 'QN'
-                WHEN geo_borough = 'STATEN ISLAND' THEN 'SI'
+                WHEN a.geo_borough = 'BRONX' THEN 'BX'
+                WHEN a.geo_borough = 'BROOKLYN' THEN 'BK'
+                WHEN a.geo_borough = 'MANHATTAN' THEN 'MN'
+                WHEN a.geo_borough = 'QUEENS' THEN 'QN'
+                WHEN a.geo_borough = 'STATEN ISLAND' THEN 'SI'
             END), 
             (SELECT 
                 (CASE 
@@ -86,37 +164,40 @@ CREATE TEMP TABLE cleaned as (
                 END) from doitt_zipcodeboundaries b where st_within(geom, b.wkb_geometry))
         )as borough,
         COALESCE(
-            geo_nta,
+            a.geo_nta,
             NULL -- replace with spatial join here
         ) as nta,
         null as nta_name,
         (CASE 
-            WHEN status ~* 'open' then 'open'
-            WHEN status ~* 'closed' then 'closed'
+            WHEN a.status ~* 'open' then 'open'
+            WHEN a.status ~* 'closed' then 'closed'
         END) as status,
         (CASE 
-            WHEN pickup ~* 'yes' then 'yes'
-            WHEN pickup ~* 'no' then 'no'
+            WHEN a.pickup ~* 'yes' then 'yes'
+            WHEN a.pickup ~* 'no' then 'no'
         END) as pickup,
         (CASE 
-            WHEN delivery ~* 'yes' then 'yes'
-            WHEN delivery ~* 'no' then 'no'
+            WHEN a.delivery ~* 'yes' then 'yes'
+            WHEN a.delivery ~* 'no' then 'no'
         END) as delivery,
-        hours,
-        special_hours,
+        a.hours,
+        a.special_hours,
         (CASE 
-            WHEN black_owned ~* 'true' then 'yes'
+            WHEN a.black_owned ~* 'true' then 'yes'
         END) as black_owned,
         (CASE 
-            WHEN mwbe ~* 'true' then 'yes'
+            WHEN a.mwbe ~* 'true' then 'yes'
         END) as mwbe,
-        source,
-        last_updated,
-        ST_Y(geom) as latitude,
-        ST_X(geom) as longitude,
-        geom,
-        geomsource
-    FROM cleaning
+        a.source,
+        a.last_updated,
+        ST_Y(a.geom) as latitude,
+        ST_X(a.geom) as longitude,
+        a.geom,
+        a.geomsource
+    FROM cleaning a 
+    JOIN subcat c 
+    ON a.betanyc_category = c.betanyc_category
+    AND a.betanyc_subcategory = c.betanyc_subcategory
 );
 
 CREATE SCHEMA IF NOT EXISTS :NAME;
