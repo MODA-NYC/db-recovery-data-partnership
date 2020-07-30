@@ -1,0 +1,39 @@
+name: Run Recovery Data Recipe
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  push:
+    if: github.event.issue.author_association == 'MEMBER' && contains(github.event.issue.title, '[build]')
+    runs-on: ubuntu-latest
+    env:
+      RDP_DATA: ${{ secrets.EDM_DATA }}
+      AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Install dependencies
+        shell: bash
+        run: ./rdp setup
+        
+      - name: Run recipes
+        shell: bash
+        run: |
+          title='${{ github.event.issue.title }}'
+          recipes=$(python -c "print('$title').replace('[build] ', '')")
+          for i in $(echo $recipes | tr " " "\n")
+          do
+            ./rdp run recipe $i
+          done
+          
+      - name: Close Issue
+        if: ${{ success() }}
+        uses: peter-evans/close-issue@v1
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          comment: |
+            # ${{ github.event.issue.title }} Is Successfully Updated! 🎉
+            for more details, check https://github.com/NYCPlanning/ceqr-app-data/actions/runs/${{ github.run_id }}
