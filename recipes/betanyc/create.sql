@@ -184,7 +184,7 @@ CREATE TEMP TABLE cleaned as (
         a.special_hours,
         (CASE 
             WHEN a.black_owned ~* 'true' then 'yes'
-        END) as a.black_owned,
+        END) as black_owned,
         (CASE 
             WHEN a.mwbe ~* 'true' then 'yes'
         END) as mwbe,
