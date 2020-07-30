@@ -5,7 +5,7 @@ on:
 
 jobs:
   push:
-    if: github.event.issue.author_association == 'MEMBER' && contains(github.event.issue.title, '[build]')
+    if: github.event.issue.author_association == 'COLLABORATOR' && contains(github.event.issue.title, '[build]')
     runs-on: ubuntu-latest
     env:
       RDP_DATA: ${{ secrets.RDP_DATA }}
