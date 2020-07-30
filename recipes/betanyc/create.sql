@@ -165,9 +165,17 @@ CREATE TEMP TABLE cleaned as (
         )as borough,
         COALESCE(
             a.geo_nta,
-            NULL -- replace with spatial join here
-        ) as nta,
-        null as nta_name,
+            (SELECT b.ntacode::text 
+            FROM dcp_ntaboundaries b 
+            WHERE st_within(a.geom, b.wkb_geometry))
+        ) as nta_code,
+        (SELECT ntaname from dcp_ntaboundaries
+        WHERE ntacode = COALESCE(
+            a.geo_nta,
+            (SELECT b.ntacode::text 
+            FROM dcp_ntaboundaries b 
+            WHERE st_within(a.geom, b.wkb_geometry))
+        )) as nta_name,
         (CASE 
             WHEN a.status ~* 'open' then 'open'
             WHEN a.status ~* 'closed' then 'closed'
