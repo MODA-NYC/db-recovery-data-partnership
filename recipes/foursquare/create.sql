@@ -54,15 +54,7 @@ WITH unpivot AS(
         (CASE
             WHEN demo = 'All' THEN p50duration 
             ELSE NULL 
-        END) AS p50dur_all,
-        (CASE
-            WHEN demo = 'Below65' THEN p50duration 
-            ELSE NULL 
-        END) AS p50dur_u65,
-        (CASE
-            WHEN demo = 'Above65' THEN p50duration 
-            ELSE NULL 
-        END) AS p50dur_o65
+        END) AS p50dur_all
     FROM tmp
 )
 
@@ -77,9 +69,7 @@ SELECT date,
         SUM(avgdur_all) as avgdur_all,
         SUM(avgdur_u65) as avgdur_u65,
         SUM(avgdur_o65) as avgdur_o65,
-        SUM(p50dur_all) as p50dur_all,
-        SUM(p50dur_u65) as p50dur_u65,
-        SUM(p50dur_o65) as p50dur_o65
+        SUM(p50dur_all) as p50dur_all
 INTO :NAME.:"VERSION"
 FROM unpivot
 GROUP BY date, state, borough, categoryid, categoryname;
