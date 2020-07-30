@@ -39,6 +39,10 @@ ACL=public-read
             SELECT * FROM $NAME.\"$VERSION\"
         ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
 
+        psql $RDP_DATA -c "\COPY (
+            SELECT * FROM foursquare_grouped.\"$VERSION\"
+        ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_grouped.csv
+
         # Write VERSION info
         echo "$VERSION" > version.txt
         
