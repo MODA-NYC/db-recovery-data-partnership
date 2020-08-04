@@ -21,9 +21,10 @@ RUN sudo tee /etc/apt/sources.list.d/pgdg.list << END\
     && curl -O https://www.postgresql.org/media/keys/ACCC4CF8.asc\
     && sudo apt-key add ACCC4CF8.asc
 
-    && sudo apt update
-    && sudo apt install -y postgresql-client-11 gdal-bin
-    && sudo apt autoremove
+    && sudo apt update\
+    && sudo apt install -y\
+    postgresql-client-11 gdal-bin\
+    && sudo apt autoremove\
     && rm ACCC4CF8.asc
 
 RUN curl -O https://dl.min.io/client/mc/release/linux-amd64/mc\
