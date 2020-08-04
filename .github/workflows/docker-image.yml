@@ -17,9 +17,9 @@ jobs:
       run: |
         DATE=$(date "+%Y-%m-%d")
         docker build . --file Dockerfile\
-          --tag docker.pkg.github.com/MODA-NYC/db-recovery-data-partnership/rdp:$DATE
-        docker tag  docker.pkg.github.com/MODA-NYC/db-recovery-data-partnership/rdp:$DATE\
-          docker.pkg.github.com/MODA-NYC/db-recovery-data-partnership/rdp:latest
-        docker push docker.pkg.github.com/MODA-NYC/db-recovery-data-partnership/rdp:$DATE
-        docker push docker.pkg.github.com/MODA-NYC/db-recovery-data-partnership/rdp:latest
+          --tag docker.pkg.github.com/mode-nyc/db-recovery-data-partnership/rdp:$DATE
+        docker tag  docker.pkg.github.com/mode-nyc/db-recovery-data-partnership/rdp:$DATE\
+          docker.pkg.github.com/mode-nyc/db-recovery-data-partnership/rdp:latest
+        docker push docker.pkg.github.com/mode-nyc/db-recovery-data-partnership/rdp:$DATE
+        docker push docker.pkg.github.commode-nyc/db-recovery-data-partnership/rdp:latest
     
