@@ -34,3 +34,7 @@ RUN pip install --upgrade pip\
     && pip install python-geosupport pandas numpy sqlalchemy psycopg2-binary usaddress beautifulsoup4
 
 WORKDIR /
+
+RUN useradd -u 1000 moda
+
+USER moda
