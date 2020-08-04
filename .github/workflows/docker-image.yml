@@ -9,10 +9,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
     - uses: actions/checkout@v2
+      
     - name: Log into Github registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+      
     - name: Build the Docker image
       run: |
         DATE=$(date "+%Y-%m-%d")
@@ -23,3 +26,14 @@ jobs:
         docker push docker.pkg.github.com/moda-nyc/db-recovery-data-partnership/rdp:$DATE
         docker push docker.pkg.github.com/moda-nyc/db-recovery-data-partnership/rdp:latest
     
+    - name: Log into Docker registry
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
+      
+    - name: Push to Dockerhub
+      shell: bash
+      run: |
+        DATE=$(date "+%Y-%m-%d")
+        docker tag docker.pkg.github.com/moda-nyc/db-recovery-data-partnership/rdp:$DATE nycplanning/rdp:$DATE
+        docker push nycplanning/rdp:$DATE
+        docker tag nycplanning/rdp:$DATE nycplanning/rdp:latest
+        docker push nycplanning/rdp:latest
