@@ -7,7 +7,9 @@ jobs:
   push:
     if: github.event.issue.author_association == 'COLLABORATOR' && contains(github.event.issue.title, '[build]')
     runs-on: ubuntu-latest
-    container: nycplanning/rdp:latest
+    container: 
+      image: nycplanning/rdp:latest
+      options: --user 1000
     env:
       RDP_DATA: ${{ secrets.RDP_DATA }}
       AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
