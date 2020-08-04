@@ -7,6 +7,7 @@ jobs:
   push:
     if: github.event.issue.author_association == 'COLLABORATOR' && contains(github.event.issue.title, '[build]')
     runs-on: ubuntu-latest
+    container: docker.pkg.github.com/moda-nyc/db-recovery-data-partnership/rdp:latest
     env:
       RDP_DATA: ${{ secrets.RDP_DATA }}
       AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
@@ -15,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         
-      - name: Install dependencies
+      - name: Set Up
         shell: bash
         run: ./rdp setup
         
