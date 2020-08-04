@@ -127,7 +127,7 @@ CREATE VIEW :NAME.count_by_zip AS
         GROUP BY zipcode, to_char(interview_date, 'IYYY-IW')
         ORDER BY zipcode, to_char(interview_date, 'IYYY-IW')  
     ) a 
-    LEFT JOIN doitt_zipcodeboundaries b
+    RIGHT JOIN doitt_zipcodeboundaries b
     ON a.zipcode::text = b.zipcode::text
 ;
 
@@ -146,6 +146,6 @@ CREATE VIEW :NAME.sum_by_zip AS
         GROUP BY zipcode
         ORDER BY zipcode
     ) a 
-    LEFT JOIN doitt_zipcodeboundaries b
+    RIGHT JOIN doitt_zipcodeboundaries b
     ON a.zipcode::text = b.zipcode::text
 ;
