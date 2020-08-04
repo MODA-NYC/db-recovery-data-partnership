@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           title='${{ github.event.issue.title }}'
-          recipes=$(python -c "print('$title').replace('[build] ', '')")
+          recipes=$(python -c "print('$title'.replace('[build] ', ''))")
           for i in $(echo $recipes | tr " " "\n")
           do
             ./rdp run recipe $i
