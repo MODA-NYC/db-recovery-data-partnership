@@ -115,7 +115,7 @@ CREATE VIEW :NAME.latest AS (
 DROP VIEW IF EXISTS :NAME.count_by_zip;
 CREATE VIEW :NAME.count_by_zip AS
     SELECT 
-        a.zipcode, a.year_week, a.total, a.sum_covid, a.per_covid, b.wkb_geometry
+        b.zipcode, a.year_week, a.total, a.sum_covid, a.per_covid, b.wkb_geometry
     FROM(
         SELECT 
             zipcode, 
@@ -135,7 +135,7 @@ CREATE VIEW :NAME.count_by_zip AS
 DROP VIEW IF EXISTS :NAME.sum_by_zip;
 CREATE VIEW :NAME.sum_by_zip AS
     SELECT 
-        a.zipcode, a.total, a.sum_covid, a.per_covid, b.wkb_geometry
+        b.zipcode, a.total, a.sum_covid, a.per_covid, b.wkb_geometry
     FROM(
         SELECT 
             zipcode, 
