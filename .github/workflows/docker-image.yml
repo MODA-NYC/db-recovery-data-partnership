@@ -1,0 +1,25 @@
+name: Create Docker Image
+
+on:
+  push:
+    paths: 
+    - 'Dockerfile'
+    - '.github/workflows/docker-image.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Log into Github registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+    - name: Build the Docker image
+      run: |
+        DATE=$(date "+%Y-%m-%d")
+        docker build . --file Dockerfile\
+          --tag docker.pkg.github.com/MODA-NYC/db-recovery-data-partnership/rdp:$DATE
+        docker tag  docker.pkg.github.com/MODA-NYC/db-recovery-data-partnership/rdp:$DATE\
+          docker.pkg.github.com/MODA-NYC/db-recovery-data-partnership/rdp:latest
+        docker push docker.pkg.github.com/MODA-NYC/db-recovery-data-partnership/rdp:$DATE
+        docker push docker.pkg.github.com/MODA-NYC/db-recovery-data-partnership/rdp:latest
+    
