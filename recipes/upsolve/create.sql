@@ -115,15 +115,36 @@ CREATE VIEW :NAME.latest AS (
 DROP VIEW IF EXISTS :NAME.count_by_zip;
 CREATE VIEW :NAME.count_by_zip AS
     SELECT 
-        a.zipcode, a.year_week, a.count, b.wkb_geometry
+        a.zipcode, a.year_week, a.total, a.sum_covid, a.per_covid, b.wkb_geometry
     FROM(
         SELECT 
             zipcode, 
             to_char(interview_date, 'IYYY-IW') as year_week,
-            count(*) as count
+            count(*) as total,
+            count(CASE WHEN r_covid19 THEN 1 END) as sum_covid,
+            ROUND(count(CASE WHEN r_covid19 THEN 1 END)::numeric*100/count(*), 2) as per_covid
         FROM :NAME.:"VERSION"
         GROUP BY zipcode, to_char(interview_date, 'IYYY-IW')
         ORDER BY zipcode, to_char(interview_date, 'IYYY-IW')  
+    ) a 
+    LEFT JOIN doitt_zipcodeboundaries b
+    ON a.zipcode::text = b.zipcode::text
+;
+
+-- Create zip aggregation of total counts to date
+DROP VIEW IF EXISTS :NAME.sum_by_zip;
+CREATE VIEW :NAME.sum_by_zip AS
+    SELECT 
+        a.zipcode, a.total, a.sum_covid, a.per_covid, b.wkb_geometry
+    FROM(
+        SELECT 
+            zipcode, 
+            count(*) as total,
+            count(CASE WHEN r_covid19 THEN 1 END) as sum_covid,
+            ROUND(count(CASE WHEN r_covid19 THEN 1 END)::numeric*100/count(*), 2) as per_covid
+        FROM :NAME.:"VERSION"
+        GROUP BY zipcode
+        ORDER BY zipcode
     ) a 
     LEFT JOIN doitt_zipcodeboundaries b
     ON a.zipcode::text = b.zipcode::text
