@@ -11,6 +11,7 @@ VERSION=$DATE
     docker run --rm\
             -v $(pwd)/../:/recipes\
             -e NAME=$NAME\
+            -e STREET_EASY_AWS=$STREET_EASY_AWS\
             -w /recipes/$NAME\
             nycplanning/cook:latest python3 build.py | 
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql

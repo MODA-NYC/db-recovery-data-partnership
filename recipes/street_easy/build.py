@@ -1,5 +1,8 @@
+import os
 import sys
 import pandas as pd
+
+street_easy_aws = os.environ.get('STREET_EASY_AWS')
 
 # Read input data
 cols = [
@@ -24,7 +27,7 @@ cols = [
         "week_end_date"
     ]
 
-df = pd.read_csv("input/street_easy_latest.csv")
+df = pd.read_csv(f"{street_easy_aws}/nta/nta-metrics-2020-06-01.csv")
 
 df.columns = [i.lower().replace(" ", "_") for i in df.columns]
 for col in cols:
