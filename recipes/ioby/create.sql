@@ -9,7 +9,11 @@ CREATE TEMP TABLE tmp (
     total_rev numeric,
     date_post date,
     date_end date,
-    days_don numeric
+    days_don numeric,
+    donation numeric,
+    don_date date,
+    project text,
+    don_city text
 );
 
 \COPY tmp FROM PSTDIN DELIMITER '|' CSV HEADER;
@@ -17,7 +21,7 @@ CREATE TEMP TABLE tmp (
 -- Create active project table
 CREATE SCHEMA IF NOT EXISTS ioby_active_projects;
 DROP TABLE IF EXISTS ioby_active_projects.:"VERSION" CASCADE;
-SELECT name,
+SELECT DISTINCT name,
         description,
         zipcode,
         target_rev,
@@ -37,7 +41,7 @@ CREATE VIEW ioby_active_projects.latest AS (
 -- Create potential project table
 CREATE SCHEMA IF NOT EXISTS ioby_potential_projects;
 DROP TABLE IF EXISTS ioby_potential_projects.:"VERSION" CASCADE;
-SELECT name,
+SELECT DISTINCT name,
         description,
         status,
         CASE WHEN project_loc IS NULL OR project_loc='' 
@@ -54,12 +58,36 @@ CREATE VIEW ioby_potential_projects.latest AS (
     FROM ioby_potential_projects.:"VERSION"
 );
 
+-- Create week-zipcode donation aggregation table
+CREATE SCHEMA IF NOT EXISTS ioby_donations;
+DROP TABLE IF EXISTS ioby_donations.:"VERSION" CASCADE;
+SELECT DISTINCT b.zipcode, a.year_week, a.sum_donate, a.sum_proj, b.wkb_geometry
+INTO ioby_donations.:"VERSION"
+FROM
+    (SELECT
+        zipcode,
+        to_char(don_date, 'IYYY-IW') as year_week,
+        SUM(donation) as sum_donate,
+        COUNT(DISTINCT project) as sum_proj
+        FROM tmp
+    GROUP BY zipcode, year_week
+    ORDER BY zipcode, year_week) a 
+RIGHT JOIN doitt_zipcodeboundaries b
+ON a.zipcode::text = b.zipcode::text
+;
+
+DROP VIEW IF EXISTS ioby_donations.latest;
+CREATE VIEW ioby_donations.latest AS (
+    SELECT :'VERSION' as v, * 
+    FROM ioby_donations.:"VERSION"
+);
+
 -- Create zipcode aggregation table
 DROP VIEW IF EXISTS ioby_active_projects.count_by_zip;
 CREATE VIEW ioby_active_projects.count_by_zip AS (
     SELECT b.zipcode, a.sum_donate, a.sum_proj, b.wkb_geometry
     FROM
-        (SELECT
+        (SELECT DISTINCT
             zipcode,
             SUM(total_rev) as sum_donate,
             COUNT(*) as sum_proj
