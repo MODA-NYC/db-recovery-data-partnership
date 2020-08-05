@@ -6,7 +6,7 @@ function run {
 register 'run' 'recipe' '{ recipe name }' run
 
 function local_run {
-    docker run --rm\
+    docker pull nycplanning/rdp:latest && docker run --rm\
         -v $(pwd)/:/_w\
         -w /_w\
         nycplanning/rdp:latest bash -c "
