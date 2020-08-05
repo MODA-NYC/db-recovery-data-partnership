@@ -32,6 +32,6 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/geocode/version-${RELEASE}_${MAJOR}.${MINO
 
 WORKDIR /
 
-COPY requrements.txt /requrements.txt
+COPY requirements.txt /requirements.txt
 RUN pip install --upgrade pip\
-    && pip install -r requrements.txt
+    && pip install -r requirements.txt
