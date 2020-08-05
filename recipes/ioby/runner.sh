@@ -38,6 +38,6 @@ ACL=private
         
     )
 
-    Upload $NAME $VERSION $ACL
-    Upload $NAME latest $ACL
+    #Upload $NAME $VERSION $ACL
+    #Upload $NAME latest $ACL
 )

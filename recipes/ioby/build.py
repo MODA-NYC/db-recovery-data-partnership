@@ -5,7 +5,10 @@ import pandas as pd
 import numpy as np
 
 def clean_city(s):
-    return s.upper().replace('NEWYORK', 'NEW YORK')
+    if str(s).upper() == 'NAN':
+        return np.nan
+    else:
+        return str(s).upper().replace('NEWYORK', 'NEW YORK')
 
 # Read input spreadsheets, ignoring header information
 df_il4 = pd.read_excel('input/il4.xlsx', usecols='D:R', skiprows=range(17), skipfooter=6)
@@ -47,11 +50,11 @@ for col in cols_ideas:
 czb = pd.read_csv("../_data/city_zip_boro.csv", dtype=str, engine="c")
 df_il4 = df_il4.loc[df_il4.project_zip.isin(czb.zipcode.tolist()), :]
 
-df_ideas['project_city'] = df_ideas['project_city'].map(clean_city)
-df_ideas['contact_city'] = df_ideas['contact_city'].map(clean_city)
+df_ideas['project_city'] = df_ideas['project_city'].apply(clean_city)
+df_ideas['contact_city'] = df_ideas['contact_city'].apply(clean_city)
+df_ideas = df_ideas.loc[df_ideas.project_city.isin(czb.city.tolist())|
+                        df_ideas.contact_city.isin(czb.city.tolist()), :]
 
-df_ideas = df_ideas.loc[df_ideas.project_city.isin(czb.zipcode.tolist())|
-                        df_ideas.contact_city.isin(czb.zipcode.tolist()), :]
 
 # Merge tables
 df = df_ideas[cols_ideas].merge(df_il4[cols_il4], how='outer', on=['campaign_name', 'campaign_description'])
