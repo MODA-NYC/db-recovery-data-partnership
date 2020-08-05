@@ -5,7 +5,7 @@ ENV MAJOR=20
 ENV MINOR=2
 
 RUN apt update\
-    && apt install -y curl git unzip gdal-bin gnupg\
+    && apt install -y curl git zip unzip gdal-bin gnupg\
     && apt autoclean -y
 
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list\
