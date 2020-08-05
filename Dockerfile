@@ -30,7 +30,8 @@ RUN FILE_NAME=linux_geo${RELEASE}_${MAJOR}_${MINOR}.zip\
 ENV GEOFILES=/geocode/version-${RELEASE}_${MAJOR}.${MINOR}/fls/
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/geocode/version-${RELEASE}_${MAJOR}.${MINOR}/lib/
 
-RUN pip install --upgrade pip\
-    && pip install python-geosupport pandas numpy sqlalchemy psycopg2-binary usaddress beautifulsoup4 requests xlrd
-
 WORKDIR /
+
+COPY requrements.txt /requrements.txt
+RUN pip install --upgrade pip\
+    && pip install -r requrements.txt
