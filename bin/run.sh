@@ -8,7 +8,6 @@ register 'run' 'recipe' '{ recipe name }' run
 function local_run {
     docker run --rm\
         -v $(pwd)/:/_w\
-        --user $UID\
         -w /_w\
         nycplanning/rdp:latest bash -c "
         ./rdp setup

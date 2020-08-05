@@ -6,11 +6,10 @@ from oauth2client.service_account import ServiceAccountCredentials
 import json
 
 def get_data() -> pd.DataFrame:
-    GSHEET_CRED=os.environ.get('GSHEET_CRED')
     GSHEET_UPSOLVE=os.environ.get('GSHEET_UPSOLVE')
 
     scope = ['https://spreadsheets.google.com/feeds']
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(GSHEET_CRED, strict=False), scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name('creds.json', scope)
     client = gspread.authorize(creds)
     sheet = client.open_by_key(GSHEET_UPSOLVE).sheet1
     df = pd.DataFrame(sheet.get_all_records())

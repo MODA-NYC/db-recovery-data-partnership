@@ -9,8 +9,12 @@ VERSION=$DATE
     mkdir -p output
     mkdir -p input
 
-    python3 build.py | 
+    mc cp $GSHEET_CRED creds.json
+
+    python3 build.py |
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
+    
+    rm creds.json
 
     (
         cd output
