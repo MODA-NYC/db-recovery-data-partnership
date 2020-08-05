@@ -5,6 +5,7 @@ on:
     paths: 
     - 'Dockerfile'
     - '.github/workflows/docker-image.yml'
+    - 'requirements.txt'
 
 jobs:
   build:

@@ -1,0 +1,11 @@
+python-geosupport
+pandas
+numpy
+sqlalchemy
+psycopg2-binary
+usaddress
+beautifulsoup4
+requests
+xlrd
+gspread
+oauth2client

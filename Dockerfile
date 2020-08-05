@@ -5,7 +5,7 @@ ENV MAJOR=20
 ENV MINOR=2
 
 RUN apt update\
-    && apt install -y curl git unzip gdal-bin gnupg\
+    && apt install -y curl git zip unzip gdal-bin gnupg\
     && apt autoclean -y
 
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list\
@@ -30,7 +30,8 @@ RUN FILE_NAME=linux_geo${RELEASE}_${MAJOR}_${MINOR}.zip\
 ENV GEOFILES=/geocode/version-${RELEASE}_${MAJOR}.${MINOR}/fls/
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/geocode/version-${RELEASE}_${MAJOR}.${MINOR}/lib/
 
-RUN pip install --upgrade pip\
-    && pip install python-geosupport pandas numpy sqlalchemy psycopg2-binary usaddress beautifulsoup4 requests
-
 WORKDIR /
+
+COPY requirements.txt /requirements.txt
+RUN pip install --upgrade pip\
+    && pip install -r requirements.txt
