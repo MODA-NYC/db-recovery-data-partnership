@@ -60,6 +60,7 @@ cols = [
     ]
 
 df = get_data()
+# df.to_csv('input/raw.csv', index=False)
 czb = pd.read_csv("../_data/city_zip_boro.csv", dtype=str, engine="c")
 
 df.columns = [i.lower().replace(" ", "_") for i in df.columns]
