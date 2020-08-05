@@ -13,10 +13,15 @@ def get_index(record, sleep=0):
     url = f"{base_url}&city=&county={record[0]}&dt={record[1]}&geoPivotCategory=&neighborhood=&state=New%20York&zip={record[2]}"
     try:
         r = requests.get(url)
-        return r.json()["response"]["rows"]
+        print(r.headers['X-RateLimit-Remaining'])
+        result=r.json()["response"]["rows"]
+        result.update(dict(county=record[0], date=record[1], zipcode=record[2]))
+        return result
     except:
         time.sleep(2 * sleep)
-        return get_index(record, sleep=1)
+        print(url)
+        print(f'retrying after sleeping {2*sleep}s')
+        return get_index(record, sleep+1)
 
 with Pool(processes=cpu_count()) as pool:
     it = pool.map(get_index, combo, 50)

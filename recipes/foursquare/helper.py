@@ -202,7 +202,7 @@ NYC = [
     },
 ]
 
-v = "20200730"
+v = "20200805"
 r = requests.get(
     f"https://api.foursquare.com/v2/demo/recoveryindex/data?getOptions=true&oauth_token=4DOQA5U052PCTDHZR1XH02ZQZUAHVWL2VQS53ON11I1H00Z2&v={v}&wsid=QNQHRAJNEF2DFYC40GH1W0CA5JW3S2"
 )
