@@ -7,12 +7,9 @@ VERSION=$DATE
 (
     cd $BASEDIR
     mkdir -p output
+    mkdir -p input
 
-    docker run --rm\
-            -v $(pwd)/../:/recipes\
-            -e NAME=$NAME\
-            -w /recipes/$NAME\
-            nycplanning/cook:latest python3 build.py | 
+    python3 build.py | 
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
 
     (
@@ -37,6 +34,5 @@ VERSION=$DATE
 
         # Write VERSION info
         echo "$VERSION" > version.txt
-        
     )
 )
