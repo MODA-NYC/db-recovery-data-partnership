@@ -143,7 +143,5 @@ media
 static
 
 # Data
-/output
-*/output
-/input
-*/input
+/output/
+/input/
