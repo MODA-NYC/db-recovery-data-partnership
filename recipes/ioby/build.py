@@ -13,7 +13,7 @@ def clean_city(s):
 # Read input spreadsheets, ignoring header information
 df_il4 = pd.read_excel('input/il4.xlsx', usecols='D:R', skiprows=range(17), skipfooter=6)
 df_ideas = pd.read_excel('input/ideas.xlsx', usecols='B:O', skiprows=range(14), skipfooter=6)
-df_donations = pd.read_excel('input/donations.xlsx', usecols='B:K', skiprows=range(13), skipfooter=7)
+df_donations = pd.read_excel('input/donations.xlsx', usecols='B:L', skiprows=range(13), skipfooter=7)
 
 # Save raw data to csvs
 df_il4.to_csv('input/il4_raw.csv', index=False)
@@ -71,6 +71,7 @@ df_ideas = df_ideas.loc[df_ideas.project_city.isin(czb.city.tolist())|
 
 df_donations['project_city'] = df_donations['project_city'].apply(clean_city)
 df_donations = df_donations.loc[df_donations.project_city.isin(czb.city.tolist()), :]
+df_donations = df_donations.loc[df_donations.type == 'Project Donation', :]
 
 # Merge tables
 df = df_ideas[cols_ideas].merge(df_il4[cols_il4], how='outer', on=['campaign_name', 'campaign_description'])
