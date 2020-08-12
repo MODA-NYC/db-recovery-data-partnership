@@ -1,10 +1,8 @@
 CREATE TEMP TABLE tmp(
-    areaname text,
-    areatype text,
-    fulldate date,
+    month date,
     borough text,
-    rentindex numeric,
-    priceindex numeric
+    sales_index numeric,
+    rental_index numeric
 );
 
 
