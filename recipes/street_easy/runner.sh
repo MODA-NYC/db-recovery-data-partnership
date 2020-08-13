@@ -27,23 +27,23 @@ VERSION=$DATE
         echo "$VERSION" > version.txt
 
     )
-) 
-
-# StreetEasy Rental/Sales Indecies
-(
-    cd $BASEDIR
-    NAME=street_easy_rental_sales_index
-    
-    python3 build_rental_sales_index.py |
-    psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_rental_sales_index.sql
-
+    # StreetEasy Rental/Sales Indecies
     (
-        cd output
+        NAME=street_easy_rental_sales_index
+        
+        python3 build_rental_sales_index.py |
+        psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_rental_sales_index.sql
 
-        # Export to CSV
-        psql $RDP_DATA -c "\COPY (
-            SELECT * FROM $NAME.\"$VERSION\"
-        ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+        (
+            cd output
 
-    )
+            # Export to CSV
+            psql $RDP_DATA -c "\COPY (
+                SELECT * FROM $NAME.\"$VERSION\"
+            ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+
+        )
+    ) 
+    Upload $NAME $VERSION
+    Upload $NAME latest
 ) 
