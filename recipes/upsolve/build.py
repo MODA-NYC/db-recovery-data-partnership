@@ -12,7 +12,7 @@ def get_data() -> pd.DataFrame:
     creds = ServiceAccountCredentials.from_json_keyfile_name('creds.json', scope)
     client = gspread.authorize(creds)
     sheet = client.open_by_key(GSHEET_UPSOLVE).sheet1
-    df = pd.DataFrame(sheet.get_all_records())
+    df = pd.DataFrame(sheet.get_all_records(), dtype=str)
     return df
 
 # Read input data
@@ -67,10 +67,10 @@ for col in cols:
     assert col in df.columns
 
 # Get boro and limit to NYC
-    df["zip"] = df["zip"].str[:5]
-    df = df.loc[df.zip.isin(czb.zipcode.tolist()), :]
-    df["borough"] = df.zip.apply(
-        lambda x: czb.loc[czb.zipcode == x, "boro"].tolist()[0]
-    )
+df["zip"] = df["zip"].str[:5]
+df = df.loc[df.zip.isin(czb.zipcode.tolist()), :]
+df["borough"] = df.zip.apply(
+    lambda x: czb.loc[czb.zipcode == x, "boro"].tolist()[0]
+)
 
 df.to_csv(sys.stdout, sep='|', index=False)

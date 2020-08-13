@@ -98,12 +98,12 @@ FROM tmp;
 
 -- Remove bool gender columns
 ALTER TABLE :NAME.:"VERSION"
-DROP COLUMN gender_male,
-DROP COLUMN gender_female,
-DROP COLUMN gender_tmale,
-DROP COLUMN gender_tfemale,
-DROP COLUMN gender_queer,
-DROP COLUMN gender_other;
+DROP COLUMN IF EXISTS gender_male,
+DROP COLUMN IF EXISTS gender_female,
+DROP COLUMN IF EXISTS gender_tmale,
+DROP COLUMN IF EXISTS gender_tfemale,
+DROP COLUMN IF EXISTS gender_queer,
+DROP COLUMN IF EXISTS gender_other;
 
 DROP VIEW IF EXISTS :NAME.latest CASCADE;
 CREATE VIEW :NAME.latest AS (
