@@ -96,15 +96,6 @@ SELECT
 INTO :NAME.:"VERSION"
 FROM tmp;
 
--- Remove bool gender columns
-ALTER TABLE :NAME.:"VERSION"
-DROP COLUMN IF EXISTS gender_male,
-DROP COLUMN IF EXISTS gender_female,
-DROP COLUMN IF EXISTS gender_tmale,
-DROP COLUMN IF EXISTS gender_tfemale,
-DROP COLUMN IF EXISTS gender_queer,
-DROP COLUMN IF EXISTS gender_other;
-
 DROP VIEW IF EXISTS :NAME.latest CASCADE;
 CREATE VIEW :NAME.latest AS (
     SELECT :'VERSION' as v, * 
