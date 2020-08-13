@@ -1,5 +1,7 @@
 #!/bin/bash
 source $(pwd)/bin/cli.sh
+source $(pwd)/bin/axway.sh
+
 DATE=$(date "+%Y-%m-%d")
 
 function set_env {
@@ -48,16 +50,19 @@ function CSV_export {
 }
 
 function Upload {
-  mc rm -r --force spaces/recovery-data-partnership/$1/$2
+  axway_cmd rm publish/$1/$2/*
+  axway_cmd rmdir publish/$1/$2
+  axway_cmd mkdir publish/$1/$2
   for file in output/*
   do
     name=$(basename $file)
-    mc cp --attr x-amz-acl=$3 $file spaces/recovery-data-partnership/$1/$2/$name
+    axway_cmd put $file publish/$1/$2/$name
   done
-  wait
 }
 
 function setup {
-mc config host add spaces $AWS_S3_ENDPOINT $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY --api S3v4
+  mc config host add spaces $AWS_S3_ENDPOINT $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY --api S3v4
+  mc config host add kinsa https://s3.amazonaws.com $KINSA_ACCESS_KEY_ID $KINSA_SECRET_ACCESS_KEY --api S3v4
+  mc config host add cuebiq https://s3.amazonaws.com $CUEBIQ_ACCESS_KEY_ID $CUEBIQ_SECRET_ACCESS_KEY --api S3v4
 }
 register 'setup' '' 'install system dependencies' setup

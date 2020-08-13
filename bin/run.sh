@@ -11,6 +11,9 @@ function local_run {
         -w /_w\
         nycplanning/rdp:latest bash -c "
         ./rdp setup
+        mkdir -p ~/.ssh
+        mc cp spaces/recovery-data-partnership/utils/id_rsa ~/.ssh/id_rsa_axway
+        chmod 600 ~/.ssh/id_rsa_axway
         bash /_w/recipes/$1/runner.sh
         "
 }

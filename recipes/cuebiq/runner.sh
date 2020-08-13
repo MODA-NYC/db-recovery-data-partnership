@@ -78,7 +78,8 @@ sectors=('automotive' 'dining' 'healthcare' 'lifestyle' 'malls' 'retail' 'telco'
         cd input
         for sector in "${sectors[@]}"
         do
-            mc cp cuebiq/cuebiq-dataset-nv/offline-intelligence/index=cvi/sector=$sector/country=US/daily-cvi-$sector.csv000.gz daily-cvi-$sector.csv000.gz &
+            mc cp cuebiq/cuebiq-dataset-nv/offline-intelligence/index=cvi/sector=$sector/country=US/daily-cvi-$sector.csv000.gz \
+                daily-cvi-$sector.csv000.gz &
         done
         wait
     )

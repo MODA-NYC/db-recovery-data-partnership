@@ -3,7 +3,6 @@ source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
 NAME=$(basename $BASEDIR)
 VERSION=$DATE
-ACL=public-read
 
 (
     cd $BASEDIR
@@ -26,6 +25,6 @@ ACL=public-read
         echo "$VERSION" > version.txt
         
     )
-    Upload $NAME $VERSION $ACL
-    Upload $NAME latest $ACL
+    Upload $NAME $VERSION
+    Upload $NAME latest
 )
