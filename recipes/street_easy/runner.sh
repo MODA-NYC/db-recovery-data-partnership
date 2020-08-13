@@ -1,19 +1,15 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
-NAME=$(basename $BASEDIR)
 VERSION=$DATE
 
+# StreetEasy NTA Level ETL
 (
     cd $BASEDIR
     mkdir -p output
+    NAME=$(basename $BASEDIR)
 
-    docker run --rm\
-            -v $(pwd)/../:/recipes\
-            -e NAME=$NAME\
-            -e STREET_EASY_AWS=$STREET_EASY_AWS\
-            -w /recipes/$NAME\
-            nycplanning/cook:latest python3 build.py | 
+    python3 build.py | 
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
 
     (
@@ -29,6 +25,25 @@ VERSION=$DATE
 
         # Write VERSION info
         echo "$VERSION" > version.txt
+
+    )
+) 
+
+# StreetEasy Rental/Sales Indecies
+(
+    cd $BASEDIR
+    NAME=street_easy_rental_sales_index
+    
+    python3 build_rental_sales_index.py |
+    psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_rental_sales_index.sql
+
+    (
+        cd output
+
+        # Export to CSV
+        psql $RDP_DATA -c "\COPY (
+            SELECT * FROM $NAME.\"$VERSION\"
+        ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
 
     )
 ) 
