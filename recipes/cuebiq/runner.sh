@@ -93,7 +93,16 @@ sectors=('automotive' 'dining' 'healthcare' 'lifestyle' 'malls' 'retail' 'telco'
         psql $RDP_DATA -c "\COPY (
             SELECT * FROM $NAME.\"$VERSION\"
         ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+        zip $NAME.zip $NAME.csv
+        rm $NAME.csv
     )
 )
 
 
+# Upload files
+(
+    cd $BASEDIR
+    NAME=cuebiq
+    Upload $NAME $VERSION
+    Upload $NAME latest
+)
