@@ -1,11 +1,11 @@
 FROM python:3.8-slim-buster
 
-ENV RELEASE=20b
+ENV RELEASE=20c
 ENV MAJOR=20
-ENV MINOR=2
+ENV MINOR=3
 
 RUN apt update\
-    && apt install -y curl git zip unzip gdal-bin gnupg\
+    && apt install -y curl git zip unzip gdal-bin gnupg jq\
     && apt autoclean -y
 
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list\
@@ -15,9 +15,10 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/
     && apt install -y postgresql-client-12\
     && rm ACCC4CF8.asc
 
-RUN curl -O https://dl.min.io/client/mc/release/linux-amd64/mc\
+RUN curl -O https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2020-04-19T19-17-53Z\
+    && mv mc.RELEASE.2020-04-19T19-17-53Z mc\
     && chmod +x mc\
-    &&  mv ./mc /usr/bin
+    && mv ./mc /usr/bin
 
 WORKDIR /geocode
 

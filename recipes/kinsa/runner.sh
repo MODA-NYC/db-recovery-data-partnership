@@ -6,16 +6,16 @@ VERSION=$DATE
 
 (
     cd $BASEDIR
-    mkdir -p input
     mkdir -p output
-    
-    python3 build.py |
+    mkdir -p input
+
+    mc cp kinsa/kinsa-share/kinsa_gamma_signal.csv input/kinsa_gamma_signal.csv
+    cat input/kinsa_gamma_signal.csv |
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
 
-    mkdir -p output && 
     (
         cd output
-
+           
         # Export to CSV
         psql $RDP_DATA -c "\COPY (
             SELECT * FROM $NAME.\"$VERSION\"
@@ -23,8 +23,8 @@ VERSION=$DATE
 
         # Write VERSION info
         echo "$VERSION" > version.txt
-        
     )
+    
     Upload $NAME $VERSION
     Upload $NAME latest
 )
