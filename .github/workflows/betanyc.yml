@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-    container: nycplanning/rdp:latest
     env:
       RDP_DATA: ${{ secrets.PROD_RDP_DATA }}
       AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
@@ -29,4 +28,4 @@ jobs:
 
       - name: Run recipes
         shell: bash
-        run: ./rdp run recipe betanyc
+        run: ./rdp axway ls -l
