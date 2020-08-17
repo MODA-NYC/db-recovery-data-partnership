@@ -11,6 +11,21 @@ ACL=private
     mkdir -p input
     mkdir -p output
 
+    latest_file=$(axway_ls -nrt Ioby/donation | grep .xlsx | tail -1 | awk '{print $NF}')
+    echo "$latest_file"
+    rm -rf input/donations_raw.xlsx
+    axway_cmd get $latest_file input/donations_raw.xlsx
+
+    latest_file=$(axway_ls -nrt Ioby/ideas | grep .xlsx | tail -1 | awk '{print $NF}')
+    echo "$latest_file"
+    rm -rf input/ideas_raw.xlsx
+    axway_cmd get $latest_file input/ideas_raw.xlsx
+
+    latest_file=$(axway_ls -nrt Ioby/il4s | grep .xlsx | tail -1 | awk '{print $NF}')
+    echo "$latest_file"
+    rm -rf input/il4_raw.xlsx
+    axway_cmd get $latest_file input/il4_raw.xlsx
+
     python3 build.py |
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
 
@@ -43,6 +58,6 @@ ACL=private
         
     )
 
-    #Upload $NAME $VERSION $ACL
-    #Upload $NAME latest $ACL
+    Upload $NAME $VERSION
+    Upload $NAME latest
 )

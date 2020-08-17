@@ -32,7 +32,7 @@ INTO ioby_active_projects.:"VERSION"
 FROM tmp 
 WHERE status ~* 'underway|open';
 
-DROP VIEW IF EXISTS ioby_active_projects.latest;
+DROP VIEW IF EXISTS ioby_active_projects.latest CASCADE;
 CREATE VIEW ioby_active_projects.latest AS (
     SELECT :'VERSION' as v, * 
     FROM ioby_active_projects.:"VERSION"
@@ -52,7 +52,7 @@ INTO ioby_potential_projects.:"VERSION"
 FROM tmp 
 WHERE status !~* 'underway|open';
 
-DROP VIEW IF EXISTS ioby_potential_projects.latest;
+DROP VIEW IF EXISTS ioby_potential_projects.latest CASCADE;
 CREATE VIEW ioby_potential_projects.latest AS (
     SELECT :'VERSION' as v, * 
     FROM ioby_potential_projects.:"VERSION"
