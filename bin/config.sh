@@ -66,3 +66,45 @@ function setup {
   mc config host add cuebiq https://s3.amazonaws.com $CUEBIQ_ACCESS_KEY_ID $CUEBIQ_SECRET_ACCESS_KEY --api S3v4
 }
 register 'setup' '' 'install system dependencies' setup
+
+function import_spatial {
+  psql $RDP_DATA -c "
+    DROP TABLE IF EXISTS doitt_zipcodeboundaries CASCADE;
+    CREATE TABLE doitt_zipcodeboundaries (
+      v text,
+      ogc_fid integer,
+      zipcode integer,
+      bldgzip integer,
+      po_name text,
+      population double precision,
+      area double precision,
+      state character varying(2),
+      county text,
+      st_fips character varying(2),
+      cty_fips character varying(3),
+      url text,
+      shape_area double precision,
+      shape_len double precision,
+      wkb_geometry geometry(MultiPolygon,4326)
+  );
+  "
+  cat recipes/_data/doitt_zipcodeboundaries.csv | psql $RDP_DATA -c "\copy doitt_zipcodeboundaries from stdin DELIMITER ',' CSV HEADER;"
+
+   psql $RDP_DATA -c "
+    DROP TABLE IF EXISTS dcp_ntaboundaries CASCADE;
+    CREATE TABLE dcp_ntaboundaries (
+      v text,
+      ogc_fid integer,
+      borocode character varying(1),
+      boroname text,
+      countyfips character varying(3),
+      ntacode character varying(4),
+      ntaname text,
+      shape_leng double precision,
+      shape_area double precision,
+      wkb_geometry geometry(MultiPolygon,4326)
+    );
+  "
+  cat recipes/_data/dcp_ntaboundaries.csv | psql $RDP_DATA -c "\copy dcp_ntaboundaries from stdin DELIMITER ',' CSV HEADER;"
+}
+register 'import' 'spatial' 'import zipcode and nta boundaries' import_spatial
