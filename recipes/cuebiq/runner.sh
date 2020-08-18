@@ -5,15 +5,18 @@ VERSION=$DATE
 TYPE=$1 #cityhall/weekly/daily
 sectors=('automotive' 'dining' 'healthcare' 'lifestyle' 'malls' 'retail' 'telco' 'transportation')
 
+(
+  cd $BASEDIR
+  mkdir -p output
+  mkdir -p input
+)
+
 case $TYPE in
 
   cityhall)
     (
         cd $BASEDIR
         NAME=cuebiq_cityhall
-        mkdir -p output
-        mkdir -p input
-
         (
             cd input
             touch raw_$NAME.csv
