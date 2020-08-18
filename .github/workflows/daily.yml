@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: install dependencies
         run: |
-          pip3 install beautifulsoup4 requests bs4
+          pip3 install beautifulsoup4 requests
           
       - name: get asof (foursquare)
         id: asof
