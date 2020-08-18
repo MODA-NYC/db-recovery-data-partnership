@@ -62,8 +62,8 @@ function Upload {
 
 function setup {
   mc config host add spaces $AWS_S3_ENDPOINT $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY --api S3v4
-  mc config host add kinsa https://s3.amazonaws.com $KINSA_ACCESS_KEY_ID $KINSA_SECRET_ACCESS_KEY --api S3v4
-  mc config host add cuebiq https://s3.amazonaws.com $CUEBIQ_ACCESS_KEY_ID $CUEBIQ_SECRET_ACCESS_KEY --api S3v4
+  mc config host add kinsa https://s3.dualstack.us-east-1.amazonaws.com $KINSA_ACCESS_KEY_ID $KINSA_SECRET_ACCESS_KEY --api S3v4
+  mc config host add cuebiq https://s3.dualstack.us-east-1.amazonaws.com $CUEBIQ_ACCESS_KEY_ID $CUEBIQ_SECRET_ACCESS_KEY --api S3v4
 }
 register 'setup' '' 'install system dependencies' setup
 
