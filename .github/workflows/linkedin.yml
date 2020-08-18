@@ -1,7 +1,7 @@
-name: StreetEasy
+name: LinkedIn
 on:
   repository_dispatch:
-    types: [street_easy]
+    types: [linkedin]
   schedule:
     - cron: 0 0 */7 * *
 
@@ -28,7 +28,7 @@ jobs:
       - name: Run recipes
         shell: bash
         run: |
-          ./rdp run recipe street_easy
+          ./rdp run recipe linkedin
       
       - name: Clean up
         shell: bash
