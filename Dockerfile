@@ -19,6 +19,10 @@ RUN curl -O https://dl.min.io/client/mc/release/linux-amd64/mc\
     && chmod +x mc\
     && mv ./mc /usr/bin
 
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"\
+    && unzip awscliv2.zip\
+    && sudo ./aws/install
+
 WORKDIR /geocode
 
 RUN FILE_NAME=linux_geo${RELEASE}_${MAJOR}_${MINOR}.zip\
