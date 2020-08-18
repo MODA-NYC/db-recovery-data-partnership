@@ -1,0 +1,60 @@
+name: Foursquare Runner
+on:
+  repository_dispatch:
+    types: [foursquare]
+  schedule:
+    - cron: 0 0 * * *
+
+jobs:
+  getasof:
+    runs-on: ubuntu-latest
+    outputs:
+        VERSION: ${{ steps.asof.outputs.VERSION }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        run: |
+          pip3 install beautifulsoup4 requests
+          
+      - name: get asof (foursquare)
+        id: asof
+        working-directory: recipes/foursquare
+        run: |
+          VERSION=$(python3 asof.py)
+          echo ::set-output name=VERSION::$VERSION
+
+  build:
+    runs-on: self-hosted
+    container: nycplanning/rdp:latest
+    needs: getasof
+    env:
+      AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      VERSION: ${{ needs.getasof.outputs.VERSION }}
+    steps:
+      - run: echo $VERSION
+
+      - uses: actions/checkout@v2
+
+      - name: Set Up
+        shell: bash
+        run: |
+          ./rdp setup
+          mkdir -p ~/.ssh
+          mc cp spaces/recovery-data-partnership/utils/id_rsa ~/.ssh/id_rsa_axway
+          mc cp spaces/recovery-data-partnership/utils/.env .env
+          chmod 600 ~/.ssh/id_rsa_axway
+
+      - name: Run recipes
+        shell: bash
+        run: |
+          ./rdp run recipe foursquare
+      
+      - name: Clean up
+        shell: bash
+        run: |
+          rm ~/.ssh/id_rsa_axway
+          rm .env
+          rm -rf recipes/foursquare/output
+          rm -rf recipes/foursquare/input
