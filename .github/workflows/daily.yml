@@ -8,19 +8,19 @@ on:
 jobs:
   getasof:
     runs-on: ubuntu-latest
-  outputs:
-      VERSION: ${{ steps.asof.outputs.VERSION }}
-  steps:
-    - uses: actions/checkout@v2
-    - name: install dependencies
-      run: |
-        pip install beautifulsoup4 requests
-    - name: get asof (foursquare)
-      id: asof
-      working-directory: recipes/foursquare
-      run: |
-        VERSION=$(python asof.py)
-        echo ::set-output name=VERSION::$VERSION
+    outputs:
+        VERSION: ${{ steps.asof.outputs.VERSION }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        run: |
+          pip install beautifulsoup4 requests
+      - name: get asof (foursquare)
+        id: asof
+        working-directory: recipes/foursquare
+        run: |
+          VERSION=$(python3 asof.py)
+          echo ::set-output name=VERSION::$VERSION
 
   build:
     runs-on: self-hosted
@@ -32,6 +32,8 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       VERSION: ${{ needs.getasof.outputs.VERSION }}
     steps:
+      - run: echo $VERSION
+
       - uses: actions/checkout@v2
 
       - name: Set Up
