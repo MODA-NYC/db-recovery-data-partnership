@@ -22,7 +22,7 @@ cols = {
         "q18":"email_moly",
         "q19":"social_act",
         "q20":"shop_bank",
-        "q21":"divices",
+        "q21":"devices",
         "q22":"non_eng",
         "q23":"job_search",
         "q24":"volunteer",
