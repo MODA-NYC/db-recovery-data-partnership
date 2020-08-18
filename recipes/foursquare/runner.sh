@@ -36,6 +36,7 @@ NAME=$(basename $BASEDIR)
     )
 
     cat input/raw.csv | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
+    rm -rf input
 
     mkdir -p output && 
     (
@@ -56,4 +57,5 @@ NAME=$(basename $BASEDIR)
     )
     Upload $NAME $VERSION
     Upload $NAME latest
+    rm -rf output
 )

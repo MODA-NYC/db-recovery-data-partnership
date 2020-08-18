@@ -12,6 +12,7 @@ VERSION=$DATE
     python3 build.py |
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
 
+    rm -rf input
     mkdir -p output && 
     (
         cd output
@@ -27,4 +28,5 @@ VERSION=$DATE
     )
     Upload $NAME $VERSION
     Upload $NAME latest
+    rm -rf output
 )

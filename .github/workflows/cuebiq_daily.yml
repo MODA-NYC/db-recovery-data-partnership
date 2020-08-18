@@ -1,4 +1,4 @@
-name: Cuebiq Daily Runner
+name: Cuebiq Daily
 on:
   repository_dispatch:
     types: [cuebiq_daily]

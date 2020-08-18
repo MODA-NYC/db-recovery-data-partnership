@@ -1,9 +1,9 @@
-name: BetaNYC
+name: Cuebiq Weekly
 on:
   repository_dispatch:
-    types: [betanyc]
+    types: [cuebiq_weekly]
   schedule:
-    - cron: 0 0 */3 * *
+    - cron: 0 0 */7 * *
 
 jobs:
   build:
@@ -28,11 +28,10 @@ jobs:
       - name: Run recipes
         shell: bash
         run: |
-          ./rdp run recipe betanyc
+          ./rdp run recipe cuebiq weekly
       
       - name: Clean up
         shell: bash
         run: |
           rm ~/.ssh/id_rsa_axway
           rm .env
-      

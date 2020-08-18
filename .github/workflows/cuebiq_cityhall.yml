@@ -1,9 +1,9 @@
-name: BetaNYC
+name: Cuebiq Cityhall
 on:
   repository_dispatch:
-    types: [betanyc]
+    types: [cuebiq_cityhall]
   schedule:
-    - cron: 0 0 */3 * *
+    - cron: 0 0 */2 * *
 
 jobs:
   build:
@@ -28,11 +28,10 @@ jobs:
       - name: Run recipes
         shell: bash
         run: |
-          ./rdp run recipe betanyc
+          ./rdp run recipe cuebiq cityhall
       
       - name: Clean up
         shell: bash
         run: |
           rm ~/.ssh/id_rsa_axway
           rm .env
-      
