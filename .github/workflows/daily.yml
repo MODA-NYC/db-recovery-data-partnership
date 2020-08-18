@@ -49,6 +49,7 @@ jobs:
       - name: Run recipes
         shell: bash
         run: |
+          mc --debug ls kinsa
           ./rdp run recipe kinsa
           ./rdp run recipe cuebiq daily
           ./rdp run recipe foursquare
