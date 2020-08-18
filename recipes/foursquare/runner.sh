@@ -2,11 +2,18 @@
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
 NAME=$(basename $BASEDIR)
-ACL=public-read
 
 (
     cd $BASEDIR
-    VERSION=$(python asof.py)
+
+    if [ -z "$VERSION" ]
+    then
+        # If VERSION is not set, then run asof.py to get version
+        VERSION=$(python asof.py)
+    else
+        # If VERSION is set, then ignore asof.py (this is for github actions)
+        echo "$VERSION is set!"
+    fi
     
     echo "pulling version: $VERSION"
 
@@ -47,6 +54,6 @@ ACL=public-read
         echo "$VERSION" > version.txt
         
     )
-    Upload $NAME $VERSION $ACL
-    Upload $NAME latest $ACL
+    Upload $NAME $VERSION
+    Upload $NAME latest
 )
