@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
 
-NYC_FIPS = ['36005','36047','36061','36081','36085']
+region_zips = pd.read_csv('../_data/region_zips.csv')
 
 # Read daily data tables from GitHub
 df1 = pd.read_csv(
@@ -17,7 +17,7 @@ df2 = pd.read_csv(
 
 # Filter to NYC and set FIPS code as index
 dfs = [df1, df2]
-dfs = [df[df.countyfips.isin(NYC_FIPS)].set_index(["countyfips","year","month","day_endofweek"], drop=True) for df in dfs]
+dfs = [df[df.countyfips.isin(region_zips.county_fip.tolist())].set_index(["countyfips","year","month","day_endofweek"], drop=True) for df in dfs]
 
 # Concatenate tables and reset index
 merged = pd.concat(dfs, axis=1, join='outer', copy=False)

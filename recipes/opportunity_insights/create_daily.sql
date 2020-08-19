@@ -4,10 +4,6 @@ CREATE TEMP TABLE tmp (
     month text,
     day text,
     spend_all numeric,
-    case_rate numeric,
-    new_case_rate numeric,
-    death_rate numeric,
-    new_death_rate numeric,
     gps_retail_and_recreation numeric,
     gps_grocery_and_pharmacy numeric,
     gps_parks numeric,
@@ -25,18 +21,21 @@ CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
 SELECT
     (CASE 
+        WHEN fipscounty IN ('36005','36047','36061','36081','36085')
+            THEN 'NYC'
+        ELSE 'Region'
+    END) as location,
+    (CASE 
         WHEN fipscounty = '36005' THEN 'Bronx'
         WHEN fipscounty = '36047' THEN 'Brooklyn'
         WHEN fipscounty = '36061' THEN 'Manhattan'
         WHEN fipscounty = '36081' THEN 'Queens'
         WHEN fipscounty = '36085' THEN 'Staten Island'
+        ELSE NULL
     END) as borough,
-    CONCAT_WS('-',year,LPAD(month,2),LPAD(day,2))::date AS date,
+    fipscounty,
+    CONCAT_WS('-',year,LPAD(month,2,'0'),LPAD(day,2,'0'))::date AS date,
     spend_all,
-    case_rate,
-    new_case_rate,
-    death_rate,
-    new_death_rate,
     gps_retail_and_recreation,
     gps_grocery_and_pharmacy,
     gps_parks,
