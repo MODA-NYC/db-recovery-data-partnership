@@ -37,7 +37,7 @@ case $TYPE in
         NAME=opp_insights_daily
 
         python3 build_daily.py |
-        psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_weekly.sql
+        psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_daily.sql
 
         (
             cd output

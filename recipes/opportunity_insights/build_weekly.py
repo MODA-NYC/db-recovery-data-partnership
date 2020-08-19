@@ -7,10 +7,12 @@ NYC_FIPS = ['36005','36047','36061','36081','36085']
 df1 = pd.read_csv(
     "https://raw.githubusercontent.com/OpportunityInsights/EconomicTracker/main/data/Zearn%20-%20County%20-%20Weekly.csv",
     dtype=str,
+    na_values='.'
 )
 df2 = pd.read_csv(
     "https://raw.githubusercontent.com/OpportunityInsights/EconomicTracker/main/data/UI%20Claims%20-%20County%20-%20Weekly.csv",
     dtype=str,
+    na_values='.'
 )
 
 # Filter to NYC and set FIPS code as index
