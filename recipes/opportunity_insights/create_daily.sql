@@ -36,6 +36,9 @@ SELECT
         ELSE NULL
     END) as borough,
     fipscounty,
+    TO_CHAR(
+        CONCAT_WS('-',year,LPAD(month,2,'0'),LPAD(day,2,'0'))::date, 
+        'IYYY-IW') as year_week,
     CONCAT_WS('-',year,LPAD(month,2,'0'),LPAD(day,2,'0'))::date AS date,
     spend_all,
     gps_retail_and_recreation,
