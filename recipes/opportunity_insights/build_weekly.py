@@ -10,13 +10,13 @@ df1 = pd.read_csv(
     dtype=str,
     na_values='.'
 )
-df1.to_csv('input/raw_zearn.csv')
+
 df2 = pd.read_csv(
     "https://raw.githubusercontent.com/OpportunityInsights/EconomicTracker/main/data/UI%20Claims%20-%20County%20-%20Weekly.csv",
     dtype=str,
     na_values='.'
 )
-df2.to_csv('input/raw_ui.csv')
+
 # Filter to NYC and set FIPS code as index
 dfs = [df1, df2]
 counties = region_dict.keys()
