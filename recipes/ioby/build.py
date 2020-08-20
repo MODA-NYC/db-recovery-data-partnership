@@ -43,7 +43,9 @@ cols_donations =  [
     "amount",
     "close_date",
     "project",
-    "project_city"
+    "project_city",
+    "type",
+    "drupal_order_id"
 ]
 
 # Check that input data has necessary columns
@@ -71,7 +73,6 @@ df_ideas = df_ideas.loc[df_ideas.project_city.isin(czb.city.tolist())|
 
 df_donations['project_city'] = df_donations['project_city'].apply(clean_city)
 df_donations = df_donations.loc[df_donations.project_city.isin(czb.city.tolist()), :]
-df_donations = df_donations.loc[df_donations.type == 'Project Donation', :]
 
 # Merge tables
 df = df_ideas[cols_ideas].merge(df_il4[cols_il4], how='outer', on=['campaign_name', 'campaign_description'])

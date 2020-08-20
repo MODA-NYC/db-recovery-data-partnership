@@ -13,7 +13,9 @@ CREATE TEMP TABLE tmp (
     donation numeric,
     don_date date,
     project text,
-    don_city text
+    don_city text,
+    don_type text,
+    order_id text
 );
 
 \COPY tmp FROM PSTDIN DELIMITER '|' CSV HEADER;
@@ -61,7 +63,19 @@ CREATE VIEW ioby_potential_projects.latest AS (
 -- Create week-zipcode donation aggregation table
 CREATE SCHEMA IF NOT EXISTS ioby_donations;
 DROP TABLE IF EXISTS ioby_donations.:"VERSION" CASCADE;
-SELECT DISTINCT b.zipcode, a.year_week, a.sum_donate, a.sum_proj, b.wkb_geometry
+WITH 
+distinct_donations AS(
+    SELECT DISTINCT
+        zipcode,
+        don_date,
+        donation,
+        project,
+        don_type,
+        order_id
+    FROM tmp
+    )
+
+SELECT b.zipcode, a.year_week, a.sum_donate, a.sum_proj, b.wkb_geometry
 INTO ioby_donations.:"VERSION"
 FROM
     (SELECT
@@ -69,7 +83,7 @@ FROM
         to_char(don_date, 'IYYY-IW') as year_week,
         SUM(donation) as sum_donate,
         COUNT(DISTINCT project) as sum_proj
-        FROM tmp
+        FROM distinct_donations
     GROUP BY zipcode, year_week
     ORDER BY zipcode, year_week) a 
 RIGHT JOIN doitt_zipcodeboundaries b
