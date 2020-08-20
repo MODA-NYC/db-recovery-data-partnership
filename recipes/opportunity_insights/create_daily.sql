@@ -12,7 +12,8 @@ CREATE TEMP TABLE tmp (
     gps_resitential numeric,
     gps_away_from_home numeric,
     merchants_all numeric,
-    revenue_all numeric
+    revenue_all numeric,
+    county_name text
 );
 
 \COPY tmp FROM PSTDIN DELIMITER '|' CSV HEADER;
@@ -25,6 +26,7 @@ SELECT
             THEN 'NYC'
         ELSE 'Region'
     END) as location,
+    county_name as county,
     (CASE 
         WHEN fipscounty = '36005' THEN 'Bronx'
         WHEN fipscounty = '36047' THEN 'Brooklyn'
