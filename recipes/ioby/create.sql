@@ -74,7 +74,6 @@ distinct_donations AS(
         order_id
     FROM tmp
     )
-
 SELECT b.zipcode, a.year_week, a.sum_donate, a.sum_proj, b.wkb_geometry
 INTO ioby_donations.:"VERSION"
 FROM
@@ -84,10 +83,10 @@ FROM
         SUM(donation) as sum_donate,
         COUNT(DISTINCT project) as sum_proj
         FROM distinct_donations
-    GROUP BY zipcode, year_week
-    ORDER BY zipcode, year_week) a 
+    GROUP BY zipcode, year_week) a 
 RIGHT JOIN doitt_zipcodeboundaries b
 ON a.zipcode::text = b.zipcode::text
+ORDER BY zipcode, year_week
 ;
 
 DROP VIEW IF EXISTS ioby_donations.latest;
