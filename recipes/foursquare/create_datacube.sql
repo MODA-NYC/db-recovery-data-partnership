@@ -34,6 +34,7 @@ Late Evening: 8pm to 10:59pm
 Night: 11pm to 2:59am
 Late Night: 3am to 5:59am
 */
+BEGIN;
 
 CREATE TEMP TABLE tmp (
     date text,
@@ -60,40 +61,15 @@ CREATE TEMP TABLE tmp (
 
 \COPY tmp FROM PSTDIN WITH NULL AS '' DELIMITER ',' CSV;
 
-UPDATE tmp
-SET medianDuration=nullif(medianDuration, '')::numeric;
+UPDATE tmp SET medianDuration=nullif(medianDuration, '')::numeric;
 
 /* Create maintable */
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
 SELECT * INTO :NAME.:"VERSION" FROM tmp;
 
-/* Isolate grouped cateogryed */
-CREATE SCHEMA IF NOT EXISTS foursquare_datacube_grouped;
-DROP TABLE IF EXISTS foursquare_datacube_grouped.:"VERSION" CASCADE;
-SELECT * INTO foursquare_datacube_grouped.:"VERSION" FROM :NAME.:"VERSION"
-WHERE categoryid='Group';
+/* Insert records into the Main table */
+DELETE FROM :NAME.main WHERE date = :'VERSION';
+INSERT INTO :NAME.main SELECT * FROM :NAME.:"VERSION";
 
-/* Remove grouped records from maintable */
-DELETE FROM :NAME.:"VERSION" WHERE categoryid='Group';
-
-/* Create NYC views */
-DROP VIEW IF EXISTS :NAME.latest;
-CREATE VIEW :NAME.latest AS (
-    SELECT :'VERSION' as v, * 
-    FROM :NAME.:"VERSION"
-    WHERE zip in (
-        SELECT DISTINCT zipcode::text 
-        FROM doitt_zipcodeboundaries
-    )
-);
-
-DROP VIEW IF EXISTS foursquare_datacube_grouped.latest;
-CREATE VIEW foursquare_datacube_grouped.latest AS (
-    SELECT :'VERSION' as v, * 
-    FROM foursquare_datacube_grouped.:"VERSION"
-    WHERE zip in (
-        SELECT DISTINCT zipcode::text
-        FROM doitt_zipcodeboundaries
-    )
-);
+COMMIT;

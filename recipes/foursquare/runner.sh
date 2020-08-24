@@ -1,5 +1,7 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
+source $(pwd)/recipes/foursquare/runner_datacube.sh
+
 BASEDIR=$(dirname $0)
 NAME=$(basename $BASEDIR)
 TYPE=$1 # datacube/*
@@ -60,55 +62,6 @@ function foursquare_default {
         Upload $NAME $VERSION
         Upload $NAME latest
         rm -rf output
-    )
-}
-
-function foursquare_datacube {
-    (
-        cd $BASEDIR
-        NAME=foursquare_datacube
-        
-        mc cp $GSHEET_CRED creds.json
-        mkdir -p input && mkdir -p output
-
-        python3 datacube.py
-
-        (
-            cd input
-            file_name=$(tar tf *.tar.gz | grep .csv.gz)
-            path=$(dirname $file_name)
-            VERSION=${path: -10}
-            tar -xvzf *.tar.gz $file_name -O > raw.csv.gz
-            echo "$VERSION" > version.txt
-        )
-
-        VERSION=$(cat input/version.txt)
-        gunzip -dc input/raw.csv.gz | 
-        psql $RDP_DATA \
-            -v NAME=$NAME \
-            -v VERSION=$VERSION \
-            -f create_datacube.sql
-        
-        (
-            cd output
-            
-            # Export to CSV
-            psql $RDP_DATA -c "\COPY (
-                SELECT * FROM $NAME.\"$VERSION\"
-            ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
-
-            psql $RDP_DATA -c "\COPY (
-                SELECT * FROM $NAME.latest
-            ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_datacube_nyc.csv
-
-            # Write VERSION info
-            echo "$VERSION" > version.txt
-        )
-
-        Upload $NAME $VERSION
-        Upload $NAME latest
-        rm -rf output && rm -rf output
-        rm creds.json
     )
 }
 
