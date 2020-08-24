@@ -108,3 +108,20 @@ function import_spatial {
   cat recipes/_data/dcp_ntaboundaries.csv | psql $RDP_DATA -c "\copy dcp_ntaboundaries from stdin DELIMITER ',' CSV HEADER;"
 }
 register 'import' 'spatial' 'import zipcode and nta boundaries' import_spatial
+
+
+function max_bg_procs {
+    if [[ $# -eq 0 ]] ; then
+            echo "Usage: max_bg_procs NUM_PROCS.  Will wait until the number of background (&)"
+            echo "           bash processes (as determined by 'jobs -pr') falls below NUM_PROCS"
+            return
+    fi
+    local max_number=$((0 + ${1:-0}))
+    while true; do
+            local current_number=$(jobs -pr | wc -l)
+            if [[ $current_number -lt $max_number ]]; then
+                    break
+            fi
+            sleep 1
+    done
+}
