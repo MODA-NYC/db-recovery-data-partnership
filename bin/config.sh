@@ -125,3 +125,19 @@ function max_bg_procs {
             sleep 1
     done
 }
+
+function get_monday {
+    input_date=$(date -d "$1")
+    start_date=$(date -d "$input_date - 7 days")
+    d=
+    n=0
+    until [ "$d" = "$input_date +%Y-%m-%d" ]
+    do  
+        ((n++))
+        d=$(date -d "$start_date + $n days")
+        DOW=$(date -d "$d" +%a)
+        if [ "$DOW" == "Mon" ]; then
+            echo "$d +%Y-%m-%d"
+        fi
+    done
+}

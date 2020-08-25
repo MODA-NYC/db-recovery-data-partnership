@@ -3,15 +3,16 @@ source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
 VERSION=$DATE
 
-
-
 # StreetEasy NTA Level ETL
 (
     cd $BASEDIR
     mkdir -p output
     NAME=$(basename $BASEDIR)
+    MONDAY=$(get_monday $DATE)
 
-    python3 build.py | 
+    echo $MONDAY
+
+    python3 build.py $MONDAY | 
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
 
     (
@@ -29,6 +30,7 @@ VERSION=$DATE
         echo "$VERSION" > version.txt
 
     )
+    
     # StreetEasy Rental/Sales Indecies
     (
         NAME=street_easy_rental_sales_index
