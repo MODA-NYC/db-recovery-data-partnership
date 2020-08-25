@@ -5,7 +5,7 @@ from datetime import date, timedelta
 
 if __name__ == "__main__":
     d = sys.argv[1]
-    url = os.environ.get('URL_STREETEASY')
+    url = os.environ.get('URL_STREET_EASY')
 
     # Read input data
     cols = [
