@@ -1,7 +1,6 @@
 import os
 import sys
 import pandas as pd
-from datetime import date, timedelta
 
 if __name__ == "__main__":
     d = sys.argv[1]
