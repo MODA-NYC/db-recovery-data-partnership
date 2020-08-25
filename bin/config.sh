@@ -126,9 +126,9 @@ function max_bg_procs {
     done
 }
 
-function get_monday {
+function get_last_monday {
     input_date=$(date -d "$1" +%Y-%m-%d)
-    start_date=$(date -d "$input_date - 7 days")
+    start_date=$(date -d "$input_date - 14 days")
     d=
     n=0
     until [ "$d" = "$input_date" ]

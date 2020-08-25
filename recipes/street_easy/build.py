@@ -28,7 +28,7 @@ if __name__ == "__main__":
             "week_start_date",
             "week_end_date"
         ]
-
+    
     df = pd.read_csv(f"{url}{d}.csv")
 
     df.columns = [i.lower().replace(" ", "_") for i in df.columns]

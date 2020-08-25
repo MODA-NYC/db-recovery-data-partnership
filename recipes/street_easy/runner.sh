@@ -8,9 +8,9 @@ VERSION=$DATE
     cd $BASEDIR
     mkdir -p output
     NAME=$(basename $BASEDIR)
-    MONDAY=$(get_monday $DATE)
+    MONDAY=$(get_last_monday $DATE)
 
-    echo $MONDAY
+    echo "$URL_STREET_EASY$MONDAY.csv"
 
     python3 build.py $MONDAY | 
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
@@ -30,7 +30,7 @@ VERSION=$DATE
         echo "$VERSION" > version.txt
 
     )
-    
+
     # StreetEasy Rental/Sales Indecies
     (
         NAME=street_easy_rental_sales_index
