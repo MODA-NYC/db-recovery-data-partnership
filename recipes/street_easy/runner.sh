@@ -3,6 +3,8 @@ source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
 VERSION=$DATE
 
+
+
 # StreetEasy NTA Level ETL
 (
     cd $BASEDIR
