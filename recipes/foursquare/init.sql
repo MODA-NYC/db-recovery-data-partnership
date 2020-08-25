@@ -9,6 +9,7 @@ BEGIN
     SELECT 'foursquare_datacube.latest' IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _view_grouped;
 
     IF NOT _main THEN
+        CREATE SCHEMA IF NOT EXISTS foursquare_datacube;
         CREATE TABLE foursquare_datacube.main (
             date text,
             country text,
