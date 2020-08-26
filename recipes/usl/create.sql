@@ -168,7 +168,75 @@ SELECT
     hhld_inc,
     notes
 INTO usl.:"VERSION"
-FROM tmp;
+FROM tmp
+WHERE nyc_res <> 'No' AND
+    (zip IS NOT NULL OR
+    borough IS NOT NULL OR
+    neighborhood IS NOT NULL OR
+    distancing IS NOT NULL OR
+    time_dist IS NOT NULL OR
+    left_home IS NOT NULL OR
+    feel_safe IS NOT NULL OR
+    can_dist IS NOT NULL OR
+    access IS NOT NULL OR
+    activities IS NOT NULL OR
+    other_activities IS NOT NULL OR
+    diff_park IS NOT NULL OR
+    diff_nycha IS NOT NULL OR
+    diff_walk IS NOT NULL OR
+    diff_rec IS NOT NULL OR
+    diff_exrcz IS NOT NULL OR
+    diff_dog IS NOT NULL OR
+    diff_grdn IS NOT NULL OR
+    diff_birds IS NOT NULL OR
+    diff_plants IS NOT NULL OR
+    diff_wndw IS NOT NULL OR
+    diff_fish IS NOT NULL OR
+    diff_other IS NOT NULL OR
+    to_park IS NOT NULL OR
+    other_to_park IS NOT NULL OR
+    time_to_pk IS NOT NULL OR
+    wkly_visits IS NOT NULL OR
+    time_in_pk IS NOT NULL OR
+    last_visit IS NOT NULL OR
+    mood_in_pk IS NOT NULL OR
+    stress_in_pk IS NOT NULL OR
+    social_in_pk IS NOT NULL OR
+    pk_priority IS NOT NULL OR
+    other_pk_priority IS NOT NULL OR
+    pk_benefits IS NOT NULL OR
+    pk_concerns IS NOT NULL OR
+    other_pk_concerns IS NOT NULL OR
+    pk_safety_concerns IS NOT NULL OR
+    access_limit IS NOT NULL OR
+    unhappy IS NOT NULL OR
+    lost_sleep IS NOT NULL OR
+    lost_focus IS NOT NULL OR
+    enjoyment IS NOT NULL OR
+    os_mntlhlth_pre IS NOT NULL OR
+    os_mntlhlth_post IS NOT NULL OR
+    pk_mntlhlth_pre IS NOT NULL OR
+    pk_mntlhlth_post IS NOT NULL OR
+    park_desc IS NOT NULL OR
+    place_living IS NOT NULL OR
+    other_place_living IS NOT NULL OR
+    home_type IS NOT NULL OR
+    other_home_type IS NOT NULL OR
+    public_housing IS NOT NULL OR
+    hhld_u18 IS NOT NULL OR
+    hhld_18_to_59 IS NOT NULL OR
+    hhld_o59 IS NOT NULL OR
+    severe_risk IS NOT NULL OR
+    diff_inc IS NOT NULL OR
+    age IS NOT NULL OR
+    gender IS NOT NULL OR
+    other_gender IS NOT NULL OR
+    hispanic IS NOT NULL OR
+    race IS NOT NULL OR
+    other_race IS NOT NULL OR
+    highest_ed  IS NOT NULL OR
+    hhld_inc IS NOT NULL OR
+    notes IS NOT NULL);
 
 DROP VIEW IF EXISTS usl.latest CASCADE;
 CREATE VIEW usl.latest AS (
