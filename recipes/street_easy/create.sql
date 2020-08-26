@@ -51,8 +51,13 @@ JOIN dcp_ntaboundaries b
 ON a.nta_code = b.ntacode
 ;
 
+/* Insert records into the Main table */
+CREATE TABLE IF NOT EXISTS :NAME.main AS TABLE :NAME.:"VERSION";
+DELETE FROM :NAME.main WHERE year_week = to_char(:'VERSION'::date, 'IYYY-IW');
+INSERT INTO :NAME.main SELECT * FROM :NAME.:"VERSION";
+
 DROP VIEW IF EXISTS :NAME.latest;
 CREATE VIEW :NAME.latest AS (
     SELECT :'VERSION' as v, * 
-    FROM :NAME.:"VERSION"
+    FROM :NAME.main
 ); 

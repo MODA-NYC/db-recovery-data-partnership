@@ -138,6 +138,7 @@ function get_last_monday {
         DOW=$(date -d "$d" +%a)
         if [ "$DOW" == "Mon" ]; then
             echo "$d"
+            break
         fi
     done
 }
