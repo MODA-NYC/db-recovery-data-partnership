@@ -14,12 +14,12 @@ do
     (
         cd $BASEDIR
         mkdir -p output
-        NAME=$(basename $BASEDIR)
+        NAME=street_easy
         
         echo "$URL_STREET_EASY$VERSION.csv"
 
         python3 build.py $VERSION | 
-        psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
+        psql $RDP_DATA -v NAME=street_easy -v VERSION=$VERSION -f create.sql
 
         (
             cd output
