@@ -6,13 +6,12 @@ VERSION=$DATE
 
 (
     cd $BASEDIR
-    echo "Pulling data from dropbox"
+    echo "Pulling data from google drive"
 
-    mkdir -p input && (
-        cd input
-        curl -L -o raw.xlsx $URL_OATS
-    )
+    mc cp $GSHEET_CRED creds.json
+    mkdir -p input && mkdir -p output
 
+    python3 get_data.py
     python3 build.py |
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
 
@@ -31,4 +30,5 @@ VERSION=$DATE
 
     Upload $NAME $VERSION
     Upload $NAME latest
+    rm -rf input && rm -rf output
 )
