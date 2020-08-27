@@ -123,7 +123,6 @@ case $TYPE in
         cd $BASEDIR
         NAME=cuebiq_travelers
 
-        #aws s3 ls s3://cuebiq-dataset-nv/d4g/travelers/country=US/state=NY/ --recursive
         (
             cd input
             touch raw_$NAME.csv
@@ -140,7 +139,7 @@ case $TYPE in
         cat input/raw_$NAME.csv |
         psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_travelers.sql
         rm -rf input
-        
+
         (
             cd output
             
@@ -160,7 +159,7 @@ case $TYPE in
 
   *)
     echo -n "
-    please specify cityhall, weekly or daily
+    please specify cityhall, weekly, daily, or travelers
     "
     ;;
 esac
