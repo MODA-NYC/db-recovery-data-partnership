@@ -11,9 +11,9 @@ def clean_city(s):
         return str(s).upper().replace('NEWYORK', 'NEW YORK')
 
 # Read input spreadsheets, ignoring header information
-df_il4 = pd.read_excel('input/il4.xlsx', usecols='D:R', skiprows=range(17), skipfooter=6)
-df_ideas = pd.read_excel('input/ideas.xlsx', usecols='B:O', skiprows=range(14), skipfooter=6)
-df_donations = pd.read_excel('input/donations.xlsx', usecols='B:L', skiprows=range(13), skipfooter=7)
+df_il4 = pd.read_excel('input/il4_raw.xlsx', usecols='D:R', skiprows=range(17), skipfooter=6)
+df_ideas = pd.read_excel('input/ideas_raw.xlsx', usecols='B:O', skiprows=range(14), skipfooter=6)
+df_donations = pd.read_excel('input/donations_raw.xlsx', usecols='B:L', skiprows=range(13), skipfooter=7)
 
 # Save raw data to csvs
 df_il4.to_csv('input/il4_raw.csv', index=False)
