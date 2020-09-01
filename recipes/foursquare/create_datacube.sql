@@ -72,4 +72,114 @@ SELECT * INTO :NAME.:"VERSION" FROM tmp;
 DELETE FROM :NAME.main WHERE date = :'VERSION';
 INSERT INTO :NAME.main SELECT * FROM :NAME.:"VERSION";
 
+/* Create daily aggregate tables */
+SELECT
+	date,
+	zip as zipcode,
+	categoryname as category,
+	SUM(CASE
+		WHEN demo='All' AND hour='All' THEN visits
+		ELSE 0
+	END) as visits_all,
+	SUM(CASE
+		WHEN demo='Below65' AND hour='All' THEN visits
+		ELSE 0
+	END) as visits_below65,
+	SUM(CASE
+		WHEN demo='Above65' AND hour='All' THEN visits
+		ELSE 0
+	END) as visits_above65	
+INTO foursquare_daily_zipcode.:"VERSION"
+FROM foursquare_datacube.main
+WHERE categoryid <> 'Group'
+GROUP BY date, zipcode, categoryname;
+
+DROP VIEW IF EXISTS foursquare_daily_zipcode.latest CASCADE;
+CREATE VIEW foursquare_daily_zipcode.latest AS (
+    SELECT :'VERSION' as v, * 
+    FROM foursquare_daily_zipcode.:"VERSION"
+);
+
+SELECT
+	date,
+	zip as zipcode,
+	categoryname as category,
+	SUM(CASE
+		WHEN demo='All' AND hour='All' THEN visits
+		ELSE 0
+	END) as visits_all,
+	SUM(CASE
+		WHEN demo='Below65' AND hour='All' THEN visits
+		ELSE 0
+	END) as visits_below65,
+	SUM(CASE
+		WHEN demo='Above65' AND hour='All' THEN visits
+		ELSE 0
+	END) as visits_above65	
+INTO foursquare_daily_zipcode_grouped.:"VERSION"
+FROM foursquare_datacube.main
+WHERE categoryid = 'Group'
+GROUP BY date, zipcode, categoryname;
+
+DROP VIEW IF EXISTS foursquare_daily_zipcode_grouped.latest CASCADE;
+CREATE VIEW foursquare_daily_zipcode_grouped.latest AS (
+    SELECT :'VERSION' as v, * 
+    FROM foursquare_daily_zipcode_grouped.:"VERSION"
+);
+
+/* Create weekly aggregate tables */
+SELECT
+	to_char(date::date, 'IYYY-IW') as year_week,
+	zip as zipcode,
+	categoryname as category,
+	SUM(CASE
+		WHEN demo='All' AND hour='All' THEN visits
+		ELSE 0
+	END)/COUNT(DISTINCT date) as visits_avg_all,
+	SUM(CASE
+		WHEN demo='Below65' AND hour='All' THEN visits
+		ELSE 0
+	END)/COUNT(DISTINCT date) as visits_avg_below65,
+	SUM(CASE
+		WHEN demo='Above65' AND hour='All' THEN visits
+		ELSE 0
+	END)/COUNT(DISTINCT date) as visits_avg_above65		
+INTO foursquare_weekly_zipcode.:"VERSION"
+FROM foursquare_datacube.main
+WHERE categoryid <> 'Group'
+GROUP BY to_char(date::date, 'IYYY-IW'), zipcode, categoryname;
+
+DROP VIEW IF EXISTS foursquare_weekly_zipcode.latest CASCADE;
+CREATE VIEW foursquare_weekly_zipcode.latest AS (
+    SELECT :'VERSION' as v, * 
+    FROM foursquare_weekly_zipcode.:"VERSION"
+);
+
+SELECT
+	to_char(date::date, 'IYYY-IW') as year_week,
+	zip as zipcode,
+	categoryname as category,
+	SUM(CASE
+		WHEN demo='All' AND hour='All' THEN visits
+		ELSE 0
+	END)/COUNT(DISTINCT date) as visits_avg_all,
+	SUM(CASE
+		WHEN demo='Below65' AND hour='All' THEN visits
+		ELSE 0
+	END)/COUNT(DISTINCT date) as visits_avg_below65,
+	SUM(CASE
+		WHEN demo='Above65' AND hour='All' THEN visits
+		ELSE 0
+	END)/COUNT(DISTINCT date) as visits_avg_above65	
+INTO foursquare_weekly_zipcode_grouped.:"VERSION"
+FROM foursquare_datacube.main
+WHERE categoryid = 'Group'
+GROUP BY to_char(date::date, 'IYYY-IW'), zipcode, categoryname;
+
+DROP VIEW IF EXISTS foursquare_weekly_zipcode_grouped.latest CASCADE;
+CREATE VIEW foursquare_weekly_zipcode.latest AS (
+    SELECT :'VERSION' as v, * 
+    FROM foursquare_weekly_zipcode_grouped.:"VERSION"
+);
+
 COMMIT;
