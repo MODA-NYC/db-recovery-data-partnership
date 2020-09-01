@@ -1,9 +1,9 @@
-name: BetaNYC
+name: LinkedIn
 on:
   repository_dispatch:
-    types: [betanyc]
+    types: [linkedin]
   schedule:
-    - cron: 0 0 */3 * *
+    - cron: 0 0 */7 * *
 
 jobs:
   build:
@@ -28,7 +28,7 @@ jobs:
       - name: Run recipes
         shell: bash
         run: |
-          ./rdp run recipe betanyc
+          ./rdp run recipe linkedin
       
       - name: Clean up
         shell: bash

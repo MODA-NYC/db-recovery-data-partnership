@@ -61,9 +61,9 @@ function Upload {
 }
 
 function setup {
-  mc config host add spaces $AWS_S3_ENDPOINT $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY --api S3v4
-  mc config host add kinsa https://s3.amazonaws.com $KINSA_ACCESS_KEY_ID $KINSA_SECRET_ACCESS_KEY --api S3v4
-  mc config host add cuebiq https://s3.amazonaws.com $CUEBIQ_ACCESS_KEY_ID $CUEBIQ_SECRET_ACCESS_KEY --api S3v4
+  mc alias set spaces $AWS_S3_ENDPOINT $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY --api S3v4
+  mc alias set kinsa https://s3.amazonaws.com $KINSA_ACCESS_KEY_ID $KINSA_SECRET_ACCESS_KEY --api S3v4
+  mc alias set cuebiq https://s3.amazonaws.com $CUEBIQ_ACCESS_KEY_ID $CUEBIQ_SECRET_ACCESS_KEY --api S3v4
 }
 register 'setup' '' 'install system dependencies' setup
 
@@ -108,3 +108,20 @@ function import_spatial {
   cat recipes/_data/dcp_ntaboundaries.csv | psql $RDP_DATA -c "\copy dcp_ntaboundaries from stdin DELIMITER ',' CSV HEADER;"
 }
 register 'import' 'spatial' 'import zipcode and nta boundaries' import_spatial
+
+
+function max_bg_procs {
+    if [[ $# -eq 0 ]] ; then
+            echo "Usage: max_bg_procs NUM_PROCS.  Will wait until the number of background (&)"
+            echo "           bash processes (as determined by 'jobs -pr') falls below NUM_PROCS"
+            return
+    fi
+    local max_number=$((0 + ${1:-0}))
+    while true; do
+            local current_number=$(jobs -pr | wc -l)
+            if [[ $current_number -lt $max_number ]]; then
+                    break
+            fi
+            sleep 1
+    done
+}

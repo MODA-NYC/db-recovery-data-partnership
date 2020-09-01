@@ -6,31 +6,29 @@ VERSION=$DATE
 
 (
     cd $BASEDIR
-    mkdir -p output
-    mkdir -p input
+    echo "Pulling data from google drive"
 
-    latest_file=$(axway_ls -nrt LinkedIn | grep .xlsx | tail -1 | awk '{print $NF}')
-    echo "$latest_file"
-    rm -rf input/raw.xlsx
-    axway_cmd get $latest_file input/raw.xlsx
+    mc cp $GSHEET_CRED creds.json
+    mkdir -p input && mkdir -p output
 
+    python3 get_data.py
     python3 build.py |
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
-    rm -rf input
 
     (
         cd output
 
         # Export to CSV
         psql $RDP_DATA -c "\COPY (
-            SELECT * FROM linkedin.\"$VERSION\"
-        ) TO stdout DELIMITER ',' CSV HEADER;" > linkedin.csv
+            SELECT * FROM $NAME.\"$VERSION\"
+        ) TO stdout DELIMITER ',' CSV HEADER;" > oats_records.csv
 
         # Write VERSION info
         echo "$VERSION" > version.txt
+        
     )
-    
+
     Upload $NAME $VERSION
     Upload $NAME latest
-    rm -rf output
+    rm -rf input && rm -rf output
 )

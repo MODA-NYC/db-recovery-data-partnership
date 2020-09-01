@@ -15,7 +15,7 @@ VERSION=$DATE
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
     
     rm creds.json
-
+    rm -rf input
     (
         cd output
         
@@ -41,4 +41,5 @@ VERSION=$DATE
     )
     Upload $NAME $VERSION
     Upload $NAME latest
+    rm -rf output
 )

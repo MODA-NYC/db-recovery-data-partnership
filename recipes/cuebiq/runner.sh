@@ -2,8 +2,17 @@
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
 VERSION=$DATE
+AWS_ACCESS_KEY_ID=$CUEBIQ_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY=$CUEBIQ_SECRET_ACCESS_KEY
+AWS_DEFAULT_REGION=us-east-1
 TYPE=$1 #cityhall/weekly/daily
 sectors=('automotive' 'dining' 'healthcare' 'lifestyle' 'malls' 'retail' 'telco' 'transportation')
+
+(
+  cd $BASEDIR
+  mkdir -p output
+  mkdir -p input
+)
 
 case $TYPE in
 
@@ -11,24 +20,19 @@ case $TYPE in
     (
         cd $BASEDIR
         NAME=cuebiq_cityhall
-        mkdir -p output
-        mkdir -p input
-
         (
             cd input
             touch raw_$NAME.csv
-            for i in $(mc --json ls cuebiq/cuebiq-dataset-nv/1/ce-an-994/)
+            aws s3 sync s3://cuebiq-dataset-nv/1/ce-an-994/ .
+            for i in $(ls cityhall*.csv)
             do
-                key=$(echo $i | jq '.key' -r)
-                mc cp cuebiq/cuebiq-dataset-nv/1/ce-an-994/$key tmp.csv
-                tail -n +2 tmp.csv >> raw_$NAME.csv
-                rm tmp.csv
+                tail -n +2 $i >> raw_$NAME.csv
             done
         )
 
         cat input/raw_$NAME.csv |
         psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
-
+        rm -rf input
         (
             cd output
             
@@ -42,6 +46,7 @@ case $TYPE in
         )
         Upload $NAME $VERSION
         Upload $NAME latest
+        rm -rf output
     )
     ;;
 
@@ -55,7 +60,7 @@ case $TYPE in
             touch raw_$NAME.csv
             for sector in "${sectors[@]}"
             do
-                mc cp cuebiq/cuebiq-dataset-nv/offline-intelligence/index=cvi/sector=$sector/country=US/cvi-$sector.csv000.gz cvi-$sector.csv000.gz
+                aws s3 cp s3://cuebiq-dataset-nv/offline-intelligence/index=cvi/sector=$sector/country=US/cvi-$sector.csv000.gz cvi-$sector.csv000.gz
                 gunzip cvi-$sector.csv000.gz
                 tail -n +2 cvi-$sector.csv000 >> raw_$NAME.csv
                 rm cvi-$sector.csv000
@@ -64,6 +69,7 @@ case $TYPE in
 
         cat input/raw_$NAME.csv |
         psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_weekly.sql
+        rm -rf input
 
         (
             cd output
@@ -75,6 +81,7 @@ case $TYPE in
         )
         Upload $NAME $VERSION
         Upload $NAME latest
+        rm -rf output
     )
     ;;
 
@@ -87,14 +94,14 @@ case $TYPE in
             cd input
             for sector in "${sectors[@]}"
             do
-                mc cp cuebiq/cuebiq-dataset-nv/offline-intelligence/index=cvi/sector=$sector/country=US/daily-cvi-$sector.csv000.gz \
+                aws s3 cp s3://cuebiq-dataset-nv/offline-intelligence/index=cvi/sector=$sector/country=US/daily-cvi-$sector.csv000.gz \
                     daily-cvi-$sector.csv000.gz &
             done
             wait
         )
 
         psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_daily.sql
-
+        rm -rf input
         (
             cd output
             
@@ -107,10 +114,13 @@ case $TYPE in
         )
         Upload $NAME $VERSION
         Upload $NAME latest
+        rm -rf output
     )
     ;;
 
   *)
-    echo -n "please specify cityhall, weekly or daily"
+    echo -n "
+    please specify cityhall, weekly or daily
+    "
     ;;
 esac

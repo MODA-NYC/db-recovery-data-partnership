@@ -47,7 +47,7 @@ cols = [
 ]
 
 df1["Hours"] = df1["Close Time"] + "-" + df1["Open Time"]
-df1["Sub-Category"] = df1["Sub Category"]
+df1["Sub-Category"] = df1["Sub Categories"]
 df3["Black Owned Business"] = ""
 df3["MWBE"] = ""
 

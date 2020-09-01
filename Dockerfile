@@ -15,10 +15,13 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/
     && apt install -y postgresql-client-12\
     && rm ACCC4CF8.asc
 
-RUN curl -O https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2020-04-19T19-17-53Z\
-    && mv mc.RELEASE.2020-04-19T19-17-53Z mc\
+RUN curl -O https://dl.min.io/client/mc/release/linux-amd64/mc\
     && chmod +x mc\
     && mv ./mc /usr/bin
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"\
+    && unzip awscliv2.zip\
+    && ./aws/install
 
 WORKDIR /geocode
 

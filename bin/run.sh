@@ -1,4 +1,5 @@
 # #!/bin/bash
+source $(pwd)/bin/config.sh
 
 function run {
     bash $(pwd)/recipes/$1/runner.sh $2
@@ -18,3 +19,31 @@ function local_run {
         "
 }
 register 'run' 'local' '{ recipe name }' local_run
+
+function cloud_run {
+case $1 in
+    cuebiq)
+        case $2 in
+            cityhall | weekly | daily)
+                curl --location --request POST 'https://api.github.com/repos/MODA-NYC/db-recovery-data-partnership/dispatches?Accept=application/vnd.github.v3+json&Content-Type=application/json' \
+                --header "Authorization: Bearer $GITHUB_TOKEN" \
+                --header 'Content-Type: text/plain' \
+                --data-raw "{\"event_type\" : \"cuebiq_$2\"}"
+            ;;
+            *) 
+                echo "$2 is not recognized! please enter weekly, cityhall or daily"
+            ;;
+            esac
+    ;;
+    street_easy | kinsa | foursqaure | betanyc | upsolve | linkedin)
+        curl --location --request POST 'https://api.github.com/repos/MODA-NYC/db-recovery-data-partnership/dispatches?Accept=application/vnd.github.v3+json&Content-Type=application/json' \
+            --header "Authorization: Bearer $GITHUB_TOKEN" \
+            --header 'Content-Type: text/plain' \
+            --data-raw "{\"event_type\" : \"$1\"}"
+    ;;
+    *)
+    echo "$1 is not recognized as a recipe"
+    ;;
+esac
+}
+register 'run' 'cloud' '{ recipe name }' cloud_run

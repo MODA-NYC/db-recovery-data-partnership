@@ -1,9 +1,9 @@
-name: BetaNYC
+name: StreetEasy
 on:
   repository_dispatch:
-    types: [betanyc]
+    types: [street_easy]
   schedule:
-    - cron: 0 0 */3 * *
+    - cron: 0 0 */7 * *
 
 jobs:
   build:
@@ -28,7 +28,7 @@ jobs:
       - name: Run recipes
         shell: bash
         run: |
-          ./rdp run recipe betanyc
+          ./rdp run recipe street_easy
       
       - name: Clean up
         shell: bash
