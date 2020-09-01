@@ -68,6 +68,14 @@ function foursquare_datacube {
                     SELECT * FROM $NAME.weekly_zipcode
                 ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_weekly_zipcode.csv
 
+                psql $RDP_DATA -c "\COPY (
+                    SELECT * FROM $NAME.grouped_daily_zipcode
+                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_grouped_weekly_zipcode.csv
+
+                psql $RDP_DATA -c "\COPY (
+                    SELECT * FROM $NAME.grouped_weekly_zipcode
+                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_grouped_weekly_zipcode.csv
+
                 # Write VERSION info
                 echo "$VERSION" > version.txt
             )
