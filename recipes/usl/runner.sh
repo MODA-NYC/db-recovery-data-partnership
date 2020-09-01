@@ -6,6 +6,8 @@ VERSION=$DATE
 
 (
     cd $BASEDIR
+    mkdir -p input && mkdir output
+    axway_cmd get USL/urban_parks_perception.csv input/urban_parks_perception.csv
     
     python3 build.py |
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
