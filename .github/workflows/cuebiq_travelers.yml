@@ -1,7 +1,7 @@
 name: Cuebiq Travelers
 on:
   repository_dispatch:
-    types: [cuebiq_daily]
+    types: [cuebiq_travelers]
   schedule:
     - cron: 0 0 * * *
 
