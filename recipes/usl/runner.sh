@@ -6,7 +6,9 @@ VERSION=$DATE
 
 (
     cd $BASEDIR
-    mkdir -p input && mkdir output
+    mkdir -p input && mkdir -p output
+
+    rm -rf input/urban_parks_perception.csv
     axway_cmd get USL/urban_parks_perception.csv input/urban_parks_perception.csv
     
     python3 build.py |
