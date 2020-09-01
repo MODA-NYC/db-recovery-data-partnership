@@ -56,5 +56,3 @@ jobs:
         run: |
           rm ~/.ssh/id_rsa_axway
           rm .env
-          rm -rf recipes/foursquare/output
-          rm -rf recipes/foursquare/input

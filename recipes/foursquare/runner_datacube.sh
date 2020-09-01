@@ -1,11 +1,10 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
-NAME=$(basename $BASEDIR)
 
 function foursquare_datacube {
     (
-        cd $BASEDIR
+        cd $BASEDIR/datacube
         NAME=foursquare_datacube
         
         mc cp $GSHEET_CRED creds.json
@@ -33,11 +32,12 @@ function foursquare_datacube {
                         psql $RDP_DATA \
                             -v NAME=$NAME \
                             -v VERSION=$VERSION \
-                            -f ../create_datacube.sql
+                            -f ../create.sql
                         rm $file
                         rm $VERSION.csv.gz
                     ) &
                 done
+                wait
             )
 
             (
@@ -48,7 +48,7 @@ function foursquare_datacube {
                     SELECT MAX(table_name::date) 
                     FROM information_schema.tables 
                     where table_schema = 'foursquare_datacube'
-                    AND table_name !~* 'latest|main'"
+                    AND table_name !~* 'latest|main|zipcode'"
                 )
 
                 # Export to CSV
@@ -60,12 +60,20 @@ function foursquare_datacube {
                     SELECT * FROM $NAME.grouped_latest
                 ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_datacube_grouped.csv
 
+                psql $RDP_DATA -c "\COPY (
+                    SELECT * FROM $NAME.daily_zipcode
+                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_daily_zipcode.csv
+
+                psql $RDP_DATA -c "\COPY (
+                    SELECT * FROM $NAME.weekly_zipcode
+                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_weekly_zipcode.csv
+
                 # Write VERSION info
                 echo "$VERSION" > version.txt
             )
             VERSION=$(cat output/version.txt)
-            Upload $NAME $VERSION
-            Upload $NAME latest
+            Upload foursquare/$NAME $VERSION
+            Upload foursquare/$NAME latest
             rm -rf input && rm -rf output
             rm creds.json
         else
