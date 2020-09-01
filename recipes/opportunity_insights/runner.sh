@@ -4,14 +4,13 @@ BASEDIR=$(dirname $0)
 VERSION=$DATE
 TYPE=$1 #weekly/daily
 
-mkdir -p input
-mkdir -p output
-
 case $TYPE in
 
   weekly)
     (
         cd $BASEDIR
+        mkdir -p input
+        mkdir -p output
         
         NAME=opp_insights_weekly
             
@@ -34,6 +33,9 @@ case $TYPE in
   daily)
     (
         cd $BASEDIR
+        mkdir -p input
+        mkdir -p output
+
         NAME=opp_insights_daily
 
         python3 build_daily.py |
