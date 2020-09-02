@@ -11,7 +11,7 @@ function foursquare_datacube {
         mkdir -p input && mkdir -p output
 
         psql $RDP_DATA -f init.sql
-
+        
         python3 datacube.py
 
         if [ "$(ls -A input)" ]; then
@@ -70,7 +70,7 @@ function foursquare_datacube {
 
                 psql $RDP_DATA -c "\COPY (
                     SELECT * FROM $NAME.grouped_daily_zipcode
-                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_grouped_weekly_zipcode.csv
+                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_grouped_daily_zipcode.csv
 
                 psql $RDP_DATA -c "\COPY (
                     SELECT * FROM $NAME.grouped_weekly_zipcode
