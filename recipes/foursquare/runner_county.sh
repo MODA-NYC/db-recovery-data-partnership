@@ -1,11 +1,11 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
-NAME=$(basename $BASEDIR)
+NAME=foursquare
 
-function foursquare_default {
+function foursquare_county {
     (
-        cd $BASEDIR
+        cd $BASEDIR/county
 
         if [ -z "$VERSION" ]
         then
@@ -56,8 +56,8 @@ function foursquare_default {
             echo "$VERSION" > version.txt
             
         )
-        Upload $NAME $VERSION
-        Upload $NAME latest
+        Upload foursquare/$NAME $VERSION
+        Upload foursquare/$NAME latest
         rm -rf output
     )
 }
