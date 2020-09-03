@@ -24,17 +24,11 @@ SELECT
     ROUND(cvi, 4) as cvi,
     ROUND(cvi_per_store, 4) as cvi_per_store
 INTO :NAME.:"VERSION"
-FROM tmp;
+FROM tmp
+WHERE market_area_code = '501';
 
 DROP VIEW IF EXISTS :NAME.latest;
 CREATE VIEW :NAME.latest AS (
     SELECT :'VERSION' as v, * 
     FROM :NAME.:"VERSION"
-);
-
-DROP VIEW IF EXISTS :NAME.nyc_latest;
-CREATE VIEW :NAME.nyc_latest AS (
-    SELECT :'VERSION' as v, * 
-    FROM :NAME.:"VERSION"
-    WHERE market_area_code = '501'
 );

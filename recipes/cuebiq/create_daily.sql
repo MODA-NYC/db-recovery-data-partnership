@@ -128,17 +128,17 @@ CREATE TEMP TABLE transportation (
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
 WITH all_sectors AS (
-    (SELECT * FROM automotive) UNION
-    (SELECT * FROM dining) UNION
-    (SELECT * FROM healthcare) UNION
-    (SELECT * FROM lifestyle) UNION
-    (SELECT * FROM malls) UNION
-    (SELECT * FROM retail) UNION
-    (SELECT * FROM telco) UNION
+    (SELECT * FROM automotive WHERE market_area_code = '501') UNION
+    (SELECT * FROM dining WHERE market_area_code = '501') UNION
+    (SELECT * FROM healthcare WHERE market_area_code = '501') UNION
+    (SELECT * FROM lifestyle WHERE market_area_code = '501') UNION
+    (SELECT * FROM malls WHERE market_area_code = '501') UNION
+    (SELECT * FROM retail WHERE market_area_code = '501') UNION
+    (SELECT * FROM telco WHERE market_area_code = '501') UNION
     (SELECT *, 
         NULL::numeric as roll_avg_7days_cvi_per_store,
         NULL::numeric as ly_roll_avg_7days_cvi_per_store
-    FROM transportation)
+    FROM transportation WHERE market_area_code = '501')
 )
 SELECT 
     reference_date,
@@ -160,11 +160,4 @@ DROP VIEW IF EXISTS :NAME.latest;
 CREATE VIEW :NAME.latest AS (
     SELECT :'VERSION' as v, * 
     FROM :NAME.:"VERSION"
-);
-
-DROP VIEW IF EXISTS :NAME.nyc_latest;
-CREATE VIEW :NAME.nyc_latest AS (
-    SELECT :'VERSION' as v, * 
-    FROM :NAME.:"VERSION"
-    WHERE market_area_code = '501'
 );
