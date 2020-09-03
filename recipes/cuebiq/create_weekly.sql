@@ -22,7 +22,7 @@ SELECT
     vertical,
     brand,
     ROUND(cvi, 4) as cvi,
-    ROUND(cvi_per_store, 4) as cvi
+    ROUND(cvi_per_store, 4) as cvi_per_store
 INTO :NAME.:"VERSION"
 FROM tmp;
 
