@@ -12,7 +12,14 @@ CREATE TEMP TABLE tmp (
 
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
-SELECT DISTINCT *
+SELECT DISTINCT
+    reference_date,
+    REPLACE(week_name, 'W', '') as year_week,
+    county_name as county,
+    state_name as state,
+    census_block_group_id,
+    ROUND(mobility_index, 8)  as mobility_index,
+    weight
 INTO :NAME.:"VERSION"
 FROM tmp;
 

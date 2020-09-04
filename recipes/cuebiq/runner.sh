@@ -78,6 +78,7 @@ case $TYPE in
             psql $RDP_DATA -c "\COPY (
                 SELECT * FROM $NAME.\"$VERSION\"
             ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+
         )
         Upload $NAME $VERSION
         Upload $NAME latest
@@ -111,6 +112,7 @@ case $TYPE in
             ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
             zip $NAME.zip $NAME.csv
             rm $NAME.csv
+            
         )
         Upload $NAME $VERSION
         Upload $NAME latest

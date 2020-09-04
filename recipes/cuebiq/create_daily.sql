@@ -127,9 +127,7 @@ CREATE TEMP TABLE transportation (
 
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
-SELECT * 
-INTO :NAME.:"VERSION"
-FROM (
+WITH all_sectors AS (
     (SELECT * FROM automotive WHERE market_area_code = '501') UNION
     (SELECT * FROM dining WHERE market_area_code = '501') UNION
     (SELECT * FROM healthcare WHERE market_area_code = '501') UNION
@@ -141,7 +139,22 @@ FROM (
         NULL::numeric as roll_avg_7days_cvi_per_store,
         NULL::numeric as ly_roll_avg_7days_cvi_per_store
     FROM transportation WHERE market_area_code = '501')
-) a;
+)
+SELECT 
+    reference_date,
+    to_char(reference_date::date, 'IYYY-IW') as year_week,
+    market_area_code,
+    market_area,
+    sector,
+    vertical,
+    brand,
+    naics6_code,
+    ROUND(roll_avg_7days_cvi, 4) as roll_avg_7days_cvi,
+    ROUND(ly_roll_avg_7days_cvi, 4) as ly_roll_avg_7days_cvi,
+    ROUND(roll_avg_7days_cvi_per_store, 4) as roll_avg_7days_cvi_per_store,
+    ROUND(ly_roll_avg_7days_cvi_per_store, 4) as ly_roll_avg_7days_cvi_per_store
+INTO :NAME.:"VERSION"
+FROM all_sectors;
 
 DROP VIEW IF EXISTS :NAME.latest;
 CREATE VIEW :NAME.latest AS (
