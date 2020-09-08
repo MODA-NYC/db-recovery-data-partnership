@@ -115,6 +115,24 @@ function max_bg_procs {
     done
 }
 
+
+function get_last_monday {
+    input_date=$(date -d "$1" +%Y-%m-%d)
+    start_date=$(date -d "$input_date - 14 days")
+    d=
+    n=0
+    until [ "$d" = "$input_date" ]
+    do  
+        ((n++))
+        d=$(date -d "$start_date + $n days" +%Y-%m-%d)
+        DOW=$(date -d "$d" +%a)
+        if [ "$DOW" == "Mon" ]; then
+            echo "$d"
+            break
+        fi
+    done
+}
+
 function Upload {
   python3 ../../bin/sharepoint.py $1/$2
 }
@@ -128,3 +146,4 @@ function Upload {
 #     axway_cmd put $file publish/$1/$2/$name
 #   done
 # }
+

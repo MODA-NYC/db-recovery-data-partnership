@@ -1,15 +1,18 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
-VERSION=$DATE
+VERSION=$(get_last_monday $DATE)
+echo "Version: $VERSION"
 
 # StreetEasy NTA Level ETL
 (
     cd $BASEDIR
     mkdir -p output
     NAME=$(basename $BASEDIR)
+    
+    echo "$URL_STREET_EASY$VERSION.csv"
 
-    python3 build.py | 
+    python3 build.py $VERSION | 
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
 
     (
@@ -27,6 +30,7 @@ VERSION=$DATE
         echo "$VERSION" > version.txt
 
     )
+
     # StreetEasy Rental/Sales Indecies
     (
         NAME=street_easy_rental_sales_index
