@@ -44,8 +44,8 @@ case $TYPE in
             # Write VERSION info
             echo "$VERSION" > version.txt
         )
-        Upload $NAME $VERSION
-        Upload $NAME latest
+        Upload cuebiq/$NAME $VERSION
+        Upload cuebiq/$NAME latest
         rm -rf output
     )
     ;;
@@ -80,8 +80,8 @@ case $TYPE in
             ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
 
         )
-        Upload $NAME $VERSION
-        Upload $NAME latest
+        Upload cuebiq/$NAME $VERSION
+        Upload cuebiq/$NAME latest
         rm -rf output
     )
     ;;
@@ -114,8 +114,8 @@ case $TYPE in
             rm $NAME.csv
             
         )
-        Upload $NAME $VERSION
-        Upload $NAME latest
+        Upload cuebiq/$NAME $VERSION
+        Upload cuebiq/$NAME latest
         rm -rf output
     )
     ;;
@@ -153,8 +153,8 @@ case $TYPE in
             # Write VERSION info
             echo "$VERSION" > version.txt
         )
-        Upload $NAME $VERSION
-        Upload $NAME latest
+        Upload cuebiq/$NAME $VERSION
+        Upload cuebiq/$NAME latest
         rm -rf output
     )
     ;;

@@ -4,6 +4,7 @@ from office365.runtime.auth.client_credential import ClientCredential
 from office365.runtime.auth.user_credential import UserCredential
 import sys
 import os
+import glob
 
 def mkdir_recursive(root_folder, path):
     # Similar to mkdir -p <path>
@@ -64,7 +65,9 @@ if __name__ == "__main__":
                 settings['user_credentials']['password']
                 )
             )
-    
-    local_path=sys.argv[1]
-    target_path=sys.argv[2]
-    copy_file(local_path, target_path)
+
+    target_folder=sys.argv[1]
+    for local_path in glob.glob("output/*"):
+        file_name=local_path.split('/')[-1]
+        target_path=f'{target_folder}/{file_name}'
+        copy_file(local_path, target_path)
