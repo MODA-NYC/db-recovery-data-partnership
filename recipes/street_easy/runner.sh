@@ -1,26 +1,56 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
-VERSION=$(get_last_monday $DATE)
-echo "Version: $VERSION"
 
 # StreetEasy NTA Level ETL
 (
     cd $BASEDIR
     mkdir -p output
     NAME=$(basename $BASEDIR)
-    
-    echo "$URL_STREET_EASY$VERSION.csv"
+    touch output/urls.txt
 
-    python3 build.py $VERSION | 
-    psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
+    psql $RDP_DATA -f init.sql
+    startdate=2019-01-15
+    n=0
+    VERSION=
+    until [ "$VERSION" = "$(get_last_monday $DATE)" ]
+    do
+        d=$(date -d "$startdate + $n days" +%Y-%m-%d)
+        VERSION=$(get_last_monday $d)
+        echo "$URL_STREET_EASY$VERSION.csv" >> output/urls.txt
+
+        LOADED=$(psql -q -At $RDP_DATA -c "
+            SELECT '$VERSION' IN (
+                SELECT table_name 
+                FROM information_schema.tables 
+                WHERE table_schema = '$NAME'
+            )")
+        
+        case $LOADED in
+        f)
+            echo "Loading $VERSION"
+            curl $URL_STREET_EASY$VERSION.csv |
+            psql $RDP_DATA -v NAME=street_easy -v VERSION=$VERSION -f create.sql
+        ;;
+        *)
+            echo "$VERSION is already loaded!"
+        ;;
+        esac
+        n=$((n+7))
+    done
 
     (
         cd output
 
         # Export to CSV
         psql $RDP_DATA -c "\COPY (
-            SELECT * FROM $NAME.\"$VERSION\"
+            SELECT 
+                year_week,nta_name,nta_code,s_newlist,
+                s_pendlist,s_list,s_pct_inc,s_pct_dec,
+                s_wksonmkt,r_newlist,r_pendlist,r_list,
+                r_pct_inc,r_pct_dec,r_pct_furn,r_pct_shor,
+                r_pct_con,r_wksonmkt
+            FROM $NAME.main
         ) TO stdout DELIMITER ',' CSV HEADER;" > street_easy_nta.csv
 
         # Export to ShapeFile
