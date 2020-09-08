@@ -116,14 +116,8 @@ function max_bg_procs {
 }
 
 function Upload {
-    for file in output/*
-    do
-        name=$(basename $file)
-        echo $name
-        python3 ../../bin/sharepoint.py $file $1/$2/$name
-    done
+  python3 ../../bin/sharepoint.py $1/$2
 }
-
 # function Upload {
 #   axway_cmd rm publish/$1/$2/*
 #   axway_cmd rmdir publish/$1/$2

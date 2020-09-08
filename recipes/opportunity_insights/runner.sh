@@ -25,8 +25,8 @@ case $TYPE in
                 SELECT * FROM $NAME.\"$VERSION\"
             ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
         )
-        Upload $NAME $VERSION
-        Upload $NAME latest
+        Upload opportunity_insights/$NAME $VERSION
+        Upload opportunity_insights/$NAME latest
     )
     ;;
 
@@ -51,8 +51,8 @@ case $TYPE in
             zip $NAME.zip $NAME.csv
             rm $NAME.csv
         )
-        Upload $NAME $VERSION
-        Upload $NAME latest
+        Upload opportunity_insights/$NAME $VERSION
+        Upload opportunity_insights/$NAME latest
     )
     ;;
 

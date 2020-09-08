@@ -4,7 +4,7 @@ BASEDIR=$(dirname $0)
 
 function foursquare_datacube {
     (
-        cd $BASEDIR/datacube
+        cd $BASEDIR
         NAME=foursquare_datacube
         
         mc cp $GSHEET_CRED creds.json
@@ -32,7 +32,7 @@ function foursquare_datacube {
                         psql $RDP_DATA \
                             -v NAME=$NAME \
                             -v VERSION=$VERSION \
-                            -f ../create.sql
+                            -f ../create_datacube.sql
                         rm $file
                         rm $VERSION.csv.gz
                     ) &

@@ -5,7 +5,7 @@ NAME=foursquare
 
 function foursquare_county {
     (
-        cd $BASEDIR/county
+        cd $BASEDIR
 
         if [ -z "$VERSION" ]
         then
@@ -36,7 +36,7 @@ function foursquare_county {
             ls | grep -v raw.csv | xargs rm 
         )
 
-        cat input/raw.csv | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
+        cat input/raw.csv | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_county.sql
         rm -rf input
 
         mkdir -p output && 
