@@ -10,8 +10,6 @@ echo "Version: $VERSION"
     mkdir -p output
     NAME=$(basename $BASEDIR)
     
-    echo "$URL_STREET_EASY$VERSION.csv"
-
     python3 build.py $VERSION | 
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
 
