@@ -1,7 +1,7 @@
 ---
 name: New data pipeline
 about: Capture information needed to build a new data pipeline
-title: 'Souce: [name of dataset]'
+title: 'Source: [name of dataset]'
 labels: ''
 assignees: ''
 

@@ -49,17 +49,6 @@ function CSV_export {
   ) TO STDOUT DELIMITER ',' CSV HEADER;" > $3.csv
 }
 
-function Upload {
-  axway_cmd rm publish/$1/$2/*
-  axway_cmd rmdir publish/$1/$2
-  axway_cmd mkdir publish/$1/$2
-  for file in output/*
-  do
-    name=$(basename $file)
-    axway_cmd put $file publish/$1/$2/$name
-  done
-}
-
 function setup {
   mc alias set spaces $AWS_S3_ENDPOINT $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY --api S3v4
   mc alias set kinsa https://s3.amazonaws.com $KINSA_ACCESS_KEY_ID $KINSA_SECRET_ACCESS_KEY --api S3v4
@@ -126,6 +115,7 @@ function max_bg_procs {
     done
 }
 
+
 function get_last_monday {
     input_date=$(date -d "$1" +%Y-%m-%d)
     start_date=$(date -d "$input_date - 14 days")
@@ -142,3 +132,24 @@ function get_last_monday {
         fi
     done
 }
+
+function Upload {
+    for file in output/*
+    do
+        name=$(basename $file)
+        echo $name
+        python3 ../../bin/sharepoint.py $file $1/$2/$name
+    done
+}
+
+# function Upload {
+#   axway_cmd rm publish/$1/$2/*
+#   axway_cmd rmdir publish/$1/$2
+#   axway_cmd mkdir publish/$1/$2
+#   for file in output/*
+#   do
+#     name=$(basename $file)
+#     axway_cmd put $file publish/$1/$2/$name
+#   done
+# }
+

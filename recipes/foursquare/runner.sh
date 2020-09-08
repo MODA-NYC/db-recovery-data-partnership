@@ -1,10 +1,7 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 source $(pwd)/recipes/foursquare/runner_datacube.sh
-source $(pwd)/recipes/foursquare/runner_default.sh
-
-BASEDIR=$(dirname $0)
-NAME=$(basename $BASEDIR)
+source $(pwd)/recipes/foursquare/runner_county.sh
 TYPE=$1 # datacube/*
 
 case $TYPE in
@@ -14,6 +11,6 @@ case $TYPE in
     ;;
     *)
         # Default pulling county level foursquare data
-        foursquare_default
+        foursquare_county
     ;;
 esac

@@ -5,7 +5,7 @@ VERSION=$DATE
 AWS_ACCESS_KEY_ID=$CUEBIQ_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY=$CUEBIQ_SECRET_ACCESS_KEY
 AWS_DEFAULT_REGION=us-east-1
-TYPE=$1 #cityhall/weekly/daily
+TYPE=$1 #cityhall/weekly/daily/travelers
 sectors=('automotive' 'dining' 'healthcare' 'lifestyle' 'malls' 'retail' 'telco' 'transportation')
 
 (
@@ -78,6 +78,7 @@ case $TYPE in
             psql $RDP_DATA -c "\COPY (
                 SELECT * FROM $NAME.\"$VERSION\"
             ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+
         )
         Upload $NAME $VERSION
         Upload $NAME latest
@@ -111,6 +112,46 @@ case $TYPE in
             ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
             zip $NAME.zip $NAME.csv
             rm $NAME.csv
+            
+        )
+        Upload $NAME $VERSION
+        Upload $NAME latest
+        rm -rf output
+    )
+    ;;
+
+    travelers)
+    (
+        cd $BASEDIR
+        NAME=cuebiq_travelers
+
+        (
+            cd input
+            touch raw_$NAME.csv
+            aws s3 sync s3://cuebiq-dataset-nv/d4g/travelers/country=US/state=NY/ .
+            for i in $(ls vdate=*/travelers-*.csv000.gz)
+            do
+                FILE=$(echo "$i" | cut -f 1 -d '.')
+                yes n | gunzip $i
+                tail -n +2 $FILE.csv000 >> raw_$NAME.csv
+                rm $FILE.csv000
+            done
+        )
+
+        cat input/raw_$NAME.csv |
+        psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_travelers.sql
+        rm -rf input
+
+        (
+            cd output
+            
+            # Export to CSV
+            psql $RDP_DATA -c "\COPY (
+                SELECT * FROM $NAME.\"$VERSION\"
+            ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+
+            # Write VERSION info
+            echo "$VERSION" > version.txt
         )
         Upload $NAME $VERSION
         Upload $NAME latest
@@ -120,7 +161,7 @@ case $TYPE in
 
   *)
     echo -n "
-    please specify cityhall, weekly or daily
+    please specify cityhall, weekly, daily, or travelers
     "
     ;;
 esac
