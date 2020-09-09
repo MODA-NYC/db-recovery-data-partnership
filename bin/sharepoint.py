@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 from office365.sharepoint.client_context import ClientContext
 from office365.runtime.auth.client_credential import ClientCredential
-from office365.runtime.auth.user_credential import UserCredential
 import sys
 import os
 import glob
@@ -47,24 +46,12 @@ if __name__ == "__main__":
         client_credentials=dict(
             client_id=os.environ.get('SHAREPOINT_CLIENT_ID', ''),
             client_secret=os.environ.get('SHAREPOINT_CLIENT_SECRET', '')
-        ),
-        user_credentials=dict(
-            username=os.environ.get('SHAREPOINT_USERNAME', ''),
-            password=os.environ.get('SHAREPOINT_PASSWORD', '')
         )
     )
 
-    # ctx = ClientContext(settings['url']).with_credentials(
-    # ClientCredential(settings['client_credentials']['client_id'],
-    #                  settings['client_credentials']['client_secret']))
-
-    ctx = ClientContext.connect_with_credentials(
-            settings['url'],
-            UserCredential(
-                settings['user_credentials']['username'],
-                settings['user_credentials']['password']
-                )
-            )
+    ctx = ClientContext(settings['url']).with_credentials(
+    ClientCredential(settings['client_credentials']['client_id'],
+                     settings['client_credentials']['client_secret']))
 
     target_folder=sys.argv[1]
     for local_path in glob.glob("output/*"):
