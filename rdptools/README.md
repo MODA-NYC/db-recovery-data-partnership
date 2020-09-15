@@ -14,7 +14,7 @@ rdptools is a python package that simplifies data pulling from the **RDPDataRepo
 pip install rdptools
 ```
 
-## Examples [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MODA-NYC/db-recovery-data-partnership/blob/master/examples/example_data_import.ipynb)
+## Examples
 
 ### Authentication
 
