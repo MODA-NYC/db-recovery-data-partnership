@@ -1,10 +1,16 @@
-# rdptools
+# rdptools 
+[![PyPI version](https://badge.fury.io/py/rdptools.svg)](https://badge.fury.io/py/rdptools)
 
 rdptools is a python package that simplifies data pulling from the **RDPDataRepository** sharepoint site. To use this package you will need to obtain the following information:
 
 1. the RDPDataRepository sharepoint site url
 2. Your agency issued email login and password
 3. access permission to specific data partnerships
+
+## Installation
+```bash 
+pip install rdptools
+```
 
 ## Examples
 
