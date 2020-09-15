@@ -1,5 +1,6 @@
-# rdptools 
-[![PyPI version](https://badge.fury.io/py/rdptools.svg)](https://badge.fury.io/py/rdptools)
+# rdptools
+
+[![PyPI version](https://badge.fury.io/py/rdptools.svg)](https://badge.fury.io/py/rdptools) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MODA-NYC/db-recovery-data-partnership/blob/master/examples/example_data_import.ipynb)
 
 rdptools is a python package that simplifies data pulling from the **RDPDataRepository** sharepoint site. To use this package you will need to obtain the following information:
 
@@ -8,7 +9,8 @@ rdptools is a python package that simplifies data pulling from the **RDPDataRepo
 3. access permission to specific data partnerships
 
 ## Installation
-```bash 
+
+```bash
 pip install rdptools
 ```
 
