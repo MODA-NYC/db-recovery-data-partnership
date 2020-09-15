@@ -147,3 +147,6 @@ static
 /input/
 output/
 input/
+
+# Notebooks
+example.ipynb
