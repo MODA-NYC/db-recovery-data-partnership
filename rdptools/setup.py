@@ -13,6 +13,7 @@ setup(name='rdptools',
       pacakges=find_packages(),
       install_requires=[
           'pandas',
-          'office365-rest-client=2.2.0'
+          'office365-rest-client==2.2.0',
+          'geopandas'
       ]
     )

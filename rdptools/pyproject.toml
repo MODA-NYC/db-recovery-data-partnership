@@ -5,6 +5,7 @@ description = ""
 authors = ["Baiyue Cao <caobaiyue@live.com>"]
 
 [tool.poetry.dependencies]
-python = "3.*"
+python = ">=3.6"
 office365-rest-client = "2.2.0"
 pandas = "*"
+python-dotenv = "^0.14.0"

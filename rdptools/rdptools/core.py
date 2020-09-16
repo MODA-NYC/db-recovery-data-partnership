@@ -5,27 +5,47 @@ from io import StringIO
 import pandas as pd
 import tempfile
 import os
+import geopandas as gpd
+from shapely import wkb, wkt
 
 class Site():
     def __init__(self, site_url, username, password):
         self.ctx = ClientContext(site_url)\
                     .with_credentials(UserCredential(username, password))
-    
+
     def create_partner(self, partner):
         return Partner(self.ctx, partner)
+
+    @property
+    def nta(self):
+        return self.csv_to_gpd('https://raw.githubusercontent.com/MODA-NYC/db-recovery-data-partnership/master/recipes/_data/dcp_ntaboundaries.csv')
+
+    @property
+    def zipcode(self):
+        return self.csv_to_gpd('https://raw.githubusercontent.com/MODA-NYC/db-recovery-data-partnership/master/recipes/_data/doitt_zipcodeboundaries.csv')
+
+    @staticmethod
+    def csv_to_gpd(url):
+        df=pd.read_csv(url)
+        df['geometry']=df.wkb_geometry.apply(lambda x : wkb.loads(x, hex=True))
+        del df['wkb_geometry']
+        return gpd.GeoDataFrame(df, geometry=df.geometry)
 
 class Partner():
     def __init__(self, ctx, partner):
         self.ctx = ctx
         self.partner=partner
-        self.SiteRoot = self.get_SiteRoot()
-        self.libraryRoot = f'{self.SiteRoot}{self.partner}'
 
-    def get_SiteRoot(self):
+    @property
+    def SiteRoot(self):
         root=self.ctx.web.get_folder_by_server_relative_url('')
         self.ctx.load(root)
         self.ctx.execute_query()
         return root.properties['ServerRelativeUrl']
+
+    @property
+    def libraryRoot(self):
+        return f'{self.SiteRoot}{self.partner}'
 
     def list_versions(self):
         _libraryRoot = self.ctx.web.get_folder_by_server_relative_url(self.partner)
