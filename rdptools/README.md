@@ -115,4 +115,17 @@ df=cuebiq_daily.load_by_fileName('cuebiq_daily.zip')
 
 ### Geospatial
 
-coming ....
+`rdptools` preloads a list of spatial boundaries in the form of geopandas dataframes. Sample usage:
+
+```python
+nyc_nta = rdp.nyc_nta
+nyc_ctract2010 = rdp.nyc_nta
+```
+
+To check available spatial boundaries:
+
+```python
+help(rdp)
+```
+
+you will find a list of spatial boundaries under `Readonly properties`

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rdptools"
-version = "0.1.5"
+version = "0.1.6"
 description = ""
 authors = ["Baiyue Cao <caobaiyue@live.com>"]
 
@@ -8,3 +8,5 @@ authors = ["Baiyue Cao <caobaiyue@live.com>"]
 python = "3.*"
 office365-rest-client = "2.2.0"
 pandas = "*"
+geopandas = "*"
+python-dotenv = "^0.14.0"
