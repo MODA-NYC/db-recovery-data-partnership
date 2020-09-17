@@ -12,6 +12,13 @@ Below are name and data-type conventions for fields that are common among the RD
 |county|`text`|Kings|cuebiq_cityhall/cuebiq_travelers/kinsa/opp_insights*/|
 |fips_county|`varchar(5)`|36001|opp_insights*|
 |census_block_group_id|`text`|360470284003|cuebiq_cityhall/|
+|bctcb2010|`text`|||
+|ct2010|`text`|||
+|council `numeric`|||
+|borocd|`numeric`||401|
+|borocode|`numeric`||4|
+|boroname|`numeric`||Staten Island|
+|address|`text`|||
 |state|`varchar(2)`|NY|cuebiq_cityhall/foursquare/kinsa|
 |ntacode|`varchar(4)`|MN36|betanyc/street_easy|
 |ntaname|`text`|Washington Heights South|betanyc/street_easy|
