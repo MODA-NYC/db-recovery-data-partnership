@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TEMP TABLE tmp (
     visit_week_cd text,
     week_label text,
@@ -32,3 +34,5 @@ CREATE VIEW :NAME.latest AS (
     SELECT :'VERSION' as v, * 
     FROM :NAME.:"VERSION"
 );
+
+COMMIT;
