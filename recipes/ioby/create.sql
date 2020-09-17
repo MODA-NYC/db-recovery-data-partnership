@@ -49,7 +49,7 @@ SELECT DISTINCT name,
         CASE WHEN project_loc IS NULL OR project_loc='' 
             THEN UPPER(contact_loc) 
             ELSE UPPER(project_loc)
-            END as location
+            END as city
 INTO ioby_potential_projects.:"VERSION"
 FROM tmp 
 WHERE status !~* 'underway|open';
