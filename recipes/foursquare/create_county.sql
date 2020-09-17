@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TEMP TABLE tmp (
     date timestamp,
     state text,
@@ -14,10 +16,9 @@ CREATE TEMP TABLE tmp (
 
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
-WITH unpivot AS(
+CREATE TABLE :NAME.:"VERSION" AS(
     SELECT 
         date,
-        state,
         (CASE 
             WHEN borough = 'Bronx County' THEN 'BX'
             WHEN borough = 'Brooklyn' THEN 'BK'
@@ -27,62 +28,46 @@ WITH unpivot AS(
         END) as borough,
         categoryid,
         categoryname,
-        (CASE
-            WHEN demo = 'All' THEN visits
-            ELSE NULL
-        END) AS visits_all,
-        (CASE
-            WHEN demo = 'Below65' THEN visits 
-            ELSE NULL
-        END) AS visits_u65,
-        (CASE
-            WHEN demo = 'Above65' THEN visits 
-            ELSE NULL 
-        END) AS visits_o65,
-        (CASE
-            WHEN demo = 'All' THEN avgduration 
-            ELSE NULL 
-        END) AS avgdur_all,
-        (CASE
-            WHEN demo = 'Below65' THEN avgduration 
-            ELSE NULL 
-        END) AS avgdur_u65,
-        (CASE
-            WHEN demo = 'Above65' THEN avgduration 
-            ELSE NULL
-        END) AS avgdur_o65,
-        (CASE
-            WHEN demo = 'All' THEN p50duration 
-            ELSE NULL 
-        END) AS p50dur_all
+        SUM(CASE WHEN demo = 'All' THEN visits END) AS visits_all,
+        SUM(CASE WHEN demo = 'Below65' THEN visits END) AS visits_u65,
+        SUM(CASE WHEN demo = 'Above65' THEN visits END) AS visits_o65,
+        SUM(CASE WHEN demo = 'All' THEN avgduration END) AS duration_avg_all,
+        SUM(CASE WHEN demo = 'Below65' THEN avgduration END) AS duration_avg_u65,
+        SUM(CASE WHEN demo = 'Above65' THEN avgduration END) AS duration_avg_o65
     FROM tmp
-)
+    GROUP BY date, borough, categoryid, categoryname
+);
 
-SELECT date,
-        state,
-        borough,
-        categoryid,
-        categoryname,
-        SUM(visits_all) as visits_all,
-        SUM(visits_u65) as visits_u65,
-        SUM(visits_o65) as visits_o65,
-        SUM(avgdur_all) as avgdur_all,
-        SUM(avgdur_u65) as avgdur_u65,
-        SUM(avgdur_o65) as avgdur_o65,
-        SUM(p50dur_all) as p50dur_all
-INTO :NAME.:"VERSION"
-FROM unpivot
-GROUP BY date, state, borough, categoryid, categoryname;
+DROP TABLE IF EXISTS foursquare.daily_county CASCADE;
+SELECT 
+    date,
+    borough,
+    categoryname,
+    SUM(visits_all) AS visits_all,
+    SUM(visits_u65) AS visits_u65,
+    SUM(visits_o65) AS visits_o65,
+    ROUND(SUM(duration_avg_all*visits_all)/SUM(visits_all), 2) as duration_avg_all,
+    ROUND(SUM(duration_avg_u65*visits_u65)/SUM(visits_u65), 2) as duration_avg_u65,
+    ROUND(SUM(duration_avg_o65*visits_o65)/SUM(visits_o65), 2)as duration_avg_o65
+INTO foursquare.daily_county
+FROM :NAME.:"VERSION" WHERE categoryid != 'Group'
+GROUP BY date, borough, categoryname;
 
-CREATE SCHEMA IF NOT EXISTS foursquare_grouped;
-DROP TABLE IF EXISTS foursquare_grouped.:"VERSION" CASCADE;
-SELECT *
-INTO foursquare_grouped.:"VERSION"
-FROM :NAME.:"VERSION"
-WHERE categoryid='Group';
+DROP TABLE IF EXISTS foursquare.weekly_county CASCADE;
+SELECT 
+    to_char(date::date, 'IYYY-IW') year_week,
+    borough, categoryname, 
+    AVG(visits_all) AS visits_avg_all,
+    AVG(visits_u65) AS visits_avg_u65,
+    AVG(visits_o65) AS visits_avg_o65,
+    ROUND(SUM(duration_avg_all*visits_all)/SUM(visits_all), 2) as duration_avg_all,
+    ROUND(SUM(duration_avg_u65*visits_u65)/SUM(visits_u65), 2) as duration_avg_u65,
+    ROUND(SUM(duration_avg_o65*visits_o65)/SUM(visits_o65), 2)as duration_avg_o65
+INTO foursquare.weekly_county
+FROM :NAME.:"VERSION" WHERE categoryid != 'Group'
+GROUP BY year_week, borough, categoryname;
 
-DELETE
-FROM :NAME.:"VERSION"
+DELETE FROM :NAME.:"VERSION"
 WHERE categoryid='Group';
 
 DROP VIEW IF EXISTS :NAME.latest;
@@ -91,8 +76,4 @@ CREATE VIEW :NAME.latest AS (
     FROM :NAME.:"VERSION"
 );
 
-DROP VIEW IF EXISTS foursquare_grouped.latest;
-CREATE VIEW foursquare_grouped.latest AS (
-    SELECT :'VERSION' as v, * 
-    FROM foursquare_grouped.:"VERSION"
-);
+COMMIT;
