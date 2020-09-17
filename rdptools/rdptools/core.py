@@ -11,6 +11,7 @@ from shapely import wkb, wkt
 
 class Site:
     def __init__(self, site_url, username, password):
+        self.site_url=site_url
         self.ctx = ClientContext(site_url).with_credentials(
             UserCredential(username, password)
         )
@@ -69,10 +70,7 @@ class Partner:
 
     @property
     def SiteRoot(self):
-        root = self.ctx.web.get_folder_by_server_relative_url("")
-        self.ctx.load(root)
-        self.ctx.execute_query()
-        return root.properties["ServerRelativeUrl"]
+        return "/" + "/".join(self.ctx.base_url.split("/")[-2:]) + "/"
 
     @property
     def libraryRoot(self):
