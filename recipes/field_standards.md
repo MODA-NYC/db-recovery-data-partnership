@@ -13,8 +13,8 @@ Below are name and data-type conventions for fields that are common among the RD
 |fips_county|`varchar(5)`|36001|opp_insights*|
 |census_block_group_id|`text`|360470284003|cuebiq_cityhall/|
 |state|`varchar(2)`|NY|cuebiq_cityhall/foursquare/kinsa|
-|nta_code|`varchar(4)`|MN36|betanyc/street_easy|
-|nta_name|`text`|Washington Heights South|betanyc/street_easy|
+|ntacode|`varchar(4)`|MN36|betanyc/street_easy|
+|ntaname|`text`|Washington Heights South|betanyc/street_easy|
 
 ## Changes needed to standardize
 + `reference_date` -> `date` , and format as `YYYY-MM-DD` in cuebiq_cityhall, cuebiq_daily, cuebiq_travelers
