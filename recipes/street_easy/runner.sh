@@ -45,7 +45,7 @@ BASEDIR=$(dirname $0)
         # Export to CSV
         psql $RDP_DATA -c "\COPY (
             SELECT 
-                year_week,nta_name,nta_code,s_newlist,
+                year_week,ntaname,ntacode,s_newlist,
                 s_pendlist,s_list,s_pct_inc,s_pct_dec,
                 s_wksonmkt,r_newlist,r_pendlist,r_list,
                 r_pct_inc,r_pct_dec,r_pct_furn,r_pct_shor,

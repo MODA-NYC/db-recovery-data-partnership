@@ -1,8 +1,8 @@
 BEGIN;
 
 CREATE TEMP TABLE tmp(
-    nta_name text,
-    nta_code varchar(4),
+    ntaname text,
+    ntacode varchar(4),
     s_newlist decimal,
     s_pendlist decimal,
     s_list decimal,
@@ -29,8 +29,8 @@ CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
 SELECT 
     to_char(a.week_start, 'IYYY-IW') as year_week,
-    a.nta_name,
-    a.nta_code,
+    a.ntaname,
+    a.ntacode,
     a.s_newlist::int,
     a.s_pendlist::int,
     a.s_list::int,
@@ -50,7 +50,7 @@ SELECT
 INTO :NAME.:"VERSION"
 FROM tmp a
 JOIN dcp_ntaboundaries b
-ON a.nta_code = b.ntacode
+ON a.ntacode = b.ntacode
 ;
 
 /* Insert records into the Main table */
