@@ -1,7 +1,7 @@
-name: Cuebiq Cityhall
+name: Cuebiq Mobility
 on:
   repository_dispatch:
-    types: [cuebiq_cityhall]
+    types: [cuebiq_mobility]
   schedule:
     - cron: 0 0 */2 * *
 
@@ -28,7 +28,7 @@ jobs:
       - name: Run recipes
         shell: bash
         run: |
-          ./rdp run recipe cuebiq cityhall
+          ./rdp run recipe cuebiq mobility
       
       - name: Clean up
         shell: bash

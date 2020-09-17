@@ -5,7 +5,7 @@ VERSION=$DATE
 AWS_ACCESS_KEY_ID=$CUEBIQ_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY=$CUEBIQ_SECRET_ACCESS_KEY
 AWS_DEFAULT_REGION=us-east-1
-TYPE=$1 #cityhall/weekly/daily/travelers
+TYPE=$1 #mobility/weekly/daily/travelers
 sectors=('automotive' 'dining' 'healthcare' 'lifestyle' 'malls' 'retail' 'telco' 'transportation')
 
 (
@@ -16,10 +16,10 @@ sectors=('automotive' 'dining' 'healthcare' 'lifestyle' 'malls' 'retail' 'telco'
 
 case $TYPE in
 
-  cityhall)
+  mobility)
     (
         cd $BASEDIR
-        NAME=cuebiq_cityhall
+        NAME=cuebiq_mobility
         (
             cd input
             touch raw_$NAME.csv
@@ -31,7 +31,7 @@ case $TYPE in
         )
 
         cat input/raw_$NAME.csv |
-        psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
+        psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mobility.sql
         rm -rf input
         (
             cd output
@@ -161,7 +161,7 @@ case $TYPE in
 
   *)
     echo -n "
-    please specify cityhall, weekly, daily, or travelers
+    please specify mobility, weekly, daily, or travelers
     "
     ;;
 esac

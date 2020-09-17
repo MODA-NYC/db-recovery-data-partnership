@@ -1,7 +1,9 @@
+BEGIN;
+
 CREATE TEMP TABLE tmp (
-    reference_date date,
-    county_code text,
-    county_name text,
+    date date,
+    fips_county text,
+    county text,
     origin_state text,
     last_14_days_travelers int,
     last_14_days_travelers_sip int,
@@ -22,3 +24,5 @@ CREATE VIEW :NAME.latest AS (
     SELECT :'VERSION' as v, * 
     FROM :NAME.:"VERSION"
 );
+
+COMMIT;
