@@ -25,7 +25,7 @@ Below are name and data-type conventions for fields that are common among the RD
 + `region_name` -> `county` in kinsa
 + `region_state` -> `state` in kinsa
 + `zip` -> `zipcode` in oats
-+ `county_code`-> `fipscounty`  in cuebiq_travelers
++ `county_code`-> `fips_county`  in cuebiq_travelers
 + `borough` as varchar(2) in opp_insights_*, usl, and street_easy_rental_sales_index
     + `borough` in street_easy_rental_sales_index contains both borough and NYC. Should there be `location` as in other datasets?
 + `month` -> `date` in street_easy_rental_sales_index (?)
