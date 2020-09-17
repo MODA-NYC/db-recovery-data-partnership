@@ -10,7 +10,7 @@ Below are name and data-type conventions for fields that are common among the RD
 |borough|`varchar(2)`|MN|betanyc/opp_insights*/usl|
 |location|`text`|NYC, Region, Nation|oats/|
 |county|`text`|Kings|cuebiq_cityhall/cuebiq_travelers/kinsa/opp_insights*/|
-|county_code|`varchar(5)`|36001|cuebiq_travelers/opp_insights*|
+|fips_county|`varchar(5)`|36001|opp_insights*|
 |census_block_group_id|`text`|360470284003|cuebiq_cityhall/|
 |state|`varchar(2)`|NY|cuebiq_cityhall/foursquare/kinsa|
 |nta_code|`varchar(4)`|MN36|betanyc/street_easy|
@@ -25,7 +25,7 @@ Below are name and data-type conventions for fields that are common among the RD
 + `region_name` -> `county` in kinsa
 + `region_state` -> `state` in kinsa
 + `zip` -> `zipcode` in oats
-+ `fipscounty` -> `county_code` in opp_insights_*
++ `county_code`-> `fipscounty`  in cuebiq_travelers
 + `borough` as varchar(2) in opp_insights_*, usl, and street_easy_rental_sales_index
     + `borough` in street_easy_rental_sales_index contains both borough and NYC. Should there be `location` as in other datasets?
 + `month` -> `date` in street_easy_rental_sales_index (?)
