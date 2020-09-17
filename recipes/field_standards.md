@@ -23,4 +23,4 @@ Below are name and data-type conventions for fields that are common among the RD
 |ntacode|`varchar(4)`|MN36|betanyc/street_easy|
 |ntaname|`text`|Washington Heights South|betanyc/street_easy|
 
-If a file is NYC specific and contains information at the county level or lower, make sure that it has the fields `borough` and `borocode`
+If a file is NYC specific and contains information at the county level or lower, make sure that it has the field `borough`
