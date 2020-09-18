@@ -12,7 +12,7 @@ case $TYPE in
         mkdir -p input
         mkdir -p output
         
-        NAME=opp_insights_weekly
+        NAME=oppinsights_weekly_mobility
             
         python3 build_weekly.py |
         psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_weekly.sql
@@ -36,7 +36,7 @@ case $TYPE in
         mkdir -p input
         mkdir -p output
 
-        NAME=opp_insights_daily
+        NAME=oppinsights_daily_mobility
 
         python3 build_daily.py |
         psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_daily.sql
