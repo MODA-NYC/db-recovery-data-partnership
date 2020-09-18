@@ -20,7 +20,9 @@ VERSION=$DATE
         # Export to CSV
         psql $RDP_DATA -c "\COPY (
             SELECT * FROM $NAME.\"$VERSION\"
-        ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+        ) TO stdout DELIMITER ',' CSV HEADER;" > betanyc_businesses.csv
+
+        SHP_export $RDP_DATA $NAME.latest POINT betanyc_businesses.shp
 
         # Write VERSION info
         echo "$VERSION" > version.txt

@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TEMP TABLE tmp (
     geo_housenum text,
     geo_streetname text,
@@ -139,7 +141,7 @@ CREATE TEMP TABLE cleaned as (
         a.betanyc_category,
         a.betanyc_subcategory,
         a.phone,
-        a.address,
+        COALESCE(a.geo_housenum||' '||a.geo_streetname, UPPER(a.address)) as address,
         COALESCE(
             a.zipcode, 
             (SELECT b.zipcode::text 
@@ -168,14 +170,14 @@ CREATE TEMP TABLE cleaned as (
             (SELECT b.ntacode::text 
             FROM dcp_ntaboundaries b 
             WHERE st_within(a.geom, b.wkb_geometry))
-        ) as nta_code,
+        ) as ntacode,
         (SELECT ntaname from dcp_ntaboundaries
         WHERE ntacode = COALESCE(
             a.geo_nta,
             (SELECT b.ntacode::text 
             FROM dcp_ntaboundaries b 
             WHERE st_within(a.geom, b.wkb_geometry))
-        )) as nta_name,
+        )) as ntaname,
         (CASE 
             WHEN a.status ~* 'open' then 'open'
             WHEN a.status ~* 'closed' then 'closed'
@@ -219,3 +221,5 @@ CREATE VIEW :NAME.latest AS (
     SELECT :'VERSION' as v, * 
     FROM :NAME.:"VERSION"
 );
+
+COMMIT;
