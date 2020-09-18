@@ -24,6 +24,7 @@ Below are name and data-type conventions for fields that are common among the RD
 |latitude|`double precision`|40.725038|betanyc|
 |longitude|`double precision`|-73.956633|betanyc|
 |income|`text`|$25,001-$50,000|oats|
+|pct|`numeric`|40||
 
 
 
