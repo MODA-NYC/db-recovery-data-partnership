@@ -26,16 +26,29 @@ SELECT
             THEN 'NYC'
         ELSE 'Region'
     END) as location,
-    county_name as county,
+    SPLIT_PART(county_name, ' County', 1) as county,
+    (CASE
+        WHEN fipscounty ~* '9' THEN 'CT'
+        WHEN fipscounty ~* '34' THEN 'NJ'
+        WHEN fipscounty ~* '36' THEN 'NY'
+    END) as state,
     (CASE 
-        WHEN fipscounty = '36005' THEN 'Bronx'
-        WHEN fipscounty = '36047' THEN 'Brooklyn'
-        WHEN fipscounty = '36061' THEN 'Manhattan'
-        WHEN fipscounty = '36081' THEN 'Queens'
-        WHEN fipscounty = '36085' THEN 'Staten Island'
+        WHEN fipscounty = '36005' THEN 'BX'
+        WHEN fipscounty = '36047' THEN 'BK'
+        WHEN fipscounty = '36061' THEN 'MN'
+        WHEN fipscounty = '36081' THEN 'QN'
+        WHEN fipscounty = '36085' THEN 'SI'
         ELSE NULL
     END) as borough,
-    fipscounty,
+    (CASE 
+        WHEN fipscounty = '36005' THEN 2
+        WHEN fipscounty = '36047' THEN 3
+        WHEN fipscounty = '36061' THEN 1
+        WHEN fipscounty = '36081' THEN 4
+        WHEN fipscounty = '36085' THEN 5
+        ELSE NULL
+    END) as borocode,
+    fipscounty as fips_county,
     TO_CHAR(
         CONCAT_WS('-',year,LPAD(month,2,'0'),LPAD(day,2,'0'))::date, 
         'IYYY-IW') as year_week,
