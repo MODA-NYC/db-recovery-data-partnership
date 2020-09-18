@@ -21,6 +21,10 @@ Below are name and data-type conventions for fields that are common among the RD
 |address|`text`|120 Broadway|betanyc|
 |state|`varchar(2)`|NY|cuebiq_cityhall/foursquare/kinsa|
 |ntacode|`varchar(4)`|MN36|betanyc/street_easy|
-|ntaname|`text`|Washington Heights South|betanyc/street_easy|
+|latitude|`double precision`|40.725038|betanyc|
+|longitude|`double precision`|-73.956633|betanyc|
+|income|`text`|$25,001-$50,000|oats|
+
+
 
 If a file is NYC specific and contains information at the county level or lower, make sure that it has the field `borough`
