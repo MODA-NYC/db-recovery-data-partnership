@@ -25,9 +25,9 @@ SELECT
     END) as location,
     SPLIT_PART(county_name, ' County', 1) as county,
     (CASE
-        WHEN fipscounty ~* '9' THEN 'CT'
-        WHEN fipscounty ~* '34' THEN 'NJ'
-        WHEN fipscounty ~* '36' THEN 'NY'
+        WHEN LEFT(fipscounty, 1) = '9' THEN 'CT'
+        WHEN LEFT(fipscounty, 2) = '34' THEN 'NJ'
+        WHEN LEFT(fipscounty, 2) = '36' THEN 'NY'
     END) as state,
     (CASE 
         WHEN fipscounty = '36005' THEN 'BX'
@@ -45,7 +45,7 @@ SELECT
         WHEN fipscounty = '36085' THEN 5
         ELSE NULL
     END) as borocode,
-    fipscounty as fips_county, 
+    LPAD(fipscounty, 5, '0') as fips_county, 
     TO_CHAR(
         CONCAT_WS('-',year,LPAD(month,2,'0'),LPAD(day_endofweek,2,'0'))::date, 
         'IYYY-IW') as year_week,
