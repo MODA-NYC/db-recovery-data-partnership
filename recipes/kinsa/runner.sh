@@ -22,7 +22,7 @@ AWS_SECRET_ACCESS_KEY=$KINSA_SECRET_ACCESS_KEY
         # Export to CSV
         psql $RDP_DATA -c "\COPY (
             SELECT * FROM $NAME.\"$VERSION\"
-        ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+        ) TO stdout DELIMITER ',' CSV HEADER;" > kinsa_illness.csv
 
         # Write VERSION info
         echo "$VERSION" > version.txt

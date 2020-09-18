@@ -5,7 +5,7 @@ CREATE TEMP TABLE tmp (
     region_id text,
     signal_type text,
     created_date date,
-    percent_ill numeric
+    pct_ill numeric
 );
 
 \COPY tmp FROM PSTDIN DELIMITER ',' CSV HEADER;
@@ -27,9 +27,9 @@ SELECT
         WHEN a.region_name ~* 'Queens' THEN 4
         WHEN a.region_name ~* 'Richmond' THEN 5
     END) as borocode,
-    a.region_id as borofips,
+    a.region_id as fips_county,
     a.created_date as date,
-    a.percent_ill
+    ROUND(a.pct_ill) as pct_ill
 INTO :NAME.:"VERSION" 
 FROM tmp a;
 
