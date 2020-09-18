@@ -1,5 +1,5 @@
 CREATE TEMP TABLE tmp(
-        interview_date timestamp,
+        date date,
         birth_year smallint,
         race_white boolean,
         race_black boolean,
@@ -49,7 +49,7 @@ CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
 SELECT
     md5(CAST((tmp.*)AS text)) as id,
-    interview_date,
+    date,
     birth_year,
     race_white,
     race_black,
@@ -90,9 +90,15 @@ SELECT
     o_negotiated,
     o_lawyer,
     alt_option,
-    state,
     zipcode,
-    borough
+    borough,
+    (CASE
+        WHEN borough = 'MN' THEN 1
+        WHEN borough = 'BX' THEN 2
+        WHEN borough = 'BK' THEN 3
+        WHEN borough = 'QN' THEN 4
+        WHEN borough = 'SI' THEN 5
+    END) as borocode
 INTO :NAME.:"VERSION"
 FROM tmp;
 
@@ -103,20 +109,33 @@ CREATE VIEW :NAME.latest AS (
 ); 
 
 -- Create zip-week aggregation
-DROP VIEW IF EXISTS :NAME.count_by_zip;
-CREATE VIEW :NAME.count_by_zip AS
+DROP VIEW IF EXISTS :NAME.weekly_count_by_zip;
+CREATE VIEW :NAME.weekly_count_by_zip AS
     SELECT 
-        b.zipcode, a.year_week, a.total, a.sum_covid, a.per_covid, b.wkb_geometry
+        b.zipcode, 
+        a.year_week, 
+        a.total, 
+        a.sum_covid, 
+        a.per_covid,
+        a.borough,
+        (CASE
+            WHEN a.borough = 'MN' THEN 1
+            WHEN a.borough = 'BX' THEN 2
+            WHEN a.borough = 'BK' THEN 3
+            WHEN a.borough = 'QN' THEN 4
+            WHEN a.borough = 'SI' THEN 5
+        END) as borocode
     FROM(
         SELECT 
-            zipcode, 
-            to_char(interview_date, 'IYYY-IW') as year_week,
+            zipcode,
+            borough, 
+            to_char(date, 'IYYY-IW') as year_week,
             count(*) as total,
             count(CASE WHEN r_covid19 THEN 1 END) as sum_covid,
             ROUND(count(CASE WHEN r_covid19 THEN 1 END)::numeric*100/count(*), 2) as per_covid
         FROM :NAME.:"VERSION"
-        GROUP BY zipcode, to_char(interview_date, 'IYYY-IW')
-        ORDER BY zipcode, to_char(interview_date, 'IYYY-IW')  
+        GROUP BY zipcode, borough, to_char(date, 'IYYY-IW')
+        ORDER BY zipcode, borough, to_char(date, 'IYYY-IW')  
     ) a 
     RIGHT JOIN doitt_zipcodeboundaries b
     ON a.zipcode::text = b.zipcode::text
@@ -126,16 +145,29 @@ CREATE VIEW :NAME.count_by_zip AS
 DROP VIEW IF EXISTS :NAME.sum_by_zip;
 CREATE VIEW :NAME.sum_by_zip AS
     SELECT 
-        b.zipcode, a.total, a.sum_covid, a.per_covid, b.wkb_geometry
+        b.zipcode, 
+        a.total, 
+        a.sum_covid, 
+        a.per_covid,
+        a.borough,
+        (CASE
+            WHEN a.borough = 'MN' THEN 1
+            WHEN a.borough = 'BX' THEN 2
+            WHEN a.borough = 'BK' THEN 3
+            WHEN a.borough = 'QN' THEN 4
+            WHEN a.borough = 'SI' THEN 5
+        END) as borocode,
+        b.wkb_geometry
     FROM(
         SELECT 
             zipcode, 
+            borough,
             count(*) as total,
             count(CASE WHEN r_covid19 THEN 1 END) as sum_covid,
             ROUND(count(CASE WHEN r_covid19 THEN 1 END)::numeric*100/count(*), 2) as per_covid
         FROM :NAME.:"VERSION"
-        GROUP BY zipcode
-        ORDER BY zipcode
+        GROUP BY zipcode, borough
+        ORDER BY zipcode, borough
     ) a 
     RIGHT JOIN doitt_zipcodeboundaries b
     ON a.zipcode::text = b.zipcode::text

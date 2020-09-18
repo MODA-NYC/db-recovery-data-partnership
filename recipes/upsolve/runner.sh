@@ -26,20 +26,19 @@ VERSION=$DATE
 
         psql $RDP_DATA -c "\COPY (
             SELECT * FROM upsolve.count_by_zip
-        ) TO stdout DELIMITER ',' CSV HEADER;" > upsolve_count_by_zip.csv
+        ) TO stdout DELIMITER ',' CSV HEADER;" > upsolve_weekly_count_by_zip.csv
 
         psql $RDP_DATA -c "\COPY (
             SELECT * FROM upsolve.sum_by_zip
         ) TO stdout DELIMITER ',' CSV HEADER;" > upsolve_sum_by_zip.csv
 
-        # Export to ShapeFile
-        SHP_export $RDP_DATA upsolve.count_by_zip MULTIPOLYGON upsolve_count_by_zip
-        SHP_export $RDP_DATA upsolve.sum_by_zip MULTIPOLYGON upsolve_sum_by_zip
-
         # Write VERSION info
         echo "$VERSION" > version.txt
     )
-    Upload $NAME $VERSION
-    Upload $NAME latest
+
+    # Export to Shapefile
+    SHP_export $RDP_DATA upsolve.sum_by_zip MULTIPOLYGON upsolve_sum_by_zip
+
+    # Upload $NAME latest
     rm -rf output
 )
