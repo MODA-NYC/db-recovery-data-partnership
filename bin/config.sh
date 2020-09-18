@@ -95,6 +95,17 @@ function import_spatial {
     );
   "
   cat recipes/_data/dcp_ntaboundaries.csv | psql $RDP_DATA -c "\copy dcp_ntaboundaries from stdin DELIMITER ',' CSV HEADER;"
+
+  psql $RDP_DATA -c "
+  DROP TABLE IF EXISTS city_zip_boro CASCADE;
+    CREATE TABLE city_zip_boro (
+      zipcode text,
+      city text,
+      boro text
+    );
+  "
+  cat recipes/_data/city_zip_boro.csv | psql $RDP_DATA -c "\copy city_zip_boro from stdin DELIMITER ',' CSV HEADER;"
+
 }
 register 'import' 'spatial' 'import zipcode and nta boundaries' import_spatial
 

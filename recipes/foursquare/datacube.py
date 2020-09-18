@@ -30,7 +30,7 @@ available_dates=df.date.to_list()
 loaded=pd.read_sql(sql='''
     SELECT table_name 
     FROM information_schema.tables 
-    WHERE table_schema = 'foursquare_datacube'
+    WHERE table_schema = 'foursquare_zipcode'
     AND table_name not in ('main', 'latest')
 ''', con=engine)
 loaded_dates=loaded.table_name.to_list()

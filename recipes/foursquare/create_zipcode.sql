@@ -59,10 +59,15 @@ CREATE TEMP TABLE tmp (
     pctOver8Hours numeric
 );
 
-\COPY tmp FROM PSTDIN WITH NULL AS '' DELIMITER ',' CSV QUOTE '"';
+\COPY tmp FROM PSTDIN WITH NULL AS '' DELIMITER ',' CSV;
 
 DELETE FROM tmp WHERE categoryid != 'Group';
-ALTER TABLE tmp DROP COLUMN categoryid;
+ALTER TABLE tmp 
+    DROP COLUMN categoryid,
+    DROP COLUMN country,
+    DROP COLUMN state,
+    DROP COLUMN county;
+DELETE FROM tmp WHERE zip not in (select distinct zipcode from city_zip_boro);
 UPDATE tmp SET medianDuration=nullif(medianDuration, '')::numeric;
 
 /* Create maintable */

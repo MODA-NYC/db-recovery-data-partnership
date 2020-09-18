@@ -60,6 +60,14 @@ function foursquare_zipcode {
                     SELECT * FROM $NAME.weekly_zipcode
                 ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_weekly_zipcode.csv
 
+                psql $RDP_DATA -c "\COPY (
+                    SELECT * FROM $NAME.weekly_zipcode_timeofday
+                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_weekly_zipcode_timeofday.csv
+
+                psql $RDP_DATA -c "\COPY (
+                    SELECT * FROM $NAME.latest
+                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_daily_zipcode_raw.csv
+
                 # Write VERSION info
                 echo "$VERSION" > version.txt
             )
