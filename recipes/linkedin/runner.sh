@@ -24,7 +24,7 @@ VERSION=$DATE
         # Export to CSV
         psql $RDP_DATA -c "\COPY (
             SELECT * FROM linkedin.\"$VERSION\"
-        ) TO stdout DELIMITER ',' CSV HEADER;" > linkedin.csv
+        ) TO stdout DELIMITER ',' CSV HEADER;" > linkedin_nyc_hiringrate.csv
 
         # Write VERSION info
         echo "$VERSION" > version.txt
