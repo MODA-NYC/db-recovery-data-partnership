@@ -2,10 +2,10 @@
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
 
-function foursquare_datacube {
+function foursquare_zipcode {
     (
         cd $BASEDIR
-        NAME=foursquare_datacube
+        NAME=foursquare_zipcode
         
         mc cp $GSHEET_CRED creds.json
         mkdir -p input && mkdir -p output
@@ -32,7 +32,7 @@ function foursquare_datacube {
                         psql $RDP_DATA \
                             -v NAME=$NAME \
                             -v VERSION=$VERSION \
-                            -f ../create_datacube.sql
+                            -f ../create_zipcode.sql
                         rm $file
                         rm $VERSION.csv.gz
                     ) &
@@ -47,7 +47,7 @@ function foursquare_datacube {
                     psql $RDP_DATA -At -c "
                     SELECT MAX(table_name::date) 
                     FROM information_schema.tables 
-                    where table_schema = 'foursquare_datacube'
+                    where table_schema = 'foursquare_zipcode'
                     AND table_name !~* 'latest|main|zipcode'"
                 )
 

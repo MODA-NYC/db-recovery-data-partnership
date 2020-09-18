@@ -1,10 +1,11 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
-NAME=foursquare
 
 function foursquare_county {
-    (
+    (   
+        NAME=foursquare_county
+
         cd $BASEDIR
 
         if [ -z "$VERSION" ]

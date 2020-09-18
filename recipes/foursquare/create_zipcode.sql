@@ -37,7 +37,7 @@ Late Night: 3am to 5:59am
 BEGIN;
 
 CREATE TEMP TABLE tmp (
-    date text,
+    date date,
     country text,
     state text,
     county text,
@@ -59,8 +59,10 @@ CREATE TEMP TABLE tmp (
     pctOver8Hours numeric
 );
 
-\COPY tmp FROM PSTDIN WITH NULL AS '' DELIMITER ',' CSV;
+\COPY tmp FROM PSTDIN WITH NULL AS '' DELIMITER ',' CSV QUOTE '"';
 
+DELETE FROM tmp WHERE categoryid != 'Group';
+ALTER TABLE tmp DROP COLUMN categoryid;
 UPDATE tmp SET medianDuration=nullif(medianDuration, '')::numeric;
 
 /* Create maintable */
