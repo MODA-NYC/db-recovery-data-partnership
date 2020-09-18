@@ -29,7 +29,7 @@ SELECT
     END) as borocode,
     a.region_id as fips_county,
     a.created_date as date,
-    ROUND(a.pct_ill) as pct_ill
+    ROUND(a.pct_ill, 2) as pct_ill
 INTO :NAME.:"VERSION" 
 FROM tmp a;
 
