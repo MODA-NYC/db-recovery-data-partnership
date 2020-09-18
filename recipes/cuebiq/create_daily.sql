@@ -145,8 +145,6 @@ WITH all_sectors AS (
 SELECT 
     reference_date,
     to_char(reference_date::date, 'IYYY-IW') as year_week,
-    market_area_code,
-    market_area,
     sector,
     vertical,
     brand,
