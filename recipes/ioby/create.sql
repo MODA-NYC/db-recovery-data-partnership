@@ -29,7 +29,8 @@ SELECT DISTINCT name,
         target_rev,
         total_rev,
         date_post,
-        date_end
+        date_end,
+        days_don
 INTO ioby_active_projects.:"VERSION"
 FROM tmp 
 WHERE status ~* 'underway|open';
@@ -74,7 +75,25 @@ distinct_donations AS(
         order_id
     FROM tmp
     )
-SELECT b.zipcode, a.year_week, a.sum_donate, a.sum_proj, b.wkb_geometry
+SELECT 
+    (CASE
+        WHEN b.county = 'New York' THEN 'MN'
+        WHEN b.county = 'Bronx' THEN 'BX'
+        WHEN b.county = 'Kings' THEN 'BK'
+        WHEN b.county = 'Queens' THEN 'QN'
+        WHEN b.county = 'Richmond' THEN 'SI'
+    END) as borough,
+    (CASE
+        WHEN b.county = 'New York' THEN 1
+        WHEN b.county = 'Bronx' THEN 2
+        WHEN b.county = 'Kings' THEN 3
+        WHEN b.county = 'Queens' THEN 4
+        WHEN b.county = 'Richmond' THEN 5
+    END) as borocode,
+    b.zipcode, 
+    a.year_week, 
+    a.sum_donate, 
+    a.sum_proj
 INTO ioby_donations.:"VERSION"
 FROM
     (SELECT
@@ -98,7 +117,24 @@ CREATE VIEW ioby_donations.latest AS (
 -- Create zipcode aggregation table
 DROP VIEW IF EXISTS ioby_active_projects.count_by_zip;
 CREATE VIEW ioby_active_projects.count_by_zip AS (
-    SELECT b.zipcode, a.sum_donate, a.sum_proj, b.wkb_geometry
+    SELECT 
+    (CASE
+        WHEN b.county = 'New York' THEN 'MN'
+        WHEN b.county = 'Bronx' THEN 'BX'
+        WHEN b.county = 'Kings' THEN 'BK'
+        WHEN b.county = 'Queens' THEN 'QN'
+        WHEN b.county = 'Richmond' THEN 'SI'
+    END) as borough,
+    (CASE
+        WHEN b.county = 'New York' THEN 1
+        WHEN b.county = 'Bronx' THEN 2
+        WHEN b.county = 'Kings' THEN 3
+        WHEN b.county = 'Queens' THEN 4
+        WHEN b.county = 'Richmond' THEN 5
+    END) as borocode,
+    b.zipcode, 
+    a.sum_donate, 
+    a.sum_proj
     FROM
         (SELECT DISTINCT
             zipcode,
