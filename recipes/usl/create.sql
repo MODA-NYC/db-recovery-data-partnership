@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TEMP TABLE tmp (
     date date,
     zip text,
@@ -81,8 +83,21 @@ SELECT
         WHEN zip IS NOT NULL AND LEFT(zip, 5) ~ '^[0-9]*$'
         THEN LEFT(zip, 5)
         ELSE NULL
-    END) as zip,
-    borough,
+    END) as zipcode,
+    (CASE
+        WHEN borough = 'Queens' THEN 'QN'
+        WHEN borough = 'Staten Island' THEN 'SI'
+        WHEN borough = 'Manhattan' THEN 'MN'
+        WHEN borough = 'Bronx' THEN 'BX'
+        WHEN borough = 'Brooklyn' THEN 'BK'
+    END) as borough,
+    (CASE
+        WHEN borough = 'Queens' THEN 4
+        WHEN borough = 'Staten Island' THEN 5
+        WHEN borough = 'Manhattan' THEN 1
+        WHEN borough = 'Bronx' THEN 2
+        WHEN borough = 'Brooklyn' THEN 3
+    END) as borocode,
     neighborhood,
     nyc_res,
     distancing,
@@ -243,3 +258,5 @@ CREATE VIEW usl.latest AS (
     SELECT :'VERSION' as v, * 
     FROM usl.:"VERSION"
 );
+
+COMMIT;
