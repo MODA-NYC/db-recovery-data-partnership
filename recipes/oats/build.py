@@ -5,7 +5,6 @@ import pandas as pd
 df = pd.read_excel('input/raw.xlsx', skiprows=[1])
 df.to_csv('input/raw.csv')
 
-city_zips = pd.read_csv('../_data/city_zip_boro.csv')
 region_zips = pd.read_csv('../_data/region_zips.csv')
 
 # Check columns
@@ -48,9 +47,7 @@ for col in cols.keys():
 df.rename(columns=cols, inplace=True)
 
 # Create location flag, overwriting by each smaller region
-df['location'] = 'Nation'
-df.loc[df.zip.isin(region_zips.ZIP.tolist()), 'location'] = 'Region'
-df.loc[df.zip.isin(city_zips.zipcode.tolist()), 'location'] = 'NYC'
-
+df['region'] = None
+df.loc[df.zip.isin(region_zips.ZIP.tolist()), 'region'] = 'Region'
 
 df.to_csv(sys.stdout, sep='|', index=False)
