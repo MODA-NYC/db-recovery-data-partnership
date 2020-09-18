@@ -7,7 +7,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="rdptools",
-    version="0.1.6",
+    version="0.1.7",
     description="recovery data partnership python package",
     long_description=long_description,
     long_description_content_type="text/markdown",
