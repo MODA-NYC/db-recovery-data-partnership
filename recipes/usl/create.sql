@@ -177,8 +177,18 @@ SELECT
     (CASE WHEN pk_priority ~* 'Trees, shade' THEN 'Yes' END) as priority_trees,
     (CASE WHEN pk_priority ~* 'Places to BBQ, cook food' THEN 'Yes' END) as priority_bbq,
     other_pk_priority as priority_other,
-    TRIM(
-        REGEXP_REPLACE(pk_benefits, '\s+', ' ', 'g')) as pk_benefits,
+    (CASE WHEN pk_benefits ~* 'Landscaping maintained gardens, flowers, or lawn' THEN 'Yes' END) as benefit_landscaping,
+    (CASE WHEN pk_benefits ~* 'Socializing, spending time with others' THEN 'Yes' END) as benefit_socializing,
+    (CASE WHEN pk_benefits ~* 'Places to sit' THEN 'Yes' END) as benefit_seating,
+    (CASE WHEN pk_benefits ~* 'Places to walk' THEN 'Yes' END) as benefit_trails,
+    (CASE WHEN pk_benefits ~* 'Educational opportunities' THEN 'Yes' END) as benefit_education,
+    (CASE WHEN pk_benefits ~* 'Opportunities to view wildlife' THEN 'Yes' END) as benefit_wildlife,
+    (CASE WHEN pk_benefits ~* 'Place for children to play' THEN 'Yes' END) as benefit_play,
+    (CASE WHEN pk_benefits ~* 'Places to exercise, play sports' THEN 'Yes' END) as benefit_exercise,
+    (CASE WHEN pk_benefits ~* 'Dog-friendly' THEN 'Yes' END) as benefit_dog,
+    (CASE WHEN pk_benefits ~* 'Water feature' THEN 'Yes' END) as benefit_water,
+    (CASE WHEN pk_benefits ~* 'Trees, shade' THEN 'Yes' END) as benefit_trees,
+    (CASE WHEN pk_benefits ~* 'Places to BBQ, cook food' THEN 'Yes' END) as benefit_bbq,
     TRIM(
         REGEXP_REPLACE(
             CONCAT_WS(',', pk_concerns, other_pk_concerns, pk_safety_concerns),
