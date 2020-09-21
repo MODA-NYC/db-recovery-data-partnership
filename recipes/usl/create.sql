@@ -28,7 +28,7 @@ CREATE TEMP TABLE tmp (
     diff_fish text,
     diff_other text,
     to_park text,
-    other_to_park text,
+    to_park_other text,
     time_to_pk text,
     wkly_visits text,
     time_in_pk text,
@@ -152,11 +152,9 @@ SELECT
     REPLACE(diff_wndw,' during Covid-19 crisis','') as diff_window,
     REPLACE(diff_fish,' during Covid-19 crisis','') as diff_fish,
     REPLACE(diff_other,' during Covid-19 crisis','') as diff_other,
-    (CASE
-        WHEN to_park LIKE 'Other:%' OR to_park IS NULL
-        THEN other_to_park
-        ELSE to_park
-    END) as to_park,
+    -- Means of getting to a park
+    REPLACE(to_park,'Other: (write in space below)','Other') as to_park
+    to_park_other,
     time_to_pk,
     wkly_visits,
     time_in_pk,
