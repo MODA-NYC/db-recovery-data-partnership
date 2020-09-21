@@ -1,5 +1,7 @@
+BEGIN;
+
 CREATE TEMP TABLE automotive (
-    reference_date text,
+    date date,
     market_area_code text,
     market_area text,
     sector text,
@@ -15,7 +17,7 @@ CREATE TEMP TABLE automotive (
 \COPY automotive FROM PROGRAM 'gzip -dc input/daily-cvi-automotive.csv000.gz' DELIMITER ',' CSV HEADER;
 
 CREATE TEMP TABLE dining (
-    reference_date text,
+    date date,
     market_area_code text,
     market_area text,
     sector text,
@@ -32,7 +34,7 @@ CREATE TEMP TABLE dining (
 
 
 CREATE TEMP TABLE healthcare (
-    reference_date text,
+    date date,
     market_area_code text,
     market_area text,
     sector text,
@@ -48,7 +50,7 @@ CREATE TEMP TABLE healthcare (
 \COPY healthcare FROM PROGRAM 'gzip -dc input/daily-cvi-healthcare.csv000.gz' DELIMITER ',' CSV HEADER;
 
 CREATE TEMP TABLE lifestyle (
-    reference_date text,
+    date date,
     market_area_code text,
     market_area text,
     sector text,
@@ -64,7 +66,7 @@ CREATE TEMP TABLE lifestyle (
 \COPY lifestyle FROM PROGRAM 'gzip -dc input/daily-cvi-lifestyle.csv000.gz' DELIMITER ',' CSV HEADER;
 
 CREATE TEMP TABLE malls (
-    reference_date text,
+    date date,
     market_area_code text,
     market_area text,
     sector text,
@@ -80,7 +82,7 @@ CREATE TEMP TABLE malls (
 \COPY malls FROM PROGRAM 'gzip -dc input/daily-cvi-malls.csv000.gz' DELIMITER ',' CSV HEADER;
 
 CREATE TEMP TABLE retail (
-    reference_date text,
+    date date,
     market_area_code text,
     market_area text,
     sector text,
@@ -96,7 +98,7 @@ CREATE TEMP TABLE retail (
 \COPY retail FROM PROGRAM 'gzip -dc input/daily-cvi-retail.csv000.gz' DELIMITER ',' CSV HEADER;
 
 CREATE TEMP TABLE telco (
-    reference_date text,
+    date date,
     market_area_code text,
     market_area text,
     sector text,
@@ -112,7 +114,7 @@ CREATE TEMP TABLE telco (
 \COPY telco FROM PROGRAM 'gzip -dc input/daily-cvi-telco.csv000.gz' DELIMITER ',' CSV HEADER;
 
 CREATE TEMP TABLE transportation (
-    reference_date text,
+    date date,
     market_area_code text,
     market_area text,
     sector text,
@@ -143,8 +145,6 @@ WITH all_sectors AS (
 SELECT 
     reference_date,
     to_char(reference_date::date, 'IYYY-IW') as year_week,
-    market_area_code,
-    market_area,
     sector,
     vertical,
     brand,
@@ -161,3 +161,5 @@ CREATE VIEW :NAME.latest AS (
     SELECT :'VERSION' as v, * 
     FROM :NAME.:"VERSION"
 );
+
+COMMIT;
