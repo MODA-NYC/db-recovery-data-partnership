@@ -258,8 +258,9 @@ WHERE nyc_res <> 'No' AND
     feel_safe IS NOT NULL OR
     can_dist IS NOT NULL OR
     access IS NOT NULL OR
+    access_other IS NOT NULL OR
     activities IS NOT NULL OR
-    other_activities IS NOT NULL OR
+    activities_other IS NOT NULL OR
     diff_park IS NOT NULL OR
     diff_nycha IS NOT NULL OR
     diff_walk IS NOT NULL OR
@@ -273,7 +274,7 @@ WHERE nyc_res <> 'No' AND
     diff_fish IS NOT NULL OR
     diff_other IS NOT NULL OR
     to_park IS NOT NULL OR
-    other_to_park IS NOT NULL OR
+    to_park_other IS NOT NULL OR
     time_to_pk IS NOT NULL OR
     wkly_visits IS NOT NULL OR
     time_in_pk IS NOT NULL OR
@@ -298,9 +299,9 @@ WHERE nyc_res <> 'No' AND
     pk_mntlhlth_post IS NOT NULL OR
     park_desc IS NOT NULL OR
     place_living IS NOT NULL OR
-    other_place_living IS NOT NULL OR
+    living_other IS NOT NULL OR
     home_type IS NOT NULL OR
-    other_home_type IS NOT NULL OR
+    type_other IS NOT NULL OR
     public_housing IS NOT NULL OR
     hhld_u18 IS NOT NULL OR
     hhld_18_to_59 IS NOT NULL OR
@@ -312,7 +313,7 @@ WHERE nyc_res <> 'No' AND
     other_gender IS NOT NULL OR
     hispanic IS NOT NULL OR
     race IS NOT NULL OR
-    other_race IS NOT NULL OR
+    race_other IS NOT NULL OR
     highest_ed  IS NOT NULL OR
     hhld_inc IS NOT NULL OR
     notes IS NOT NULL);
