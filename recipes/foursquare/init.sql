@@ -106,6 +106,16 @@ BEGIN
             SELECT
                 to_char(date::date, 'IYYY-IW') as year_week,
                 zip as zipcode,
+                (SELECT boro from city_zip_boro a where zip=a.zipcode) as borough,
+                (SELECT 
+                    (CASE
+                        WHEN a.boro = 'QN' THEN 4
+                        WHEN a.boro = 'SI' THEN 5
+                        WHEN a.boro = 'MN' THEN 1
+                        WHEN a.boro = 'BX' THEN 2
+                        WHEN a.boro = 'BK' THEN 3
+                    END)
+                from city_zip_boro a where zip=a.zipcode) as borocode,
                 categoryname as category,
                 avg(CASE WHEN demo='All' THEN visits END) AS visits_avg_all,
                 avg(CASE WHEN demo='Below65' THEN visits END)AS visits_avg_u65,
