@@ -54,7 +54,7 @@ CREATE TEMP TABLE tmp (
     pk_mntlhlth_post text,
     park_desc text,
     place_living text,
-    other_place_living text,
+    living_other text,
     home_type text,
     other_home_type text,
     public_housing text,
@@ -221,11 +221,8 @@ SELECT
     os_physical_pre,
     os_physical_post,
     park_desc,
-    (CASE
-        WHEN place_living ~ 'Other:' OR place_living IS NULL
-        THEN other_place_living
-        ELSE place_living
-    END) as place_living,
+    REPLACE(place_living,'Other: (write in space below)','Other') as place_living,
+    living_other,
     (CASE
         WHEN home_type ~ 'Other:' OR home_type IS NULL
         THEN other_home_type
