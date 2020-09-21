@@ -56,7 +56,7 @@ CREATE TEMP TABLE tmp (
     place_living text,
     living_other text,
     home_type text,
-    other_home_type text,
+    type_other text,
     public_housing text,
     hhld_u18 text,
     hhld_18_to_59 text,
@@ -223,11 +223,8 @@ SELECT
     park_desc,
     REPLACE(place_living,'Other: (write in space below)','Other') as place_living,
     living_other,
-    (CASE
-        WHEN home_type ~ 'Other:' OR home_type IS NULL
-        THEN other_home_type
-        ELSE home_type
-    END) as home_type,
+    REPLACE(home_type,'Other: (write in space below)','Other') as home_type,
+    type_other,
     public_housing,
     hhld_u18,
     hhld_18_to_59,
