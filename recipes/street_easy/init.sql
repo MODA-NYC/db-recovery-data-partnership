@@ -15,8 +15,10 @@ BEGIN
     IF NOT _main THEN
         CREATE TABLE street_easy.main (
             year_week text,
-            nta_name text,
-            nta_code character varying(4),
+            ntaname text,
+            ntacode character varying(4),
+            borough character varying(2),
+            borocode integer,
             s_newlist integer,
             s_pendlist integer,
             s_list integer,
