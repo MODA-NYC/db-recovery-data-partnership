@@ -41,6 +41,7 @@ CREATE TEMP TABLE tmp (
     pk_benefits text,
     pk_concerns text,
     other_pk_concerns text,
+    adtl_safety_concerns text,
     pk_safety_concerns text,
     access_limit text,
     unhappy text,
@@ -110,6 +111,7 @@ SELECT
         ELSE NULL
     END) as feel_safe, 
     can_dist,
+    -- Access to outdoors
     (CASE WHEN access ~* 'Public park' THEN 'Yes' END) as access_park,
     (CASE WHEN access ~* 'Public plaza' THEN 'Yes' END) as access_plaza,
     (CASE WHEN access ~* 'Sidewalk' THEN 'Yes' END) as access_sidewalk,
@@ -124,6 +126,7 @@ SELECT
     (CASE WHEN access ~* 'Natural area' THEN 'Yes' END) as natural,
     (CASE WHEN access ~* 'Beach' THEN 'Yes' END) as access_other,
     access_other,
+    -- Outdoor activities
     (CASE WHEN activities ~* 'Visiting parks or open space' THEN 'Yes' END) as activities_park,
     (CASE WHEN activities ~* 'Using NYCHA open spaces' THEN 'Yes' END) as activities_nycha,
     (CASE WHEN activities ~* 'Going on walks' THEN 'Yes' END) as activities_walk,
@@ -136,6 +139,7 @@ SELECT
     (CASE WHEN activities ~* 'Observing natrue through the window' THEN 'Yes' END) as activities_window,
     (CASE WHEN activities ~* 'Fishing' THEN 'Yes' END) as activities_fish,
     activities_other,
+    -- Difference in activity during COVID
     REPLACE(diff_park,' during Covid-19 crisis','') as diff_park,
     REPLACE(diff_nycha,' during Covid-19 crisis','') as diff_nycha,
     REPLACE(diff_walk,' during Covid-19 crisis','') as diff_walk,
@@ -159,11 +163,13 @@ SELECT
     last_visit,
     mood_in_pk,
     REPLACE(stress_in_pk, ' stress', '') as stress_in_pk,
+    -- Socialization in parks
     (CASE WHEN social_in_pk ~* 'Family members' THEN 'Yes' END) as social_family,
     (CASE WHEN social_in_pk ~* 'Friends' THEN 'Yes' END) as social_friend,
     (CASE WHEN social_in_pk ~* 'Neighbors' THEN 'Yes' END) as social_neighbor,
     (CASE WHEN social_in_pk ~* 'Strangers' THEN 'Yes' END) as social_stranger,
     (CASE WHEN social_in_pk ~* 'No one' THEN 'Yes' END) as social_noone,
+    -- Park priorities
     (CASE WHEN pk_priority ~* 'Landscaping maintained gardens, flowers, or lawn' THEN 'Yes' END) as priority_landscaping,
     (CASE WHEN pk_priority ~* 'Socializing, spending time with others' THEN 'Yes' END) as priority_socializing,
     (CASE WHEN pk_priority ~* 'Places to sit' THEN 'Yes' END) as priority_seating,
@@ -177,6 +183,7 @@ SELECT
     (CASE WHEN pk_priority ~* 'Trees, shade' THEN 'Yes' END) as priority_trees,
     (CASE WHEN pk_priority ~* 'Places to BBQ, cook food' THEN 'Yes' END) as priority_bbq,
     other_pk_priority as priority_other,
+    -- Park benefits
     (CASE WHEN pk_benefits ~* 'Landscaping maintained gardens, flowers, or lawn' THEN 'Yes' END) as benefit_landscaping,
     (CASE WHEN pk_benefits ~* 'Socializing, spending time with others' THEN 'Yes' END) as benefit_socializing,
     (CASE WHEN pk_benefits ~* 'Places to sit' THEN 'Yes' END) as benefit_seating,
@@ -189,10 +196,23 @@ SELECT
     (CASE WHEN pk_benefits ~* 'Water feature' THEN 'Yes' END) as benefit_water,
     (CASE WHEN pk_benefits ~* 'Trees, shade' THEN 'Yes' END) as benefit_trees,
     (CASE WHEN pk_benefits ~* 'Places to BBQ, cook food' THEN 'Yes' END) as benefit_bbq,
-    TRIM(
-        REGEXP_REPLACE(
-            CONCAT_WS(',', pk_concerns, other_pk_concerns, pk_safety_concerns),
-            '\s+', ' ', 'g')) as pk_concerns,
+    -- Park concerns
+    (CASE WHEN pk_concerns ~* 'Too crowded' THEN 'Yes' END) as concern_crowd,
+    (CASE WHEN pk_concerns ~* 'People are not practicing social distancing' THEN 'Yes' END) as concern_distance,
+    (CASE WHEN pk_concerns ~* 'Not enough park staff' THEN 'Yes' END) as concern_staff,
+    (CASE WHEN pk_concerns ~* 'Not enough lighting' THEN 'Yes' END) as concern_light,
+    (CASE WHEN pk_concerns ~* 'Too much police presence' THEN 'Yes' END) as concern_police,
+    (CASE WHEN pk_concerns ~* 'It does not feel safe' THEN 'Yes' END) as concern_safety,
+    (CASE WHEN pk_concerns ~* 'Use of chemicals to control weeds' THEN 'Yes' END) as concern_chemical,
+    (CASE WHEN pk_concerns ~* 'I do not have easy access' THEN 'Yes' END) as concern_access,
+    (CASE WHEN pk_concerns ~* 'Not being maintained clean' THEN 'Yes' END) as concern_notclean,
+    (CASE WHEN pk_concerns ~* 'Not open during the times I would like to go' THEN 'Yes' END) as concern_notopen,
+    (CASE WHEN pk_concerns ~* 'Does not meet my needs' THEN 'Yes' END) as concern_needs,
+    (CASE WHEN pk_concerns ~* 'Not child-friendly' THEN 'Yes' END) as concern_child,
+    (CASE WHEN pk_concerns ~* 'None' THEN 'Yes' END) as concern_none,
+    other_pk_concerns as concern_other,
+    adtl_safety_concerns as safety_addl,
+    pk_safety_concerns as safety_other,
     access_limit,
     unhappy,
     lost_sleep,
