@@ -11,7 +11,7 @@ from shapely import wkb, wkt
 
 class Site:
     def __init__(self, site_url, username, password):
-        self.site_url=site_url
+        self.site_url = site_url
         self.ctx = ClientContext(site_url).with_credentials(
             UserCredential(username, password)
         )
@@ -61,6 +61,53 @@ class Site:
         df["geometry"] = df.wkb_geometry.apply(lambda x: wkb.loads(x, hex=True))
         del df["wkb_geometry"]
         return gpd.GeoDataFrame(df, geometry=df.geometry)
+
+    @property
+    def list_files_recursive(ServerRelativeUrl, file_list=[]):
+        Root = self.ctx.web.get_folder_by_server_relative_url(ServerRelativeUrl)
+        folders = Root.folders
+        self.ctx.load(folders)
+        self.ctx.execute_query()
+
+        if len(folders) == 0:
+            files = Root.files
+            self.ctx.load(files)
+            self.ctx.execute_query()
+            for _file in files:
+                file_list.append(_file.properties["ServerRelativeUrl"])
+
+        else:
+            for folder in folders:
+                subfolder = folder.properties["ServerRelativeUrl"]
+                list_files_recursive(subfolder, file_list=file_list)
+
+        return file_list
+
+    def remove_folder_recursive(ServerRelativeUrl):
+        Root = self.ctx.web.get_folder_by_server_relative_url(ServerRelativeUrl)
+        folders = Root.folders
+        self.ctx.load(folders)
+        self.ctx.execute_query()
+
+        if len(folders) == 0:
+            files = Root.files
+            self.ctx.load(files)
+            self.ctx.execute_query()
+
+            for _file in files:
+                _file.delete_object()
+                rdp.ctx.execute_query()
+                _file_ServerRelativeUrl = _file.properties["ServerRelativeUrl"]
+                print(f"removed: {_file_ServerRelativeUrl}")
+
+            Root.delete_object()
+            rdp.ctx.execute_query()
+            print(f"removed: {ServerRelativeUrl}")
+
+        else:
+            for folder in folders:
+                subfolder_ServerRelativeUrl = folder.properties["ServerRelativeUrl"]
+                remove_folder_recursive(subfolder_ServerRelativeUrl)
 
 
 class Partner:
