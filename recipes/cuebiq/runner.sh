@@ -23,13 +23,12 @@ case $TYPE in
         FILENAME=$(basename $KEY)
         RAWDATE=$(echo "$FILENAME" | sed -e "s/^ri-//" -e "s/.csv000.gz$//")
         VERSION=$(date -d "$RAWDATE" +%Y-%m-%d)
-        # LOADED=$(psql -q -At $RDP_DATA -c "
-        #     SELECT '$VERSION' IN (
-        #         SELECT table_name 
-        #         FROM information_schema.tables 
-        #         WHERE table_schema = '$NAME'
-        #     )")
-        LOADED=f
+        LOADED=$(psql -q -At $RDP_DATA -c "
+            SELECT '$VERSION' IN (
+                SELECT table_name 
+                FROM information_schema.tables 
+                WHERE table_schema = '$NAME'
+            )")
         case $LOADED in
             f)
             (
