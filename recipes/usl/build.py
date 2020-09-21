@@ -7,7 +7,7 @@ df = pd.read_csv('input/urban_parks_perception.csv', skiprows=[1])
 # Check columns
 cols = [
     "StartDate", "Q41", "Q42", "Q43", 
-    "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7", "Q9", "Q9_A",
+    "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7", "Q8", "Q9", "Q9_A",
     "Q10_A", "Q10_B", "Q10_C", "Q10_D", "Q10_E",  "Q10_F",
     "Q10_G", "Q10_H", "Q10_I", "Q10_J", "Q10_K", "Q10_L", "Q11",
     "Q11_A", "Q12", "Q13", "Q14", "Q15", "Q16", "Q17",
