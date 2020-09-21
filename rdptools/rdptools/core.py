@@ -96,12 +96,12 @@ class Site:
 
             for _file in files:
                 _file.delete_object()
-                rdp.ctx.execute_query()
+                self.ctx.execute_query()
                 _file_ServerRelativeUrl = _file.properties["ServerRelativeUrl"]
                 print(f"removed: {_file_ServerRelativeUrl}")
 
             Root.delete_object()
-            rdp.ctx.execute_query()
+            self.ctx.execute_query()
             print(f"removed: {ServerRelativeUrl}")
 
         else:
