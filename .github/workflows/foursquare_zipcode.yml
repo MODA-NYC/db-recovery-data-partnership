@@ -1,7 +1,7 @@
-name: Foursquare Datacube
+name: Foursquare Zipcode
 on:
   repository_dispatch:
-    types: [foursquare_datacube]
+    types: [foursquare_zipcode]
   schedule:
     - cron: 0 0 * * *
 
@@ -28,7 +28,7 @@ jobs:
       - name: Run recipes
         shell: bash
         run: |
-          ./rdp run recipe foursquare datacube
+          ./rdp run recipe foursquare zipcode
       
       - name: Clean up
         shell: bash

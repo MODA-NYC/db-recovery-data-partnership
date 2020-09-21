@@ -2,10 +2,10 @@
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
 
-function foursquare_datacube {
+function foursquare_zipcode {
     (
         cd $BASEDIR
-        NAME=foursquare_datacube
+        NAME=foursquare_zipcode
         
         mc cp $GSHEET_CRED creds.json
         mkdir -p input && mkdir -p output
@@ -32,7 +32,7 @@ function foursquare_datacube {
                         psql $RDP_DATA \
                             -v NAME=$NAME \
                             -v VERSION=$VERSION \
-                            -f ../create_datacube.sql
+                            -f ../create_zipcode.sql
                         rm $file
                         rm $VERSION.csv.gz
                     ) &
@@ -47,19 +47,11 @@ function foursquare_datacube {
                     psql $RDP_DATA -At -c "
                     SELECT MAX(table_name::date) 
                     FROM information_schema.tables 
-                    where table_schema = 'foursquare_datacube'
+                    where table_schema = 'foursquare_zipcode'
                     AND table_name !~* 'latest|main|zipcode'"
                 )
 
                 # Export to CSV
-                psql $RDP_DATA -c "\COPY (
-                    SELECT * FROM $NAME.latest
-                ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
-
-                psql $RDP_DATA -c "\COPY (
-                    SELECT * FROM $NAME.grouped_latest
-                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_datacube_grouped.csv
-
                 psql $RDP_DATA -c "\COPY (
                     SELECT * FROM $NAME.daily_zipcode
                 ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_daily_zipcode.csv
@@ -69,12 +61,12 @@ function foursquare_datacube {
                 ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_weekly_zipcode.csv
 
                 psql $RDP_DATA -c "\COPY (
-                    SELECT * FROM $NAME.grouped_daily_zipcode
-                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_grouped_daily_zipcode.csv
+                    SELECT * FROM $NAME.weekly_zipcode_timeofday
+                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_weekly_zipcode_timeofday.csv
 
                 psql $RDP_DATA -c "\COPY (
-                    SELECT * FROM $NAME.grouped_weekly_zipcode
-                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_grouped_weekly_zipcode.csv
+                    SELECT * FROM $NAME.latest
+                ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_daily_zipcode_raw.csv
 
                 # Write VERSION info
                 echo "$VERSION" > version.txt

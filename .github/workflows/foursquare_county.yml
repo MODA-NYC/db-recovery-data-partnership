@@ -1,7 +1,7 @@
-name: Foursquare
+name: Foursquare County
 on:
   repository_dispatch:
-    types: [foursquare]
+    types: [foursquare_county]
   schedule:
     - cron: 0 0 * * *
 

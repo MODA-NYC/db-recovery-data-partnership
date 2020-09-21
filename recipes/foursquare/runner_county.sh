@@ -1,10 +1,11 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
-NAME=foursquare
 
 function foursquare_county {
-    (
+    (   
+        NAME=foursquare_county
+
         cd $BASEDIR
 
         if [ -z "$VERSION" ]
@@ -45,12 +46,12 @@ function foursquare_county {
 
             # Export to CSV
             psql $RDP_DATA -c "\COPY (
-                SELECT * FROM $NAME.\"$VERSION\"
-            ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+                SELECT * FROM $NAME.daily_county
+            ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_daily_county.csv
 
             psql $RDP_DATA -c "\COPY (
-                SELECT * FROM foursquare_grouped.\"$VERSION\"
-            ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_grouped.csv
+                SELECT * FROM foursquare.weekly_county
+            ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_weekly_county.csv
 
             # Write VERSION info
             echo "$VERSION" > version.txt
