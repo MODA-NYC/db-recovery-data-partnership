@@ -31,6 +31,14 @@ SELECT
     to_char(a.week_start, 'IYYY-IW') as year_week,
     a.ntaname,
     a.ntacode,
+    LEFT(a.ntacode, 2) as borough,
+    (CASE
+        WHEN LEFT(a.ntacode, 2) = 'QN' THEN 4
+        WHEN LEFT(a.ntacode, 2) = 'SI' THEN 5
+        WHEN LEFT(a.ntacode, 2) = 'MN' THEN 1
+        WHEN LEFT(a.ntacode, 2) = 'BX' THEN 2
+        WHEN LEFT(a.ntacode, 2) = 'BK' THEN 3
+    END) as borocode,
     a.s_newlist::int,
     a.s_pendlist::int,
     a.s_list::int,

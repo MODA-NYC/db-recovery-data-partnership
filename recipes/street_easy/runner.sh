@@ -45,16 +45,16 @@ BASEDIR=$(dirname $0)
         # Export to CSV
         psql $RDP_DATA -c "\COPY (
             SELECT 
-                year_week,ntaname,ntacode,s_newlist,
-                s_pendlist,s_list,s_pct_inc,s_pct_dec,
+                year_week,ntaname,ntacode,borough,borocode,
+                s_newlist,s_pendlist,s_list,s_pct_inc,s_pct_dec,
                 s_wksonmkt,r_newlist,r_pendlist,r_list,
                 r_pct_inc,r_pct_dec,r_pct_furn,r_pct_shor,
                 r_pct_con,r_wksonmkt
             FROM $NAME.main
-        ) TO stdout DELIMITER ',' CSV HEADER;" > street_easy_nta.csv
+        ) TO stdout DELIMITER ',' CSV HEADER;" > streeteasy_weekly_nta.csv
 
         # Export to ShapeFile
-        SHP_export $RDP_DATA $NAME.latest MULTIPOLYGON street_easy_nta
+        SHP_export $RDP_DATA $NAME.latest MULTIPOLYGON streeteasy_weekly_nta.shp
 
         # Write VERSION info
         echo "$VERSION" > version.txt
@@ -74,7 +74,7 @@ BASEDIR=$(dirname $0)
             # Export to CSV
             psql $RDP_DATA -c "\COPY (
                 SELECT * FROM $NAME.\"$VERSION\"
-            ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+            ) TO stdout DELIMITER ',' CSV HEADER;" > streeteasy_monthly_rental_sales_index.csv
 
         )
     ) 

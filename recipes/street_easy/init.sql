@@ -17,6 +17,8 @@ BEGIN
             year_week text,
             ntaname text,
             ntacode character varying(4),
+            borough character varying(2),
+            borocode integer,
             s_newlist integer,
             s_pendlist integer,
             s_list integer,
