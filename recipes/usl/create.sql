@@ -68,7 +68,7 @@ CREATE TEMP TABLE tmp (
     other_gender text,
     hispanic text,
     race text,
-    other_race text,
+    race_other text,
     highest_ed  text,
     hhld_inc text,
     notes text
@@ -241,12 +241,14 @@ SELECT
     diff_inc,
     age,
     COALESCE(gender, other_gender) as gender,
+    -- Race
     hispanic,
-    (CASE
-        WHEN race ~ 'Other:' OR race IS NULL
-        THEN other_race
-        ELSE race
-    END) as race,
+    (CASE WHEN race ~* 'Asian' THEN 'Yes') AS race_asian,
+    (CASE WHEN race ~* 'Black or African American' THEN 'Yes') AS race_black,
+    (CASE WHEN race ~* 'American Indian or Alaska Native' THEN 'Yes') AS race_native,
+    (CASE WHEN race ~* 'Native Hawaiian or Other Pacific Islander' THEN 'Yes') AS race_pacific,
+    (CASE WHEN race ~* 'White' THEN 'Yes') AS race_white,
+    race_other,
     highest_ed,
     hhld_inc,
     notes
