@@ -56,7 +56,7 @@ BEGIN
                 categoryname as category,
                 hour,
                 demo,
-                visits,
+                ROUND(visits, 0) AS visits,
                 avgduration,
                 medianduration,
                 pctto10mins,
@@ -90,9 +90,9 @@ BEGIN
                     END)
                 from city_zip_boro a where zip=a.zipcode) as borocode,
                 categoryname as category,
-                avg(CASE WHEN demo='All' THEN visits END) AS visits_avg_all,
-                avg(CASE WHEN demo='Below65' THEN visits END)AS visits_avg_u65,
-                avg(CASE WHEN demo='Above65' THEN visits END) AS visits_avg_o65
+                ROUND(avg(CASE WHEN demo='All' THEN visits END),0) AS visits_avg_all,
+                ROUND(avg(CASE WHEN demo='Below65' THEN visits END),0) AS visits_avg_u65,
+                ROUND(avg(CASE WHEN demo='Above65' THEN visits END),0) AS visits_avg_o65
             FROM foursquare_zipcode.main
             WHERE hour = 'All'
             GROUP BY date, zip, category
@@ -117,9 +117,9 @@ BEGIN
                     END)
                 from city_zip_boro a where zip=a.zipcode) as borocode,
                 categoryname as category,
-                avg(CASE WHEN demo='All' THEN visits END) AS visits_avg_all,
-                avg(CASE WHEN demo='Below65' THEN visits END)AS visits_avg_u65,
-                avg(CASE WHEN demo='Above65' THEN visits END) AS visits_avg_o65
+                ROUND(avg(CASE WHEN demo='All' THEN visits END),0) AS visits_avg_all,
+                ROUND(avg(CASE WHEN demo='Below65' THEN visits END),0) AS visits_avg_u65,
+                ROUND(avg(CASE WHEN demo='Above65' THEN visits END),0) AS visits_avg_o65
             FROM foursquare_zipcode.main
             WHERE hour = 'All'
             GROUP BY to_char(date::date, 'IYYY-IW'), zip, category
@@ -137,16 +137,16 @@ BEGIN
                 borough, 
                 borocode,
                 category,
-                SUM(CASE WHEN demo='Below65' AND hour='All' THEN visits END)AS visits_u65,
-                SUM(CASE WHEN demo='Above65' AND hour='All' THEN visits END) AS visits_o65,
-                SUM(CASE WHEN demo='All' AND hour='Morning' THEN visits END) AS visits_morning,
-                SUM(CASE WHEN demo='All' AND hour='Late Morning' THEN visits END) AS visits_latemorning,
-                SUM(CASE WHEN demo='All' AND hour='Early Afternoon' THEN visits END) AS visits_earlyafternoon,
-                SUM(CASE WHEN demo='All' AND hour='Late Afternoon' THEN visits END) AS visits_lateafternoon,
-                SUM(CASE WHEN demo='All' AND hour='Evening' THEN visits END) AS visits_evening,
-                SUM(CASE WHEN demo='All' AND hour='Late Evening' THEN visits END) AS visits_lateevening,
-                SUM(CASE WHEN demo='All' AND hour='Night' THEN visits END) AS visits_night,
-                SUM(CASE WHEN demo='All' AND hour='Late Night' THEN visits END) AS visits_latenight
+                ROUND(SUM(CASE WHEN demo='Below65' AND hour='All' THEN visits END),0) AS visits_u65,
+                ROUND(SUM(CASE WHEN demo='Above65' AND hour='All' THEN visits END),0) AS visits_o65,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Morning' THEN visits END),0) AS visits_morning,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Late Morning' THEN visits END),0) AS visits_latemorning,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Early Afternoon' THEN visits END),0) AS visits_earlyafternoon,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Late Afternoon' THEN visits END),0) AS visits_lateafternoon,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Evening' THEN visits END),0) AS visits_evening,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Late Evening' THEN visits END),0) AS visits_lateevening,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Night' THEN visits END),0) AS visits_night,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Late Night' THEN visits END),0) AS visits_latenight
             FROM (
                 SELECT
                     date,
