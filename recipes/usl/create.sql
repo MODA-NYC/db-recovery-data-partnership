@@ -48,10 +48,10 @@ CREATE TEMP TABLE tmp (
     lost_sleep text,
     lost_focus text,
     enjoyment text,
-    os_mntlhlth_pre text,
-    os_mntlhlth_post text,
-    pk_mntlhlth_pre text,
-    pk_mntlhlth_post text,
+    os_mental_pre text,
+    os_mental_post text,
+    os_physical_pre text,
+    os_physical_post text,
     park_desc text,
     place_living text,
     living_other text,
@@ -118,13 +118,12 @@ SELECT
     (CASE WHEN access ~* 'Beach' THEN 'Yes' END) as access_beach,
     (CASE WHEN access ~* 'Community garden' THEN 'Yes' END) as access_garden,
     (CASE WHEN access ~* 'Bike path' THEN 'Yes' END) as access_bikepath,
-    (CASE WHEN access ~* 'Private yard or garden (belonging to your household)' THEN 'Yes' END) as access_yard,
+    (CASE WHEN access ~* 'Private yard' THEN 'Yes' END) as access_yard,
     (CASE WHEN access ~* 'NYCHA outdoor space' THEN 'Yes' END) as access_nycha,
-    (CASE WHEN access ~* 'Private patio, porch, terrace, or balcony (belonging to your household)' THEN 'Yes' END) as access_balcony,
-    (CASE WHEN access ~* 'Shared yard, courtyard, garden or rooftop' THEN 'Yes' END) as access_shared,
-    (CASE WHEN access ~* 'Street open for social distancing' THEN 'Yes' END) as access_street,
-    (CASE WHEN access ~* 'Natural area' THEN 'Yes' END) as natural,
-    (CASE WHEN access ~* 'Beach' THEN 'Yes' END) as access_other,
+    (CASE WHEN access ~* 'Private patio' THEN 'Yes' END) as access_balcony,
+    (CASE WHEN access ~* 'Shared yard' THEN 'Yes' END) as access_shared,
+    (CASE WHEN access ~* 'Street opened' THEN 'Yes' END) as access_street,
+    (CASE WHEN access ~* 'Natural area' THEN 'Yes' END) as access_natural,
     access_other,
     -- Outdoor activities
     (CASE WHEN activities ~* 'Visiting parks or open space' THEN 'Yes' END) as activities_park,
@@ -136,7 +135,7 @@ SELECT
     (CASE WHEN activities ~* 'Gardening' THEN 'Yes' END) as activities_garden,
     (CASE WHEN activities ~* 'Birdwatching' THEN 'Yes' END) as activities_birds,
     (CASE WHEN activities ~* 'Caring for indoor plants' THEN 'Yes' END) as activities_plants,
-    (CASE WHEN activities ~* 'Observing natrue through the window' THEN 'Yes' END) as activities_window,
+    (CASE WHEN activities ~* 'Observing nature through a window' THEN 'Yes' END) as activities_window,
     (CASE WHEN activities ~* 'Fishing' THEN 'Yes' END) as activities_fish,
     activities_other,
     -- Difference in activity during COVID
@@ -153,7 +152,7 @@ SELECT
     REPLACE(diff_fish,' during Covid-19 crisis','') as diff_fish,
     REPLACE(diff_other,' during Covid-19 crisis','') as diff_other,
     -- Means of getting to a park
-    REPLACE(to_park,'Other: (write in space below)','Other') as to_park
+    REPLACE(to_park,'Other: (write in space below)','Other') as to_park,
     to_park_other,
     time_to_pk,
     wkly_visits,
@@ -168,7 +167,7 @@ SELECT
     (CASE WHEN social_in_pk ~* 'Strangers' THEN 'Yes' END) as social_stranger,
     (CASE WHEN social_in_pk ~* 'No one' THEN 'Yes' END) as social_noone,
     -- Park priorities
-    (CASE WHEN pk_priority ~* 'Landscaping maintained gardens, flowers, or lawn' THEN 'Yes' END) as priority_landscaping,
+    (CASE WHEN pk_priority ~* 'Landscaping' THEN 'Yes' END) as priority_landscaping,
     (CASE WHEN pk_priority ~* 'Socializing, spending time with others' THEN 'Yes' END) as priority_socializing,
     (CASE WHEN pk_priority ~* 'Places to sit' THEN 'Yes' END) as priority_seating,
     (CASE WHEN pk_priority ~* 'Places to walk' THEN 'Yes' END) as priority_trails,
@@ -182,7 +181,7 @@ SELECT
     (CASE WHEN pk_priority ~* 'Places to BBQ, cook food' THEN 'Yes' END) as priority_bbq,
     other_pk_priority as priority_other,
     -- Park benefits
-    (CASE WHEN pk_benefits ~* 'Landscaping maintained gardens, flowers, or lawn' THEN 'Yes' END) as benefit_landscaping,
+    (CASE WHEN pk_benefits ~* 'Landscaping' THEN 'Yes' END) as benefit_landscaping,
     (CASE WHEN pk_benefits ~* 'Socializing, spending time with others' THEN 'Yes' END) as benefit_socializing,
     (CASE WHEN pk_benefits ~* 'Places to sit' THEN 'Yes' END) as benefit_seating,
     (CASE WHEN pk_benefits ~* 'Places to walk' THEN 'Yes' END) as benefit_trails,
@@ -203,7 +202,7 @@ SELECT
     (CASE WHEN pk_concerns ~* 'It does not feel safe' THEN 'Yes' END) as concern_safety,
     (CASE WHEN pk_concerns ~* 'Use of chemicals to control weeds' THEN 'Yes' END) as concern_chemical,
     (CASE WHEN pk_concerns ~* 'I do not have easy access' THEN 'Yes' END) as concern_access,
-    (CASE WHEN pk_concerns ~* 'Not being maintained clean' THEN 'Yes' END) as concern_notclean,
+    (CASE WHEN pk_concerns ~* 'Not being maintained' THEN 'Yes' END) as concern_notclean,
     (CASE WHEN pk_concerns ~* 'Not open during the times I would like to go' THEN 'Yes' END) as concern_notopen,
     (CASE WHEN pk_concerns ~* 'Does not meet my needs' THEN 'Yes' END) as concern_needs,
     (CASE WHEN pk_concerns ~* 'Not child-friendly' THEN 'Yes' END) as concern_child,
@@ -237,11 +236,11 @@ SELECT
     COALESCE(gender, other_gender) as gender,
     -- Race
     hispanic,
-    (CASE WHEN race ~* 'Asian' THEN 'Yes') AS race_asian,
-    (CASE WHEN race ~* 'Black or African American' THEN 'Yes') AS race_black,
-    (CASE WHEN race ~* 'American Indian or Alaska Native' THEN 'Yes') AS race_native,
-    (CASE WHEN race ~* 'Native Hawaiian or Other Pacific Islander' THEN 'Yes') AS race_pacific,
-    (CASE WHEN race ~* 'White' THEN 'Yes') AS race_white,
+    (CASE WHEN race ~* 'Asian' THEN 'Yes' END) AS race_asian,
+    (CASE WHEN race ~* 'Black or African American' THEN 'Yes' END) AS race_black,
+    (CASE WHEN race ~* 'American Indian or Alaska Native' THEN 'Yes' END) AS race_native,
+    (CASE WHEN race ~* 'Native Hawaiian or Other Pacific Islander' THEN 'Yes' END) AS race_pacific,
+    (CASE WHEN race ~* 'White' THEN 'Yes' END) AS race_white,
     race_other,
     highest_ed,
     hhld_inc,
@@ -293,10 +292,10 @@ WHERE nyc_res <> 'No' AND
     lost_sleep IS NOT NULL OR
     lost_focus IS NOT NULL OR
     enjoyment IS NOT NULL OR
-    os_mntlhlth_pre IS NOT NULL OR
-    os_mntlhlth_post IS NOT NULL OR
-    pk_mntlhlth_pre IS NOT NULL OR
-    pk_mntlhlth_post IS NOT NULL OR
+    os_mental_pre IS NOT NULL OR
+    os_mental_post IS NOT NULL OR
+    os_physical_pre IS NOT NULL OR
+    os_physical_post IS NOT NULL OR
     park_desc IS NOT NULL OR
     place_living IS NOT NULL OR
     living_other IS NOT NULL OR
