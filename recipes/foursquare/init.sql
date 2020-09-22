@@ -136,16 +136,16 @@ BEGIN
                 borough, 
                 borocode,
                 category,
-                ROUND(avg(CASE WHEN demo='Below65' AND hour='All' THEN visits END),2)AS visits_avg_u65,
-                ROUND(avg(CASE WHEN demo='Above65' AND hour='All' THEN visits END),2) AS visits_avg_o65,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Morning' THEN visits END),2) AS visits_avg_morning,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Late Morning' THEN visits END),2) AS visits_avg_latemorning,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Early Afternoon' THEN visits END),2) AS visits_avg_earlyafternoon,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Late Afternoon' THEN visits END),2) AS visits_avg_lateafternoon,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Evening' THEN visits END),2) AS visits_avg_evening,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Late Evening' THEN visits END),2) AS visits_avg_lateevening,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Night' THEN visits END),2) AS visits_avg_night,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Late Night' THEN visits END),2) AS visits_avg_latenight
+                SUM(CASE WHEN demo='Below65' AND hour='All' THEN visits END)AS visits_u65,
+                SUM(CASE WHEN demo='Above65' AND hour='All' THEN visits END) AS visits_o65,
+                SUM(CASE WHEN demo='All' AND hour='Morning' THEN visits END) AS visits_morning,
+                SUM(CASE WHEN demo='All' AND hour='Late Morning' THEN visits END) AS visits_latemorning,
+                SUM(CASE WHEN demo='All' AND hour='Early Afternoon' THEN visits END) AS visits_earlyafternoon,
+                SUM(CASE WHEN demo='All' AND hour='Late Afternoon' THEN visits END) AS visits_lateafternoon,
+                SUM(CASE WHEN demo='All' AND hour='Evening' THEN visits END) AS visits_evening,
+                SUM(CASE WHEN demo='All' AND hour='Late Evening' THEN visits END) AS visits_lateevening,
+                SUM(CASE WHEN demo='All' AND hour='Night' THEN visits END) AS visits_night,
+                SUM(CASE WHEN demo='All' AND hour='Late Night' THEN visits END) AS visits_latenight
             FROM (
                 SELECT 
                     to_char(date::date, 'IYYY-IW') as year_week,
