@@ -32,12 +32,12 @@ VERSION=$DATE
             SELECT * FROM upsolve.sum_by_zip
         ) TO stdout DELIMITER ',' CSV HEADER;" > upsolve_sum_by_zip.csv
 
+        # Export to Shapefile
+        SHP_export $RDP_DATA upsolve.sum_by_zip MULTIPOLYGON upsolve_sum_by_zip
+
         # Write VERSION info
         echo "$VERSION" > version.txt
     )
-
-    # Export to Shapefile
-    SHP_export $RDP_DATA upsolve.sum_by_zip MULTIPOLYGON upsolve_sum_by_zip
 
     # Upload $NAME latest
     rm -rf output
