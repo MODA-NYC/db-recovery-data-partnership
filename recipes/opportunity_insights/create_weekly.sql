@@ -1,8 +1,8 @@
 CREATE TEMP TABLE tmp (
-    fipscounty text,
     year text,
     month text,
     day_endofweek text,
+    fipscounty text,
     engagement numeric,
     badges numeric,
     break_engagement numeric,
@@ -49,13 +49,14 @@ SELECT
     TO_CHAR(
         CONCAT_WS('-',year,LPAD(month,2,'0'),LPAD(day_endofweek,2,'0'))::date, 
         'IYYY-IW') as year_week,
-    fipscounty,
-    initial_claims as ui_claims,
-    initial_claims_rate as ui_claims_rate,
-    engagement as zearn_engagement,
-    badges as zearn_badges
+    SUM(initial_claims) as ui_claims,
+    SUM(initial_claims_rate) as ui_claims_rate,
+    SUM(engagement) as zearn_engagement,
+    SUM(badges) as zearn_badges
 INTO :NAME.:"VERSION"
-FROM tmp;
+FROM tmp
+GROUP BY fipscounty, county, year_week
+ORDER BY fips_county, year_week;
 
 DROP VIEW IF EXISTS :NAME.latest;
 CREATE VIEW :NAME.latest AS (
