@@ -39,6 +39,6 @@ VERSION=$DATE
         echo "$VERSION" > version.txt
     )
 
-    # Upload $NAME latest
+    Upload $NAME latest
     rm -rf output
 )
