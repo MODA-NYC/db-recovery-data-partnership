@@ -25,7 +25,7 @@ VERSION=$DATE
         ) TO stdout DELIMITER ',' CSV HEADER;" > upsolve_responses.csv
 
         psql $RDP_DATA -c "\COPY (
-            SELECT * FROM upsolve.count_by_zip
+            SELECT * FROM upsolve.weekly_count_by_zip
         ) TO stdout DELIMITER ',' CSV HEADER;" > upsolve_weekly_count_by_zip.csv
 
         psql $RDP_DATA -c "\COPY (
