@@ -24,7 +24,7 @@ function cloud_run {
 case $1 in
     cuebiq)
         case $2 in
-            cityhall | weekly | daily)
+            mobility | weekly | daily | travelers | relocation)
                 curl --location --request POST 'https://api.github.com/repos/MODA-NYC/db-recovery-data-partnership/dispatches?Accept=application/vnd.github.v3+json&Content-Type=application/json' \
                 --header "Authorization: Bearer $GITHUB_TOKEN" \
                 --header 'Content-Type: text/plain' \
@@ -35,7 +35,20 @@ case $1 in
             ;;
             esac
     ;;
-    street_easy | kinsa | foursqaure | betanyc | upsolve | linkedin)
+    foursqaure)
+        case $2 in
+            county | zipcode)
+                curl --location --request POST 'https://api.github.com/repos/MODA-NYC/db-recovery-data-partnership/dispatches?Accept=application/vnd.github.v3+json&Content-Type=application/json' \
+                --header "Authorization: Bearer $GITHUB_TOKEN" \
+                --header 'Content-Type: text/plain' \
+                --data-raw "{\"event_type\" : \"foursquare_$2\"}"
+            ;;
+            *) 
+                echo "$2 is not recognized! please enter weekly, cityhall or daily"
+            ;;
+            esac
+    ;;
+    street_easy | kinsa | betanyc | upsolve | linkedin)
         curl --location --request POST 'https://api.github.com/repos/MODA-NYC/db-recovery-data-partnership/dispatches?Accept=application/vnd.github.v3+json&Content-Type=application/json' \
             --header "Authorization: Bearer $GITHUB_TOKEN" \
             --header 'Content-Type: text/plain' \
