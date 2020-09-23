@@ -50,7 +50,7 @@ function foursquare_county {
             ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_daily_county.csv
 
             psql $RDP_DATA -c "\COPY (
-                SELECT * FROM foursquare.weekly_county
+                SELECT * FROM $NAME.weekly_county
             ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_weekly_county.csv
 
             # Write VERSION info
