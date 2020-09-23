@@ -17,17 +17,6 @@ df2 = pd.read_csv(
     na_values='.'
 )
 
-'''
-# Filter to NYC and set FIPS code as index
-dfs = [df1, df2]
-counties = region_dict.keys()
-dfs = [df[df.countyfips.isin(counties)].set_index(["countyfips","year","month","day_endofweek"], drop=True) for df in dfs]
-
-# Concatenate tables and reset index
-merged = pd.concat(dfs, axis=1, join='outer', copy=False)
-merged.reset_index(drop=False, inplace=True)
-'''
-
 counties = region_dict.keys()
 df1 = df1[df1.countyfips.isin(counties)]
 df2 = df2[df2.countyfips.isin(counties)]
