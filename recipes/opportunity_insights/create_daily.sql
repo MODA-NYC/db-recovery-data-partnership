@@ -11,8 +11,8 @@ CREATE TEMP TABLE tmp (
     gps_workplaces numeric,
     gps_resitential numeric,
     gps_away_from_home numeric,
-    merchants_all numeric,
-    revenue_all numeric,
+    --merchants_all numeric,
+    --revenue_all numeric,
     county_name text
 );
 
@@ -60,9 +60,9 @@ SELECT
     gps_transit_stations,
     gps_workplaces,
     gps_resitential,
-    gps_away_from_home,
-    merchants_all,
-    revenue_all
+    gps_away_from_home
+    --merchants_all,
+    --revenue_all
 INTO :NAME.:"VERSION"
 FROM tmp;
 

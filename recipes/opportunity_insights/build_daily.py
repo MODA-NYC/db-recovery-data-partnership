@@ -15,6 +15,7 @@ df2 = pd.read_csv(
     dtype=str,
     na_values='.'
 )
+'''
 df3 = pd.read_csv(
     "https://raw.githubusercontent.com/OpportunityInsights/EconomicTracker/main/data/Womply%20Merchants%20-%20County%20-%20Daily.csv",
     dtype=str,
@@ -25,10 +26,11 @@ df4 = pd.read_csv(
     dtype=str,
     na_values='.'
 )
-
+'''
 
 # Filter to NYC region and set FIPS code as index
-dfs = [df1, df2, df3, df4]
+#dfs = [df1, df2, df3, df4]
+dfs = [df1, df2]
 counties = region_dict.keys()
 dfs = [df[df.countyfips.isin(counties)].set_index(["countyfips","year","month","day"], drop=True) for df in dfs]
 
