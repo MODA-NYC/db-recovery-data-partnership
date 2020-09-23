@@ -15,6 +15,7 @@ CREATE TEMP TABLE automotive (
 );
 
 \COPY automotive FROM PROGRAM 'gzip -dc input/daily-cvi-automotive.csv000.gz' DELIMITER ',' CSV HEADER;
+DELETE FROM automotive WHERE market_area_code != '501';
 
 CREATE TEMP TABLE dining (
     date date,
@@ -31,6 +32,7 @@ CREATE TEMP TABLE dining (
 );
 
 \COPY dining FROM PROGRAM 'gzip -dc input/daily-cvi-dining.csv000.gz' DELIMITER ',' CSV HEADER;
+DELETE FROM dining WHERE market_area_code != '501';
 
 
 CREATE TEMP TABLE healthcare (
@@ -48,6 +50,7 @@ CREATE TEMP TABLE healthcare (
 );
 
 \COPY healthcare FROM PROGRAM 'gzip -dc input/daily-cvi-healthcare.csv000.gz' DELIMITER ',' CSV HEADER;
+DELETE FROM healthcare WHERE market_area_code != '501';
 
 CREATE TEMP TABLE lifestyle (
     date date,
@@ -64,6 +67,7 @@ CREATE TEMP TABLE lifestyle (
 );
 
 \COPY lifestyle FROM PROGRAM 'gzip -dc input/daily-cvi-lifestyle.csv000.gz' DELIMITER ',' CSV HEADER;
+DELETE FROM lifestyle WHERE market_area_code != '501';
 
 CREATE TEMP TABLE malls (
     date date,
@@ -80,6 +84,7 @@ CREATE TEMP TABLE malls (
 );
 
 \COPY malls FROM PROGRAM 'gzip -dc input/daily-cvi-malls.csv000.gz' DELIMITER ',' CSV HEADER;
+DELETE FROM malls WHERE market_area_code != '501';
 
 CREATE TEMP TABLE retail (
     date date,
@@ -96,6 +101,7 @@ CREATE TEMP TABLE retail (
 );
 
 \COPY retail FROM PROGRAM 'gzip -dc input/daily-cvi-retail.csv000.gz' DELIMITER ',' CSV HEADER;
+DELETE FROM retail WHERE market_area_code != '501';
 
 CREATE TEMP TABLE telco (
     date date,
@@ -112,6 +118,7 @@ CREATE TEMP TABLE telco (
 );
 
 \COPY telco FROM PROGRAM 'gzip -dc input/daily-cvi-telco.csv000.gz' DELIMITER ',' CSV HEADER;
+DELETE FROM telco WHERE market_area_code != '501';
 
 CREATE TEMP TABLE transportation (
     date date,
@@ -119,13 +126,14 @@ CREATE TEMP TABLE transportation (
     market_area text,
     sector text,
     vertical text,
-    brand text,
-    naics6_code text,
     roll_avg_7days_cvi numeric,
-    ly_roll_avg_7days_cvi numeric
+    ly_roll_avg_7days_cvi numeric,
+    roll_avg_7days_cvi_per_store numeric,
+    ly_roll_avg_7days_cvi_per_store numeric
 );
 
 \COPY transportation FROM PROGRAM 'gzip -dc input/daily-cvi-transportation.csv000.gz' DELIMITER ',' CSV HEADER;
+DELETE FROM transportation WHERE market_area_code != '501';
 
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
@@ -137,14 +145,22 @@ WITH all_sectors AS (
     (SELECT * FROM malls WHERE market_area_code = '501') UNION
     (SELECT * FROM retail WHERE market_area_code = '501') UNION
     (SELECT * FROM telco WHERE market_area_code = '501') UNION
-    (SELECT *, 
-        NULL::numeric as roll_avg_7days_cvi_per_store,
-        NULL::numeric as ly_roll_avg_7days_cvi_per_store
+    (SELECT 
+        date, 
+        market_area_code, 
+        market_area,sector, 
+        vertical,
+        NULL::text as brand,
+        NULL::text as naics6_code,
+        roll_avg_7days_cvi,
+        ly_roll_avg_7days_cvi,
+        roll_avg_7days_cvi_per_store,
+        ly_roll_avg_7days_cvi_per_store
     FROM transportation WHERE market_area_code = '501')
 )
 SELECT 
-    reference_date,
-    to_char(reference_date::date, 'IYYY-IW') as year_week,
+    date,
+    to_char(date::date, 'IYYY-IW') as year_week,
     sector,
     vertical,
     brand,
