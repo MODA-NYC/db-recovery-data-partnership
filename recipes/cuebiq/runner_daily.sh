@@ -26,19 +26,19 @@ function cuebiq_daily {
         psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_daily.sql
         rm -rf input
         
-        # (
-        #     cd output
+        (
+            cd output
             
-        #     # Export to CSV
-        #     psql $RDP_DATA -c "\COPY (
-        #         SELECT * FROM $NAME.\"$VERSION\"
-        #     ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
-        #     zip -9 $NAME.zip $NAME.csv
-        #     rm $NAME.csv
+            # Export to CSV
+            psql $RDP_DATA -c "\COPY (
+                SELECT * FROM $NAME.\"$VERSION\"
+            ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+            zip -9 cuebiq_daily_visits.zip $NAME.csv
+            rm $NAME.csv
             
-        # )
-        # Upload cuebiq/$NAME $VERSION
-        # Upload cuebiq/$NAME latest
-        # rm -rf output
+        )
+        Upload cuebiq/$NAME $VERSION
+        Upload cuebiq/$NAME latest
+        rm -rf output
     )   
 }
