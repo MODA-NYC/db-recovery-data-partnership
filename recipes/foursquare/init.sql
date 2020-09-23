@@ -4,13 +4,13 @@ DECLARE
     _latest boolean;
     _view_weekly_zipcode boolean;
     _view_daily_zipcode boolean;
-    _view_weekly_zipcode_timeofday boolean;
+    _view_daily_zipcode_timeofday boolean;
 BEGIN
     SELECT 'foursquare_zipcode.main' IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _main;    
     SELECT 'foursquare_zipcode.latest' IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _latest;    
     SELECT 'foursquare_zipcode.daily_zipcode'  IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _view_daily_zipcode;
     SELECT 'foursquare_zipcode.weekly_zipcode' IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _view_weekly_zipcode;
-    SELECT 'foursquare_zipcode.weekly_zipcode_timeofday' IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _view_weekly_zipcode_timeofday;
+    SELECT 'foursquare_zipcode.daily_zipcode_timeofday' IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _view_daily_zipcode_timeofday;
 
     IF NOT _main THEN
         CREATE SCHEMA IF NOT EXISTS foursquare_zipcode;
@@ -56,7 +56,7 @@ BEGIN
                 categoryname as category,
                 hour,
                 demo,
-                visits,
+                ROUND(visits, 0) AS visits,
                 avgduration,
                 medianduration,
                 pctto10mins,
@@ -90,9 +90,9 @@ BEGIN
                     END)
                 from city_zip_boro a where zip=a.zipcode) as borocode,
                 categoryname as category,
-                avg(CASE WHEN demo='All' THEN visits END) AS visits_avg_all,
-                avg(CASE WHEN demo='Below65' THEN visits END)AS visits_avg_u65,
-                avg(CASE WHEN demo='Above65' THEN visits END) AS visits_avg_o65
+                ROUND(avg(CASE WHEN demo='All' THEN visits END),0) AS visits_avg_all,
+                ROUND(avg(CASE WHEN demo='Below65' THEN visits END),0) AS visits_avg_u65,
+                ROUND(avg(CASE WHEN demo='Above65' THEN visits END),0) AS visits_avg_o65
             FROM foursquare_zipcode.main
             WHERE hour = 'All'
             GROUP BY date, zip, category
@@ -117,9 +117,9 @@ BEGIN
                     END)
                 from city_zip_boro a where zip=a.zipcode) as borocode,
                 categoryname as category,
-                avg(CASE WHEN demo='All' THEN visits END) AS visits_avg_all,
-                avg(CASE WHEN demo='Below65' THEN visits END)AS visits_avg_u65,
-                avg(CASE WHEN demo='Above65' THEN visits END) AS visits_avg_o65
+                ROUND(avg(CASE WHEN demo='All' THEN visits END),0) AS visits_avg_all,
+                ROUND(avg(CASE WHEN demo='Below65' THEN visits END),0) AS visits_avg_u65,
+                ROUND(avg(CASE WHEN demo='Above65' THEN visits END),0) AS visits_avg_o65
             FROM foursquare_zipcode.main
             WHERE hour = 'All'
             GROUP BY to_char(date::date, 'IYYY-IW'), zip, category
@@ -128,26 +128,28 @@ BEGIN
     ELSE RAISE NOTICE 'foursquare_zipcode.weekly_zipcode is created';
     END IF;
 
-    IF NOT _view_weekly_zipcode_timeofday THEN
-        CREATE VIEW foursquare_zipcode.weekly_zipcode_timeofday AS (
+    IF NOT _view_daily_zipcode_timeofday THEN
+        CREATE VIEW foursquare_zipcode.daily_zipcode_timeofday AS (
             SELECT 
+                date,
                 year_week, 
                 zipcode,
                 borough, 
                 borocode,
                 category,
-                ROUND(avg(CASE WHEN demo='Below65' AND hour='All' THEN visits END),2)AS visits_avg_u65,
-                ROUND(avg(CASE WHEN demo='Above65' AND hour='All' THEN visits END),2) AS visits_avg_o65,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Morning' THEN visits END),2) AS visits_avg_morning,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Late Morning' THEN visits END),2) AS visits_avg_latemorning,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Early Afternoon' THEN visits END),2) AS visits_avg_earlyafternoon,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Late Afternoon' THEN visits END),2) AS visits_avg_lateafternoon,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Evening' THEN visits END),2) AS visits_avg_evening,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Late Evening' THEN visits END),2) AS visits_avg_lateevening,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Night' THEN visits END),2) AS visits_avg_night,
-                ROUND(avg(CASE WHEN demo='All' AND hour='Late Night' THEN visits END),2) AS visits_avg_latenight
+                ROUND(SUM(CASE WHEN demo='Below65' AND hour='All' THEN visits END),0) AS visits_u65,
+                ROUND(SUM(CASE WHEN demo='Above65' AND hour='All' THEN visits END),0) AS visits_o65,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Morning' THEN visits END),0) AS visits_morning,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Late Morning' THEN visits END),0) AS visits_latemorning,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Early Afternoon' THEN visits END),0) AS visits_earlyafternoon,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Late Afternoon' THEN visits END),0) AS visits_lateafternoon,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Evening' THEN visits END),0) AS visits_evening,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Late Evening' THEN visits END),0) AS visits_lateevening,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Night' THEN visits END),0) AS visits_night,
+                ROUND(SUM(CASE WHEN demo='All' AND hour='Late Night' THEN visits END),0) AS visits_latenight
             FROM (
-                SELECT 
+                SELECT
+                    date,
                     to_char(date::date, 'IYYY-IW') as year_week,
                     zip as zipcode, 
                     (SELECT boro from city_zip_boro a where zip=a.zipcode) as borough,
@@ -164,11 +166,11 @@ BEGIN
                     hour, demo,
                     avg(visits) as visits
                 FROM foursquare_zipcode.main
-                GROUP BY to_char(date::date, 'IYYY-IW'), hour, demo, zip, borough, borocode, category
+                GROUP BY date, to_char(date::date, 'IYYY-IW'), hour, demo, zip, borough, borocode, category
             ) a
-            GROUP BY year_week, zipcode, borough, borocode, category
+            GROUP BY date, year_week, zipcode, borough, borocode, category
         );
-        RAISE NOTICE 'Creating foursquare_zipcode.weekly_zipcode_timeofday';
-    ELSE RAISE NOTICE 'foursquare_zipcode.weekly_zipcode_timeofday is created';
+        RAISE NOTICE 'Creating foursquare_zipcode.daily_zipcode_timeofday';
+    ELSE RAISE NOTICE 'foursquare_zipcode.daily_zipcode_timeofday is created';
     END IF;
 END $$;

@@ -6,11 +6,11 @@ TYPE=$1 # zipcode/county
 
 case $TYPE in
     zipcode)
-        # updating foursquare datacube
+        # updating foursquare zipcode
         foursquare_zipcode
     ;;
     county)
-        # Default pulling county level foursquare data
+        # updating foursquare county
         foursquare_county
     ;;
 esac
