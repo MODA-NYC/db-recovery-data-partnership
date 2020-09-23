@@ -33,7 +33,7 @@ VERSION=$DATE
         ) TO stdout DELIMITER ',' CSV HEADER;" > upsolve_sum_by_zip.csv
 
         # Export to Shapefile
-        SHP_export $RDP_DATA upsolve.sum_by_zip MULTIPOLYGON upsolve_sum_by_zip
+        SHP_export $RDP_DATA upsolve.sum_by_zip MULTIPOLYGON upsolve_sum_by_zip.shp
 
         # Write VERSION info
         echo "$VERSION" > version.txt
