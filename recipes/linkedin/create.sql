@@ -9,7 +9,12 @@ CREATE TEMP TABLE tmp (
 
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
-SELECT * INTO :NAME.:"VERSION" FROM tmp;
+SELECT 
+    to_char(month_begin_date,'YYYY-MM') as year_month,
+    hiring_rate_sa,
+    mom_change,
+    yoy_change
+INTO :NAME.:"VERSION" FROM tmp;
 
 DROP VIEW IF EXISTS :NAME.latest;
 CREATE VIEW :NAME.latest AS (
