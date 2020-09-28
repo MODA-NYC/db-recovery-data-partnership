@@ -8,8 +8,8 @@ ACL=private
 (
     
     cd $BASEDIR
-    mkdir -p input
-    mkdir -p output
+    rm -rf input && mkdir -p input
+    rm -rf output && mkdir -p output
 
     latest_file=$(axway_ls -nrt Ioby/donation | grep .xlsx | tail -1 | awk '{print $NF}')
     echo "$latest_file"
@@ -56,4 +56,5 @@ ACL=private
 
     Upload $NAME $VERSION
     Upload $NAME latest
+    rm -rf input && rm -rf output
 )
