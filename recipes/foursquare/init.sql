@@ -90,9 +90,9 @@ BEGIN
                     END)
                 from city_zip_boro a where zip=a.zipcode) as borocode,
                 categoryname as category,
-                ROUND(avg(CASE WHEN demo='All' THEN visits END),0) AS visits_avg_all,
-                ROUND(avg(CASE WHEN demo='Below65' THEN visits END),0) AS visits_avg_u65,
-                ROUND(avg(CASE WHEN demo='Above65' THEN visits END),0) AS visits_avg_o65
+                SUM(CASE WHEN demo='All' THEN visits END) AS visits_all,
+                SUM(CASE WHEN demo='Below65' THEN visits END) AS visits_u65,
+                SUM(CASE WHEN demo='Above65' THEN visits END) AS visits_o65
             FROM foursquare_zipcode.main
             WHERE hour = 'All'
             GROUP BY date, zip, category
