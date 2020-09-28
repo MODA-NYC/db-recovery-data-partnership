@@ -36,7 +36,7 @@ function SHP_export {
           PG:"host=$BUILD_HOST user=$BUILD_USER port=$BUILD_PORT dbname=$BUILD_DB password=$BUILD_PWD" \
           -nlt $3 $2
         rm -f $4.zip
-        zip $4.zip *
+        zip -9 $4.zip *
         ls | grep -v $4.zip | xargs rm
       )
   mv $4/$4.zip $4.zip
