@@ -68,6 +68,9 @@ function foursquare_zipcode {
                     SELECT * FROM $NAME.latest
                 ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_daily_zipcode_raw.csv
 
+                zip -9 foursquare_daily_zipcode_raw.zip foursquare_daily_zipcode_raw.csv
+                rm foursquare_daily_zipcode_raw.csv
+                
                 # Write VERSION info
                 echo "$VERSION" > version.txt
             )
