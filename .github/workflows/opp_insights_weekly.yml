@@ -1,7 +1,7 @@
-name: Opportunity Insights
+name: Opportunity Insights - Weekly
 on:
   repository_dispatch:
-    types: [opp_insights_weekly]
+    types: [opportunity_insights_weekly]
   schedule:
     - cron: 0 0 * * 1
 

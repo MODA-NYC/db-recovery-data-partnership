@@ -48,6 +48,19 @@ case $1 in
             ;;
             esac
     ;;
+    opportunity_insights)
+        case $2 in
+            weekly | daily)
+                curl --location --request POST 'https://api.github.com/repos/MODA-NYC/db-recovery-data-partnership/dispatches?Accept=application/vnd.github.v3+json&Content-Type=application/json' \
+                --header "Authorization: Bearer $GITHUB_TOKEN" \
+                --header 'Content-Type: text/plain' \
+                --data-raw "{\"event_type\" : \"opportunity_insights_$2\"}"
+            ;;
+            *) 
+                echo "$2 is not recognized! please enter weekly or daily"
+            ;;
+            esac
+    ;;
     street_easy | kinsa | betanyc | upsolve | linkedin | oats | usl | ioby )
         curl --location --request POST 'https://api.github.com/repos/MODA-NYC/db-recovery-data-partnership/dispatches?Accept=application/vnd.github.v3+json&Content-Type=application/json' \
             --header "Authorization: Bearer $GITHUB_TOKEN" \
