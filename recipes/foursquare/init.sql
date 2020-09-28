@@ -54,7 +54,7 @@ BEGIN
                     END)
                 from city_zip_boro a where zip=a.zipcode) as borocode,
                 categoryname as category,
-                hour,
+                hour as timeofday,
                 demo,
                 ROUND(visits, 0) AS visits,
                 avgduration,
@@ -133,23 +133,24 @@ BEGIN
             SELECT 
                 date,
                 year_week, 
+                day_of_week,
                 zipcode,
                 borough, 
                 borocode,
                 category,
-                ROUND(SUM(CASE WHEN demo='Below65' AND hour='All' THEN visits END),0) AS visits_u65,
-                ROUND(SUM(CASE WHEN demo='Above65' AND hour='All' THEN visits END),0) AS visits_o65,
-                ROUND(SUM(CASE WHEN demo='All' AND hour='Morning' THEN visits END),0) AS visits_morning,
-                ROUND(SUM(CASE WHEN demo='All' AND hour='Late Morning' THEN visits END),0) AS visits_latemorning,
-                ROUND(SUM(CASE WHEN demo='All' AND hour='Early Afternoon' THEN visits END),0) AS visits_earlyafternoon,
-                ROUND(SUM(CASE WHEN demo='All' AND hour='Late Afternoon' THEN visits END),0) AS visits_lateafternoon,
-                ROUND(SUM(CASE WHEN demo='All' AND hour='Evening' THEN visits END),0) AS visits_evening,
-                ROUND(SUM(CASE WHEN demo='All' AND hour='Late Evening' THEN visits END),0) AS visits_lateevening,
-                ROUND(SUM(CASE WHEN demo='All' AND hour='Night' THEN visits END),0) AS visits_night,
-                ROUND(SUM(CASE WHEN demo='All' AND hour='Late Night' THEN visits END),0) AS visits_latenight
+                ROUND(SUM(CASE WHEN demo='All' AND timeofday='All' THEN visits END),0) AS visits_all,
+                ROUND(SUM(CASE WHEN demo='All' AND timeofday='Morning' THEN visits END),0) AS visits_morning,
+                ROUND(SUM(CASE WHEN demo='All' AND timeofday='Late Morning' THEN visits END),0) AS visits_latemorning,
+                ROUND(SUM(CASE WHEN demo='All' AND timeofday='Early Afternoon' THEN visits END),0) AS visits_earlyafternoon,
+                ROUND(SUM(CASE WHEN demo='All' AND timeofday='Late Afternoon' THEN visits END),0) AS visits_lateafternoon,
+                ROUND(SUM(CASE WHEN demo='All' AND timeofday='Evening' THEN visits END),0) AS visits_evening,
+                ROUND(SUM(CASE WHEN demo='All' AND timeofday='Late Evening' THEN visits END),0) AS visits_lateevening,
+                ROUND(SUM(CASE WHEN demo='All' AND timeofday='Night' THEN visits END),0) AS visits_night,
+                ROUND(SUM(CASE WHEN demo='All' AND timeofday='Late Night' THEN visits END),0) AS visits_latenight
             FROM (
                 SELECT
                     date,
+                    date_part('dow', date) as day_of_week,
                     to_char(date::date, 'IYYY-IW') as year_week,
                     zip as zipcode, 
                     (SELECT boro from city_zip_boro a where zip=a.zipcode) as borough,
@@ -163,12 +164,13 @@ BEGIN
                         END)
                     from city_zip_boro a where zip=a.zipcode) as borocode,
                     categoryname as category,
-                    hour, demo,
+                    hour as timeofday, 
+                    demo,
                     avg(visits) as visits
                 FROM foursquare_zipcode.main
-                GROUP BY date, to_char(date::date, 'IYYY-IW'), hour, demo, zip, borough, borocode, category
+                GROUP BY date, year_week, day_of_week, hour, demo, zip, borough, borocode, category
             ) a
-            GROUP BY date, year_week, zipcode, borough, borocode, category
+            GROUP BY date, year_week, day_of_week, zipcode, borough, borocode, category
         );
         RAISE NOTICE 'Creating foursquare_zipcode.daily_zipcode_timeofday';
     ELSE RAISE NOTICE 'foursquare_zipcode.daily_zipcode_timeofday is created';
