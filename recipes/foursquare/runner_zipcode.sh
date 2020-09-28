@@ -65,30 +65,12 @@ function foursquare_zipcode {
                 ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_daily_zipcode_timeofday.csv
 
                 psql $RDP_DATA -c "\COPY (
-                    SELECT 
-                        date,
-                        day_of_week,
-                        year_week,
-                        zipcode,
-                        borough,
-                        borocode,
-                        category,
-                        timeofday,
-                        visits as visits_all,
-                        avgduration,
-                        medianduration,
-                        pctto10mins,
-                        pctto20mins,
-                        pctto30mins,
-                        pctto60mins,
-                        pctto2hours,
-                        pctto4hours,
-                        pctto8hours,
-                        pctover8hours
-                    FROM $NAME.latest
-                    WHERE demo='All'
+                    SELECT * FROM $NAME.latest
                 ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_daily_zipcode_raw.csv
 
+                zip -9 foursquare_daily_zipcode_raw.zip foursquare_daily_zipcode_raw.csv
+                rm foursquare_daily_zipcode_raw.csv
+                
                 # Write VERSION info
                 echo "$VERSION" > version.txt
             )
