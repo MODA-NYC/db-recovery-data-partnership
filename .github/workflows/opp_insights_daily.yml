@@ -3,7 +3,7 @@ on:
   repository_dispatch:
     types: [opp_insights_daily]
   schedule:
-    - cron: 0 0 * * 1
+    - cron: 0 0 * * *
 
 jobs:
   build:
