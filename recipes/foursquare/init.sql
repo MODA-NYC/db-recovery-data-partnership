@@ -41,7 +41,7 @@ BEGIN
             SELECT 
                 date,
                 to_char(date::date, 'IYYY-IW') as year_week,
-                date_part('dow', date) as day_of_week,
+                date_part('dow', date) as dayofweek,
                 zip as zipcode,
                 (SELECT boro from city_zip_boro a where zip=a.zipcode) as borough,
                 (SELECT 
@@ -133,7 +133,7 @@ BEGIN
             SELECT 
                 date,
                 year_week, 
-                day_of_week,
+                dayofweek,
                 zipcode,
                 borough, 
                 borocode,
@@ -150,7 +150,7 @@ BEGIN
             FROM (
                 SELECT
                     date,
-                    date_part('dow', date) as day_of_week,
+                    date_part('dow', date) as dayofweek,
                     to_char(date::date, 'IYYY-IW') as year_week,
                     zip as zipcode, 
                     (SELECT boro from city_zip_boro a where zip=a.zipcode) as borough,
@@ -168,9 +168,9 @@ BEGIN
                     demo,
                     avg(visits) as visits
                 FROM foursquare_zipcode.main
-                GROUP BY date, year_week, day_of_week, hour, demo, zip, borough, borocode, category
+                GROUP BY date, year_week, dayofweek, hour, demo, zip, borough, borocode, category
             ) a
-            GROUP BY date, year_week, day_of_week, zipcode, borough, borocode, category
+            GROUP BY date, year_week, dayofweek, zipcode, borough, borocode, category
         );
         RAISE NOTICE 'Creating foursquare_zipcode.daily_zipcode_timeofday';
     ELSE RAISE NOTICE 'foursquare_zipcode.daily_zipcode_timeofday is created';
