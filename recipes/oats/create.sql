@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TEMP TABLE tmp (
     date date,
     zipcode text,
@@ -7,7 +9,7 @@ CREATE TEMP TABLE tmp (
     computer text,
     internet text,
     email_wkly text,
-    email_moly text,
+    internet_wkly text,
     social_act text,
     shop_bank text,
     devices text,
@@ -74,7 +76,7 @@ SELECT date,
         END as computer,
         a.internet,
         a.email_wkly,
-        a.email_moly,
+        a.internet_wkly,
         a.social_act,
         a.shop_bank,
         a.devices,
@@ -100,3 +102,5 @@ CREATE VIEW oats.latest AS (
     SELECT :'VERSION' as v, * 
     FROM oats.:"VERSION"
 );
+
+COMMIT;
