@@ -42,7 +42,7 @@ ACL=private
         ) TO stdout DELIMITER ',' CSV HEADER;" > ioby_potential_projects.csv
 
         psql $RDP_DATA -c "\COPY (
-            SELECT * FROM ioby_active_projects.count_by_zip
+            SELECT '$VERSION' AS as_of_date, * FROM ioby_active_projects.count_by_zip
         ) TO stdout DELIMITER ',' CSV HEADER;" > ioby_count_by_zip.csv
 
         psql $RDP_DATA -c "\COPY (
