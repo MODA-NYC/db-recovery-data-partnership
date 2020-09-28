@@ -166,6 +166,23 @@ CREATE TEMP TABLE cleaned as (
                 END) from doitt_zipcodeboundaries b where st_within(geom, b.wkb_geometry))
         )as borough,
         COALESCE(
+            (CASE 
+                WHEN a.geo_borough = 'BRONX' THEN 2
+                WHEN a.geo_borough = 'BROOKLYN' THEN 3
+                WHEN a.geo_borough = 'MANHATTAN' THEN 1
+                WHEN a.geo_borough = 'QUEENS' THEN 4
+                WHEN a.geo_borough = 'STATEN ISLAND' THEN 5
+            END), 
+            (SELECT 
+                (CASE 
+                    WHEN b.county = 'Bronx' THEN 2
+                    WHEN b.county = 'Kings' THEN 3
+                    WHEN b.county = 'New York' THEN 1
+                    WHEN b.county = 'Queens' THEN 4
+                    WHEN b.county = 'Richmond' THEN 5
+                END) from doitt_zipcodeboundaries b where st_within(geom, b.wkb_geometry))
+        )as borocode,
+        COALESCE(
             a.geo_nta,
             (SELECT b.ntacode::text 
             FROM dcp_ntaboundaries b 
