@@ -9,7 +9,7 @@ CREATE TEMP TABLE tmp (
     gps_parks numeric,
     gps_transit_stations numeric,
     gps_workplaces numeric,
-    gps_resitential numeric,
+    gps_residential numeric,
     gps_away_from_home numeric,
     --merchants_all numeric,
     --revenue_all numeric,
@@ -59,7 +59,7 @@ SELECT
     gps_parks,
     gps_transit_stations,
     gps_workplaces,
-    gps_resitential,
+    gps_residential,
     gps_away_from_home
     --merchants_all,
     --revenue_all
