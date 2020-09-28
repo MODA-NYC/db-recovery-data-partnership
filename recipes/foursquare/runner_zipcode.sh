@@ -74,7 +74,7 @@ function foursquare_zipcode {
                         borocode,
                         category,
                         timeofday,
-                        visits,
+                        visits as visits_all,
                         avgduration,
                         medianduration,
                         pctto10mins,
