@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TEMP TABLE tmp (
     name text,
     description text,
@@ -25,6 +27,20 @@ CREATE SCHEMA IF NOT EXISTS ioby_active_projects;
 DROP TABLE IF EXISTS ioby_active_projects.:"VERSION" CASCADE;
 SELECT DISTINCT name,
         description,
+        (SELECT boro FROM city_zip_boro a 
+            WHERE zipcode=a.zipcode LIMIT 1
+        ) as borough,
+        (SELECT 
+            (CASE
+                WHEN a.boro = 'QN' THEN 4
+                WHEN a.boro = 'SI' THEN 5
+                WHEN a.boro = 'MN' THEN 1
+                WHEN a.boro = 'BX' THEN 2
+                WHEN a.boro = 'BK' THEN 3
+            END)
+            FROM city_zip_boro a 
+            WHERE zipcode=a.zipcode LIMIT 1
+        ) as borocode,
         zipcode,
         target_rev,
         total_rev,
@@ -32,7 +48,7 @@ SELECT DISTINCT name,
         date_end,
         days_don
 INTO ioby_active_projects.:"VERSION"
-FROM tmp 
+FROM tmp
 WHERE status ~* 'underway|open';
 
 DROP VIEW IF EXISTS ioby_active_projects.latest CASCADE;
@@ -146,3 +162,5 @@ CREATE VIEW ioby_active_projects.count_by_zip AS (
     RIGHT JOIN doitt_zipcodeboundaries b
     ON a.zipcode::text = b.zipcode::text)
 ;
+
+COMMIT;
