@@ -30,6 +30,13 @@ CREATE TABLE :NAME.:"VERSION" AS(
             WHEN borough = 'Queens' THEN 'QN'
             WHEN borough = 'Staten Island' THEN 'SI'
         END) as borough,
+        (CASE 
+            WHEN borough = 'Bronx County' THEN 2
+            WHEN borough = 'Brooklyn' THEN 3
+            WHEN borough = 'New York' THEN 1
+            WHEN borough = 'Queens' THEN 4
+            WHEN borough = 'Staten Island' THEN 5
+        END) as borocode,
         category,
         SUM(CASE WHEN demo = 'All' THEN visits END) AS visits_all,
         SUM(CASE WHEN demo = 'Below65' THEN visits END) AS visits_u65,
@@ -45,6 +52,7 @@ DROP TABLE IF EXISTS :NAME.daily_county CASCADE;
 SELECT 
     date,
     borough,
+    borocode,
     category,
     SUM(visits_all) AS visits_all,
     SUM(visits_u65) AS visits_u65,
@@ -54,12 +62,14 @@ SELECT
     ROUND(SUM(duration_avg_o65*visits_o65)/SUM(visits_o65), 2)as duration_avg_o65
 INTO :NAME.daily_county
 FROM :NAME.:"VERSION"
-GROUP BY date, borough, category;
+GROUP BY date, borough, borocode, category;
 
 DROP TABLE IF EXISTS :NAME.weekly_county CASCADE;
 SELECT 
     to_char(date::date, 'IYYY-IW') year_week,
-    borough, category, 
+    borough, 
+    borocode,
+    category, 
     AVG(visits_all) AS visits_avg_all,
     AVG(visits_u65) AS visits_avg_u65,
     AVG(visits_o65) AS visits_avg_o65,
@@ -68,7 +78,7 @@ SELECT
     ROUND(SUM(duration_avg_o65*visits_o65)/SUM(visits_o65), 2)as duration_avg_o65
 INTO :NAME.weekly_county
 FROM :NAME.:"VERSION"
-GROUP BY year_week, borough, category;
+GROUP BY year_week, borough, borocode, category;
 
 DROP VIEW IF EXISTS :NAME.latest;
 CREATE VIEW :NAME.latest AS (
