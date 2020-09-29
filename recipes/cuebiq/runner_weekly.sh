@@ -27,6 +27,7 @@ function cuebiq_weekly {
                     rm cvi-$sector.csv000
                 ) &
             done
+            wait
         )
 
         cat input/raw_$NAME.csv |
