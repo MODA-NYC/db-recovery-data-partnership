@@ -8,7 +8,7 @@ AWS_DEFAULT_REGION=us-east-1
 function cuebiq_travelers {
     (
         cd $BASEDIR
-        NAME=cuebiq_travelers
+        NAME=cuebiq_daily_travelers
 
         (
             cd input

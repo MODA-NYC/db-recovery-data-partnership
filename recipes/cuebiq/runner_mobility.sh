@@ -8,7 +8,7 @@ AWS_DEFAULT_REGION=us-east-1
 function cuebiq_mobility {
     (
         cd $BASEDIR
-        NAME=cuebiq_mobility
+        NAME=cuebiq_daily_mobility
         (
             cd input
             touch raw_$NAME.csv
