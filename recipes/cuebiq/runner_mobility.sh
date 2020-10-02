@@ -28,7 +28,7 @@ function cuebiq_mobility {
             # Export to CSV
             psql $RDP_DATA -c "\COPY (
                 SELECT * FROM $NAME.\"$VERSION\"
-            ) TO stdout DELIMITER ',' CSV HEADER;" > $NAME.csv
+            ) TO stdout DELIMITER ',' CSV HEADER;" > cuebiq_daily_mobility.csv
 
             # Write VERSION info
             echo "$VERSION" > version.txt
