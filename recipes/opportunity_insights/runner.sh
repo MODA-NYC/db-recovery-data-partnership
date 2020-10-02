@@ -1,6 +1,7 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
+PARTNER=$(basename $BASEDIR)
 VERSION=$DATE
 TYPE=$1 #weekly/daily
 
@@ -28,6 +29,7 @@ case $TYPE in
         Upload opportunity_insights/$NAME $VERSION
         Upload opportunity_insights/$NAME latest
         rm -rf output
+        Version $PARTNER $NAME $VERSION $NAME
     )
     ;;
 
@@ -55,6 +57,7 @@ case $TYPE in
         Upload opportunity_insights/$NAME $VERSION
         Upload opportunity_insights/$NAME latest
         rm -rf output
+        Version $PARTNER $NAME $VERSION $NAME
     )
     ;;
 

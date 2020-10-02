@@ -1,6 +1,7 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
+PARTNER=$(basename $BASEDIR)
 
 function foursquare_county {
     (   
@@ -60,5 +61,6 @@ function foursquare_county {
         Upload foursquare/$NAME $VERSION
         Upload foursquare/$NAME latest
         rm -rf output
+        Version $PARTNER $NAME $VERSION $NAME
     )
 }

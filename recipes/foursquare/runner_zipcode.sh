@@ -1,6 +1,7 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
+PARTNER=$(basename $BASEDIR)
 
 function foursquare_zipcode {
     (
@@ -79,6 +80,7 @@ function foursquare_zipcode {
             Upload foursquare/$NAME latest
             rm -rf input && rm -rf output
             rm creds.json
+            Version $PARTNER $NAME $VERSION $NAME
         else
             echo "the database is up-to-date!"
             rm -rf input && rm -rf output

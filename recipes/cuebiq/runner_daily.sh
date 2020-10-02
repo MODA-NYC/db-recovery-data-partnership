@@ -1,6 +1,7 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
+PARTNER=$(basename $BASEDIR)
 AWS_ACCESS_KEY_ID=$CUEBIQ_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY=$CUEBIQ_SECRET_ACCESS_KEY
 AWS_DEFAULT_REGION=us-east-1
@@ -40,5 +41,6 @@ function cuebiq_daily {
         Upload cuebiq/$NAME $VERSION
         Upload cuebiq/$NAME latest
         rm -rf output
+        Version $PARTNER $NAME $VERSION $NAME
     )   
 }

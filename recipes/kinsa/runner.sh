@@ -31,4 +31,5 @@ AWS_SECRET_ACCESS_KEY=$KINSA_SECRET_ACCESS_KEY
     Upload $NAME $VERSION
     Upload $NAME latest
     rm -rf output
+    Version $NAME '' $VERSION $NAME
 )

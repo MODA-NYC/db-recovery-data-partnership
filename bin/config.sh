@@ -147,14 +147,13 @@ function get_last_monday {
 function Upload {
   python3 ../../bin/sharepoint.py $1/$2
 }
-# function Upload {
-#   axway_cmd rm publish/$1/$2/*
-#   axway_cmd rmdir publish/$1/$2
-#   axway_cmd mkdir publish/$1/$2
-#   for file in output/*
-#   do
-#     name=$(basename $file)
-#     axway_cmd put $file publish/$1/$2/$name
-#   done
-# }
 
+function Version {
+  mkdir -p output && 
+    (
+        cd output 
+        echo "$1,$2,$3,$(date)" > $4.txt
+    )
+  Upload "Shared%20Documents" "versions"
+  rm -rf output
+}
