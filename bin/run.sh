@@ -20,6 +20,11 @@ function local_run {
 }
 register 'run' 'local' '{ recipe name }' local_run
 
+function versions {
+    python3 $(pwd)/bin/versions.py
+}
+register 'run' 'versions' '' versions
+
 function cloud_run {
 case $1 in
     cuebiq)

@@ -31,4 +31,5 @@ VERSION=$DATE
     Upload $NAME $VERSION
     Upload $NAME latest
     rm -rf output
+    Version $NAME '' $VERSION $NAME
 )
