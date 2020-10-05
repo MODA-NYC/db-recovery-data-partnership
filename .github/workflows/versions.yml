@@ -21,7 +21,6 @@ jobs:
           ./rdp setup
           mkdir -p ~/.ssh
           mc cp spaces/recovery-data-partnership/utils/.env .env
-          chmod 600 ~/.ssh/id_rsa_axway
 
       - name: Run recipes
         shell: bash
