@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TEMP TABLE tmp (
     date date,
     building text,
@@ -8,7 +10,7 @@ CREATE TEMP TABLE tmp (
     country text
 );
 
-\COPY tmp FROM PSTDIN DELIMITER ',' CSV HEADER ENCODING 'LATIN1';
+\COPY tmp FROM PSTDIN DELIMITER ',' CSV ENCODING 'LATIN1';
 
 CREATE SCHEMA IF NOT EXISTS met_attendance;
 DROP TABLE IF EXISTS met_attendance.:"VERSION" CASCADE;
@@ -20,14 +22,8 @@ SELECT
     count as visits,
     type,
     method,
-    (CASE
-        WHEN state = 'Unknown' THEN NULL
-        ELSE state
-    END) as state,
-    (CASE
-        WHEN country = 'Unknown' THEN NULL
-        ELSE country
-    END) as country
+    nullif(state, 'Unknown') as state,
+    nullif(country, 'Unknown') as country
 INTO met_attendance.:"VERSION" 
 FROM tmp a
 ORDER BY date, state, country;
@@ -46,14 +42,8 @@ SELECT
     SUM(count) as visits,
     type,
     method,
-    (CASE
-        WHEN state = 'Unknown' THEN NULL
-        ELSE state
-    END) as state,
-    (CASE
-        WHEN country = 'Unknown' THEN NULL
-        ELSE country
-    END) as country
+    nullif(state, 'Unknown') as state,
+    nullif(country, 'Unknown') as country
 INTO met_attendance_weekly.:"VERSION" 
 FROM tmp a
 GROUP BY year_week, building, type, method, state, country
@@ -64,3 +54,5 @@ CREATE VIEW met_attendance_weekly.latest AS (
     SELECT :'VERSION' as v, * 
     FROM met_attendance_weekly.:"VERSION"
 );
+
+COMMIT;

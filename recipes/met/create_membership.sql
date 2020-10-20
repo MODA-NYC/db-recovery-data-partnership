@@ -1,11 +1,12 @@
-SET client_encoding = 'utf-8';
+BEGIN;
+
 CREATE TEMP TABLE tmp (
     date date,
     count int,
     transaction_type text
 );
 
-\COPY tmp FROM PSTDIN DELIMITER ',' CSV HEADER ENCODING 'LATIN1';
+\COPY tmp FROM PSTDIN DELIMITER ',' CSV ENCODING 'LATIN1';
 
 CREATE SCHEMA IF NOT EXISTS met_membership;
 DROP TABLE IF EXISTS met_membership.:"VERSION" CASCADE;
@@ -40,3 +41,5 @@ CREATE VIEW met_membership_weekly.latest AS (
     SELECT :'VERSION' as v, * 
     FROM met_membership_weekly.:"VERSION"
 );
+
+COMMIT;
