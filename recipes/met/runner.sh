@@ -11,39 +11,43 @@ ACL=private
     rm -rf input && mkdir -p input
     rm -rf output && mkdir -p output
 
-    rm -rf input/attendance_raw.csv
+    #rm -rf input/attendance_raw.csv
 
     files=$(axway_ls -nrt Met_Museum/Attendance | grep .csv | awk '{print $NF}')
+    echo $files
     i=0
     output_file="input/attendance_raw.csv"
-    for filename in $files; do
-        echo $i
+    for filepath in $files; do
+        echo $filepath
+        filename=$(basename $filepath)
         echo $filename
-        axway_cmd get $filename input/$filename
+        axway_cmd get $filepath input/$filename
         if [[ $i -eq 0 ]] ; then
             # copy csv headers from first file
-            head -1 $filename > $output_file
+            head -1 input/$filename > $output_file
         fi
         # copy csv without headers from other files
-        tail -n +2 $filename >> $output_file
+        tail -n +2 input/$filename >> $output_file
         i=$(( $i + 1 ))
     done
     
-    rm -rf input/attendance_raw.csv
+    #rm -rf input/membership_raw.csv
 
     files=$(axway_ls -nrt Met_Museum/Membership | grep .csv | awk '{print $NF}')
+    echo $files
     i=0
     output_file="input/membership_raw.csv"
-    for filename in $files; do
-        echo $i
+    for filepath in $files; do
+        echo $filepath
+        filename=$(basename $filepath)
         echo $filename
-        axway_cmd get $filename input/$filename
+        axway_cmd get $filepath input/$filename
         if [[ $i -eq 0 ]] ; then
             # copy csv headers from first file
-            head -1 $filename > $output_file
+            head -1 input/$filename > $output_file
         fi
         # copy csv without headers from other files
-        tail -n +2 $filename >> $output_file
+        tail -n +2 input/$filename >> $output_file
         i=$(( $i + 1 ))
     done
 
@@ -79,8 +83,8 @@ ACL=private
         
     )
 
-    Upload $NAME $VERSION
-    Upload $NAME latest
-    rm -rf input && rm -rf output
+    #Upload $NAME $VERSION
+    #Upload $NAME latest
+    #rm -rf input && rm -rf output
     Version $NAME '' $VERSION $NAME
 )

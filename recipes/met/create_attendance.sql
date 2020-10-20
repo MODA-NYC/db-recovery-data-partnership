@@ -8,45 +8,59 @@ CREATE TEMP TABLE tmp (
     country text
 );
 
-\COPY tmp FROM PSTDIN DELIMITER ',' CSV HEADER;
+\COPY tmp FROM PSTDIN DELIMITER ',' CSV HEADER ENCODING 'LATIN1';
 
-CREATE SCHEMA IF NOT EXISTS met_attendence;
-DROP TABLE IF EXISTS met_attendence.:"VERSION" CASCADE;
+CREATE SCHEMA IF NOT EXISTS met_attendance;
+DROP TABLE IF EXISTS met_attendance.:"VERSION" CASCADE;
 SELECT
     date,
-    to_char(date, 'day') as day_of_week,
+    extract(dow from date) as day_of_week,
     to_char(date, 'IYYY-IW') as year_week,
     building,
     count as visits,
     type,
     method,
-    state,
-    country
-INTO met_attendence.:"VERSION" 
-FROM tmp a;
+    (CASE
+        WHEN state = 'Unknown' THEN NULL
+        ELSE state
+    END) as state,
+    (CASE
+        WHEN country = 'Unknown' THEN NULL
+        ELSE country
+    END) as country
+INTO met_attendance.:"VERSION" 
+FROM tmp a
+ORDER BY date, state, country;
 
-DROP VIEW IF EXISTS met_attendence.latest;
-CREATE VIEW met_attendence.latest AS (
+DROP VIEW IF EXISTS met_attendance.latest;
+CREATE VIEW met_attendance.latest AS (
     SELECT :'VERSION' as v, * 
-    FROM met_attendence.:"VERSION"
+    FROM met_attendance.:"VERSION"
 );
 
-CREATE SCHEMA IF NOT EXISTS met_attendence_weekly;
-DROP TABLE IF EXISTS met_attendence_weekly.:"VERSION" CASCADE;
+CREATE SCHEMA IF NOT EXISTS met_attendance_weekly;
+DROP TABLE IF EXISTS met_attendance_weekly.:"VERSION" CASCADE;
 SELECT
     to_char(date, 'IYYY-IW') as year_week,
     building,
     SUM(count) as visits,
     type,
     method,
-    state,
-    country
-INTO met_attendence_weekly.:"VERSION" 
+    (CASE
+        WHEN state = 'Unknown' THEN NULL
+        ELSE state
+    END) as state,
+    (CASE
+        WHEN country = 'Unknown' THEN NULL
+        ELSE country
+    END) as country
+INTO met_attendance_weekly.:"VERSION" 
 FROM tmp a
-GROUP BY year_week, building, type, method, state, country;
+GROUP BY year_week, building, type, method, state, country
+ORDER BY year_week, state, country;
 
-DROP VIEW IF EXISTS met_attendence_weekly.latest;
-CREATE VIEW met_attendence_weekly.latest AS (
+DROP VIEW IF EXISTS met_attendance_weekly.latest;
+CREATE VIEW met_attendance_weekly.latest AS (
     SELECT :'VERSION' as v, * 
-    FROM met_attendence_weekly.:"VERSION"
+    FROM met_attendance_weekly.:"VERSION"
 );
