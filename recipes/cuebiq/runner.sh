@@ -4,6 +4,7 @@ source $(pwd)/recipes/cuebiq/runner_daily.sh
 source $(pwd)/recipes/cuebiq/runner_weekly.sh
 source $(pwd)/recipes/cuebiq/runner_mobility.sh
 source $(pwd)/recipes/cuebiq/runner_travelers.sh
+source $(pwd)/recipes/cuebiq/runner_homeswitcher.sh
 
 BASEDIR=$(dirname $0)
 VERSION=$DATE
@@ -32,10 +33,12 @@ case $TYPE in
 
     travelers)
         ( cuebiq_travelers ) ;;
+    homeswitcher)
+        ( cuebiq_homeswitcher ) ;;
 
     *)
         echo -n "
-        please specify mobility, weekly, daily, or travelers
+        please specify mobility, weekly, daily, homeswitcher, or travelers
         "
     ;;
 esac
