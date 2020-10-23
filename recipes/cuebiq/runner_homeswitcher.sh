@@ -33,7 +33,7 @@ function cuebiq_homeswitcher {
                     # Export to CSV
                     psql $RDP_DATA -c "\COPY (
                         SELECT * FROM $NAME.\"$VERSION\"
-                    ) TO stdout DELIMITER ',' CSV HEADER;" > .csv
+                    ) TO stdout DELIMITER ',' CSV HEADER;" > cuebiq_weekly_homeswitcher.csv
 
                     # Write VERSION info
                     echo "$VERSION" > version.txt
@@ -41,6 +41,7 @@ function cuebiq_homeswitcher {
                 Upload cuebiq/$NAME $VERSION
                 Upload cuebiq/$NAME latest
                 rm -rf output
+                Version $PARTNER $NAME $VERSION $NAME
             );;
             *) echo "$VERSION is already loaded !" ;;
         esac
