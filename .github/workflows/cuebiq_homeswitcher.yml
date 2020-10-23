@@ -1,4 +1,4 @@
-name: Cuebiq Travelers
+name: Cuebiq Home Switcher
 on:
   repository_dispatch:
     types: [cuebiq_homeswitcher]
