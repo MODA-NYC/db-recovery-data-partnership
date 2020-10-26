@@ -35,6 +35,9 @@ function cuebiq_homeswitcher {
                         SELECT * FROM $NAME.\"$VERSION\"
                     ) TO stdout DELIMITER ',' CSV HEADER;" > cuebiq_weekly_homeswitcher.csv
 
+                    zip -9 cuebiq_weekly_homeswitcher.csv.zip cuebiq_weekly_homeswitcher.csv
+                    rm cuebiq_weekly_homeswitcher.csv
+                    
                     # Write VERSION info
                     echo "$VERSION" > version.txt
                 )
