@@ -49,7 +49,7 @@ jobs:
       - name: Run recipes
         shell: bash
         run: |
-          ./rdp run recipe foursquare
+          ./rdp run recipe foursquare county
       
       - name: Clean up
         shell: bash
