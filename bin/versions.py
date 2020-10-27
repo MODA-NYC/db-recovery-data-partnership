@@ -38,6 +38,11 @@ for version_file in version_files:
 
 # Concatenate versions
 df = pd.concat(versions)
+expected = pd.read_csv(
+    'https://raw.githubusercontent.com/MODA-NYC/db-recovery-data-partnership/master/recipes/_data/expected_update_cycle.csv', 
+    index_col=False)
+df = pd.merge(df, expected, on=['partner', 'subproduct'], how='left')\
+        .sort_values(by=['partner', 'subproduct'])
 temp = tempfile.NamedTemporaryFile(suffix='.csv')
 df.to_csv(temp.name, index=False)
 
