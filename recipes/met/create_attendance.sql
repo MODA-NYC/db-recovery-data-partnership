@@ -20,8 +20,6 @@ SELECT
     to_char(date, 'IYYY-IW') as year_week,
     building,
     count as visits,
-    type,
-    method,
     nullif(state, 'Unknown') as state,
     nullif(country, 'Unknown') as country
 INTO met_attendance.:"VERSION" 
@@ -40,13 +38,11 @@ SELECT
     to_char(date, 'IYYY-IW') as year_week,
     building,
     SUM(count) as visits,
-    type,
-    method,
     nullif(state, 'Unknown') as state,
     nullif(country, 'Unknown') as country
 INTO met_attendance_weekly.:"VERSION" 
 FROM tmp a
-GROUP BY year_week, building, type, method, state, country
+GROUP BY year_week, building, state, country
 ORDER BY year_week, state, country;
 
 DROP VIEW IF EXISTS met_attendance_weekly.latest;
