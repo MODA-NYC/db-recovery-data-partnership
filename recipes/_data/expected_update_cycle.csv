@@ -1,0 +1,19 @@
+partner,subproduct,expected update frequency
+betanyc,,as needed / ad hoc
+cuebiq,cuebiq_weekly,weekly
+cuebiq,cuebiq_mobility,daily
+cuebiq,cuebiq_homeswitcher,weekly
+cuebiq,cuebiq_daily,daily
+cuebiq,cuebiq_travelers,daily
+foursquare,foursquare_zipcode,daily
+foursquare,foursquare_county,daily
+ioby,,bi-weekly
+kinsa,,daily
+linkedin,,monthly
+met,,bi-weekly
+oats,,weekly
+opportunity_insights,oppinsights_daily_mobility_smallbiz,daily
+opportunity_insights,oppinsights_weekly_uiclaims_elearn,weekly
+street_easy,,weekly
+upsolve,,as needed / ad hoc
+usl,,none
