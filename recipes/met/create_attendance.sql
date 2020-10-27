@@ -19,6 +19,7 @@ SELECT
     extract(dow from date) as day_of_week,
     to_char(date, 'IYYY-IW') as year_week,
     building,
+    type, method,
     count as visits,
     nullif(state, 'Unknown') as state,
     nullif(country, 'Unknown') as country
