@@ -47,19 +47,19 @@ ACL=private
         cd output
         # Export to CSV
         psql $RDP_DATA -c "\COPY (
-            SELECT * FROM met_attendance.latest
+            SELECT * FROM met_attendance.\"$VERSION\"
         ) TO stdout DELIMITER ',' CSV HEADER;" > met_attendance.csv
 
         psql $RDP_DATA -c "\COPY (
-            SELECT * FROM met_attendance_weekly.latest
+            SELECT * FROM met_attendance_weekly.\"$VERSION\"
         ) TO stdout DELIMITER ',' CSV HEADER;" > met_attendance_weekly.csv
 
         psql $RDP_DATA -c "\COPY (
-            SELECT * FROM met_membership.latest
+            SELECT * FROM met_membership.\"$VERSION\"
         ) TO stdout DELIMITER ',' CSV HEADER;" > met_membership.csv
 
         psql $RDP_DATA -c "\COPY (
-            SELECT * FROM met_membership_weekly.latest
+            SELECT * FROM met_membership_weekly.\"$VERSION\"
         ) TO stdout DELIMITER ',' CSV HEADER;" > met_membership_weekly.csv
 
         # Write VERSION info
