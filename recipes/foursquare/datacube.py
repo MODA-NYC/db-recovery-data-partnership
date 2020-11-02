@@ -35,7 +35,7 @@ loaded=pd.read_sql(sql='''
 ''', con=engine)
 loaded_dates=loaded.table_name.to_list()
 
-for i in available_dates[0:2]:
+for i in available_dates:
     if i not in loaded_dates:
         print(f'pulling date {i}')
         file_id=df.loc[df.date == i, 'id'].to_list()[0]
