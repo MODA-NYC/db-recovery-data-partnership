@@ -47,16 +47,16 @@ CREATE TEMP TABLE tmp (
     hour text,
     demo text,
     visits numeric,
-    avgDuration numeric,
+    avgDuration text,
     medianDuration text,
-    pctTo10Mins numeric,
-    pctTo20Mins numeric,
-    pctTo30Mins numeric,
-    pctTo60Mins numeric,
-    pctTo2Hours numeric,
-    pctTo4Hours numeric,
-    pctTo8Hours numeric,
-    pctOver8Hours numeric
+    pctTo10Mins text,
+    pctTo20Mins text,
+    pctTo30Mins text,
+    pctTo60Mins text,
+    pctTo2Hours text,
+    pctTo4Hours text,
+    pctTo8Hours text,
+    pctOver8Hours text
 );
 
 \COPY tmp FROM PSTDIN WITH NULL AS '' DELIMITER ',' CSV;
@@ -73,7 +73,24 @@ UPDATE tmp SET medianDuration=nullif(medianDuration, '')::numeric;
 /* Create maintable */
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
-SELECT * INTO :NAME.:"VERSION" FROM tmp;
+SELECT 
+    date,
+    zip,
+    categoryname,
+    hour,
+    demo,
+    visits,
+    nullif(avgDuration, '')::numeric AS avgDuration,
+    nullif(medianDuration, '')::numeric AS medianDuration,
+    nullif(pctTo10Mins, '')::numeric AS pctTo10Mins,
+    nullif(pctTo20Mins, '')::numeric AS pctTo20Mins,
+    nullif(pctTo30Mins, '')::numeric AS pctTo30Mins,
+    nullif(pctTo60Mins, '')::numeric AS pctTo60Mins,
+    nullif(pctTo2Hours, '')::numeric AS pctTo2Hours,
+    nullif(pctTo4Hours, '')::numeric AS pctTo4Hours,
+    nullif(pctTo8Hours, '')::numeric AS pctTo8Hours,
+    nullif(pctOver8Hours, '')::numeric AS pctOver8Hours
+INTO :NAME.:"VERSION" FROM tmp;
 
 /* Insert records into the Main table */
 DELETE FROM :NAME.main WHERE date = :'VERSION';

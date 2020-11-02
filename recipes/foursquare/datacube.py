@@ -17,8 +17,8 @@ engine = create_engine(os.environ['RDP_DATA'])
 # List all files
 def get_date(title:str) -> str:
     if '2020' not in title:
-        return '2020' + title.replace('.tar.gz', '').replace('data-cube2', '')
-    return title.replace('.tar.gz', '').replace('data-cube2-', '')
+        return '2020' + title.replace('.tar.gz', '').replace('data-cube4', '')
+    return title.replace('.tar.gz', '').replace('data-cube4-', '')
 
 file_list = drive.ListFile({'q': f"'{os.environ['GDRIVE_FOURSQUARE']}' in parents and trashed=false"}).GetList()
 df=pd.DataFrame(file_list)
@@ -35,7 +35,7 @@ loaded=pd.read_sql(sql='''
 ''', con=engine)
 loaded_dates=loaded.table_name.to_list()
 
-for i in available_dates:
+for i in available_dates[0:2]:
     if i not in loaded_dates:
         print(f'pulling date {i}')
         file_id=df.loc[df.date == i, 'id'].to_list()[0]
@@ -47,3 +47,4 @@ for i in available_dates:
         # Write content string to directory
         with open(f'input/{file_name}', 'wb') as fi:
             fi.write(content_string)
+    
