@@ -68,7 +68,6 @@ ALTER TABLE tmp
     DROP COLUMN state,
     DROP COLUMN county;
 DELETE FROM tmp WHERE zip not in (select distinct zipcode from city_zip_boro);
-UPDATE tmp SET medianDuration=nullif(medianDuration, '')::numeric;
 
 /* Create maintable */
 CREATE SCHEMA IF NOT EXISTS :NAME;
