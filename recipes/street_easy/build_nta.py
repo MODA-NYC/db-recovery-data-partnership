@@ -27,7 +27,6 @@ def get_dataframe(monday):
         try:
             df=pd.read_csv(url)
         except:
-            print(url)
             df=pd.DataFrame()
     return df
 
@@ -54,7 +53,8 @@ field_lookup = {
     'Pct Short Term (Rentals)': 'r_pct_shot',
     'Pct with Concessions (Rentals)': 'r_pct_con',
     'Median Weeks on Market (Rentals)':'r_wksonmkt',
-    'No. of bedrooms':'numrooms'
+    'No. of bedrooms':'numrooms',
+    'Week Start Date':'week_start'
 }
 
 df.rename(columns=field_lookup).to_csv(
