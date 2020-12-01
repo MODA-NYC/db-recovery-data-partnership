@@ -1,32 +1,26 @@
 import os
 import sys
+import datetime
 import pandas as pd
 
-url_rent_index = "https://streeteasy-market-data-download.s3.amazonaws.com/rentals/All/rentalIndex_All.zip"
-url_sales_index = "https://streeteasy-market-data-download.s3.amazonaws.com/sales/All/priceIndex_All.zip"
+URL_STREET_EASY=os.environ['URL_STREET_EASY']
+this_month = datetime.date.today().replace(day=1)
+last_month = this_month - datetime.timedelta(days=1)
+VERSION = last_month.strftime("%Y-%m")
 
-rent_index = pd.read_csv(
-    url_rent_index, dtype=str, compression="zip", index_col="Month"
-)
-sales_index = pd.read_csv(
-    url_sales_index, dtype=str, compression="zip", index_col="Month"
-)
+try:
+    url = f"{URL_STREET_EASY}price_indices-{VERSION}.csv"
+    all_rows = pd.read_csv(url, dtype=str)
+except:
+    last_month = last_month.replace(day=1)
+    PREV_VERSION = (last_month.replace(month=last_month.month-1)).strftime("%Y-%m")
 
-r = (
-    rent_index[["Brooklyn", "Manhattan", "NYC", "Queens"]]
-    .stack()
-    .reset_index()
-    .rename(columns={"level_1": "borough", 0: "rental_index"})
-)
+    # Data for {VERSION} is not available yet, trying {PREV_VERSION}
+    url = f"{URL_STREET_EASY}price_indices-{PREV_VERSION}.csv"
+    all_rows = pd.read_csv(url, dtype=str)
 
-s = (
-    sales_index[["Brooklyn", "Manhattan", "NYC", "Queens"]]
-    .stack()
-    .reset_index()
-    .rename(columns={"level_1": "borough", 0: "sales_index"})
-)
+r = all_rows[all_rows['TYPE']=='rentals'].rename(columns={"index": "rental_index"})
+s = all_rows[all_rows['TYPE']=='sales'].rename(columns={"index": "sales_index"})
 
-df = s.merge(r, on=["Month", "borough"], how="outer")
-df.to_csv(
-    sys.stdout, index=False, columns=["Month", "borough", "sales_index", "rental_index"]
-)
+df = r.merge(s, on=['MONTH', 'BOROUGH', 'NAME'], how="outer")
+df.to_csv(sys.stdout, index=False, columns=['MONTH','BOROUGH','NAME','rental_index','sales_index'])

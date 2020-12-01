@@ -1,6 +1,7 @@
 CREATE TEMP TABLE tmp(
     month date,
     borough text,
+    submarket text,
     sales_index numeric,
     rental_index numeric
 );
@@ -8,7 +9,7 @@ CREATE TEMP TABLE tmp(
 
 \COPY tmp FROM PSTDIN DELIMITER ',' CSV HEADER;
 
--- Join with NTA geometry and round
+-- Create table containing both boro and submarket-level data
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
 SELECT
@@ -28,13 +29,29 @@ SELECT
         WHEN borough = 'Bronx' THEN 2
         WHEN borough = 'Brooklyn' THEN 3
     END) as borocode,
+    submarket,
     sales_index,
     rental_index
 INTO :NAME.:"VERSION"
 FROM tmp;
 
-DROP VIEW IF EXISTS :NAME.latest;
+-- Create view containing just submarkets
+DROP VIEW IF EXISTS :NAME.monthly_rental_sales_index_submkt;
 CREATE VIEW :NAME.latest AS (
     SELECT :'VERSION' as v, * 
     FROM :NAME.:"VERSION"
+    WHERE submarket NOT IN ('Queens', 'Staten Island', 'Manhattan', 'Bronx', 'NYC')
+); 
+
+-- Create view containing boroughs and NYC
+DROP VIEW IF EXISTS :NAME.monthly_rental_sales_index_boro;
+CREATE VIEW :NAME.latest AS (
+    SELECT :'VERSION' as v,
+        year_month,
+        borough,
+        borocode,
+        sales_index,
+        rental_index
+    FROM :NAME.:"VERSION"
+    WHERE submarket IN ('Queens', 'Staten Island', 'Manhattan', 'Bronx', 'NYC')
 ); 
