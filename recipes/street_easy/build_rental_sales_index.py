@@ -2,6 +2,7 @@ import os
 import sys
 import pandas as pd
 
+# Dowload source data from s3
 url_rent_index = "https://streeteasy-market-data-download.s3.amazonaws.com/rentals/All/rentalIndex_All.zip"
 url_sales_index = "https://streeteasy-market-data-download.s3.amazonaws.com/sales/All/priceIndex_All.zip"
 
@@ -12,6 +13,7 @@ sales_index = pd.read_csv(
     url_sales_index, dtype=str, compression="zip", index_col="Month"
 )
 
+# Unpivotting tables
 r = (
     rent_index[["Brooklyn", "Manhattan", "NYC", "Queens"]]
     .stack()
