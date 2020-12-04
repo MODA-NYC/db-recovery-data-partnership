@@ -13,6 +13,7 @@ sales_index = pd.read_csv(
     url_sales_index, dtype=str, compression="zip", index_col="Month"
 )
 
+# Unpivotting tables
 r = (
     rent_index[["Brooklyn", "Manhattan", "NYC", "Queens"]]
     .stack()
