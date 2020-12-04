@@ -2,6 +2,7 @@ import os
 import sys
 import pandas as pd
 
+# Dowload source data from s3
 url_rent_index = "https://streeteasy-market-data-download.s3.amazonaws.com/rentals/All/rentalIndex_All.zip"
 url_sales_index = "https://streeteasy-market-data-download.s3.amazonaws.com/sales/All/priceIndex_All.zip"
 
