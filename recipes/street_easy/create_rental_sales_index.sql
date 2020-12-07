@@ -1,6 +1,9 @@
+BEGIN;
 CREATE TEMP TABLE tmp(
-    month date,
+    year_month date,
     borough text,
+    borocode numeric,
+    submarket text,
     sales_index numeric,
     rental_index numeric
 );
@@ -9,32 +12,45 @@ CREATE TEMP TABLE tmp(
 \COPY tmp FROM PSTDIN DELIMITER ',' CSV HEADER;
 
 -- Join with NTA geometry and round
+-- Steve: What geometery?
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
 SELECT
-    to_char(month::date, 'IYYY-MM') as year_month,
-        (CASE
-        WHEN borough = 'Queens' THEN 'QN'
-        WHEN borough = 'Staten Island' THEN 'SI'
-        WHEN borough = 'Manhattan' THEN 'MN'
-        WHEN borough = 'Bronx' THEN 'BX'
-        WHEN borough = 'Brooklyn' THEN 'BK'
-        ELSE borough
-    END) as borough,
-    (CASE
-        WHEN borough = 'Queens' THEN 4
-        WHEN borough = 'Staten Island' THEN 5
-        WHEN borough = 'Manhattan' THEN 1
-        WHEN borough = 'Bronx' THEN 2
-        WHEN borough = 'Brooklyn' THEN 3
-    END) as borocode,
+    to_char(year_month::date, 'IYYY-MM') as year_month,
+    borough,
+    borocode,
+    submarket,
     sales_index,
     rental_index
 INTO :NAME.:"VERSION"
 FROM tmp;
+
+DROP VIEW IF EXISTS :NAME.streeteasy_monthly_rental_sales_index_submkt 
+CREATE VIEW :NAME.streeteasy_monthly_rental_sales_index_submkt AS (
+    SELECT *
+    FROM :NAME.:"VERSION"
+    WHERE (submarket <> 'Manhattan'
+     AND submarket <> 'Bronx'
+     AND submarket <> 'Brooklyn'
+     AND submarket <> 'Queens'
+     AND submarket <> 'Staten Island'
+     AND submarket <> 'NYC')
+)
+
+DROP VIEW IF EXISTS :NAME.streeteasy_monthly_rental_sales_index_boro
+CREATE VIEW  :NAME.streeteasy_monthly_rental_sales_index_boro AS (
+    SELECT *
+    FROM :NAME.:"VERSION"
+    WHERE (submarket = 'Manhattan'
+     OR submarket = 'Bronx'
+     OR submarket = 'Brooklyn'
+     OR submarket = 'Queens'
+     OR submarket = 'Staten Island')
+)
 
 DROP VIEW IF EXISTS :NAME.latest;
 CREATE VIEW :NAME.latest AS (
     SELECT :'VERSION' as v, * 
     FROM :NAME.:"VERSION"
 ); 
+COMMIT;

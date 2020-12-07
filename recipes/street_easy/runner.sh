@@ -74,7 +74,7 @@ BASEDIR=$(dirname $0)
             # Export to CSV
             psql $RDP_DATA -c "\COPY (
                 SELECT * FROM $NAME.\"$VERSION\"
-            ) TO stdout DELIMITER ',' CSV HEADER;" > streeteasy_monthly_rental_sales_index.csv
+            ) TO stdout DELIMITER ',' CSV HEADER;" > streeteasy_monthly_rental_sales_index_submkt.csv
 
         )
     ) 
