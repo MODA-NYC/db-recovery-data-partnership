@@ -3,6 +3,7 @@ import sys
 import datetime
 import pandas as pd
 
+
 BASE_URL='https://streeteasy-market-data-download.s3.amazonaws.com'
 URL_STREET_EASY=os.environ['URL_STREET_EASY']
 URL=f'{BASE_URL}/{URL_STREET_EASY}'
