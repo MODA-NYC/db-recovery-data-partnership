@@ -37,16 +37,16 @@ FROM tmp;
 
 -- Create view containing just submarkets
 DROP VIEW IF EXISTS :NAME.monthly_rental_sales_index_submkt;
-CREATE VIEW :NAME.latest AS (
-    SELECT :'VERSION' as v, * 
+CREATE VIEW :NAME.monthly_rental_sales_index_submkt AS (
+    SELECT * 
     FROM :NAME.:"VERSION"
     WHERE submarket NOT IN ('Queens', 'Staten Island', 'Manhattan', 'Bronx', 'NYC')
 ); 
 
 -- Create view containing boroughs and NYC
 DROP VIEW IF EXISTS :NAME.monthly_rental_sales_index_boro;
-CREATE VIEW :NAME.latest AS (
-    SELECT :'VERSION' as v,
+CREATE VIEW :NAME.monthly_rental_sales_index_boro AS (
+    SELECT
         year_month,
         borough,
         borocode,
