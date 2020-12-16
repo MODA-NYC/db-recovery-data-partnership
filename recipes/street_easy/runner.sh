@@ -7,57 +7,43 @@ BASEDIR=$(dirname $0)
     cd $BASEDIR
     mkdir -p output
     NAME=$(basename $BASEDIR)
-    touch output/urls.txt
+    VERSION=$DATE
 
-    psql $RDP_DATA -f init.sql
-    startdate=2019-01-15
-    n=0
-    VERSION=
-    until [ "$VERSION" = "$(get_last_monday $DATE)" ]
-    do
-        d=$(date -d "$startdate + $n days" +%Y-%m-%d)
-        VERSION=$(get_last_monday $d)
-        echo "$URL_STREET_EASY$VERSION.csv" >> output/urls.txt
-
-        LOADED=$(psql -q -At $RDP_DATA -c "
-            SELECT '$VERSION' IN (
-                SELECT table_name 
-                FROM information_schema.tables 
-                WHERE table_schema = '$NAME'
-            )")
-        
-        case $LOADED in
-        f)
-            echo "Loading $VERSION"
-            curl $URL_STREET_EASY$VERSION.csv |
-            psql $RDP_DATA -v NAME=street_easy -v VERSION=$VERSION -f create.sql
-        ;;
-        *)
-            echo "$VERSION is already loaded!"
-        ;;
-        esac
-        n=$((n+7))
-    done
-
+    # StreetEasy NTA Metrics
     (
-        cd output
+        python3 build_nta.py | psql $RDP_DATA -v VERSION=$VERSION -f create_nta.sql
 
-        # Export to CSV
-        psql $RDP_DATA -c "\COPY (
-            SELECT 
-                year_week,ntaname,ntacode,borough,borocode,
-                s_newlist,s_pendlist,s_list,s_pct_inc,s_pct_dec,
-                s_wksonmkt,r_newlist,r_pendlist,r_list,
-                r_pct_inc,r_pct_dec,r_pct_furn,r_pct_shor,
-                r_pct_con,r_wksonmkt
-            FROM $NAME.main
-        ) TO stdout DELIMITER ',' CSV HEADER;" > streeteasy_weekly_nta.csv
+        (
+            cd output
 
-        # Export to ShapeFile
-        SHP_export $RDP_DATA $NAME.latest MULTIPOLYGON streeteasy_weekly_nta.shp
+            # Export to CSV
+            psql $RDP_DATA -c "\COPY (
+                SELECT 
+                    year_week,ntaname,ntacode,borough,borocode,
+                    s_newlist,s_pendlist,s_list,s_pct_inc,s_pct_dec,
+                    s_wksonmkt,r_newlist,r_pendlist,r_list,
+                    r_pct_inc,r_pct_dec,r_pct_furn,r_pct_shot,
+                    r_pct_con,r_wksonmkt
+                FROM streeteasy_weekly_nta.latest
+            ) TO stdout DELIMITER ',' CSV HEADER;" > streeteasy_weekly_nta.csv
 
-        # Write VERSION info
-        echo "$VERSION" > version.txt
+            # Export to CSV
+            psql $RDP_DATA -c "\COPY (
+                SELECT 
+                    year_week,ntaname,ntacode,borough,borocode,numrooms,
+                    s_newlist,s_pendlist,s_list,s_pct_inc,s_pct_dec,
+                    s_wksonmkt,r_newlist,r_pendlist,r_list,
+                    r_pct_inc,r_pct_dec,r_pct_furn,r_pct_shot,
+                    r_pct_con,r_wksonmkt
+                FROM streeteasy_weekly_nta_by_rooms.latest
+            ) TO stdout DELIMITER ',' CSV HEADER;" > streeteasy_weekly_nta_by_rooms.csv
+
+            # Export to ShapeFile
+            SHP_export $RDP_DATA $NAME.latest MULTIPOLYGON streeteasy_weekly_nta.shp
+
+            # Write VERSION info
+            echo "$VERSION" > version.txt
+        )
 
     )
 
