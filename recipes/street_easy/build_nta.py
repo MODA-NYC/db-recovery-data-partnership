@@ -19,7 +19,7 @@ URL=f'{BASE_URL}/{URL_STREET_EASY}'
 mondays = get_mondays()
 
 def get_dataframe(monday):
-    url=f'{URL.replace('/v2', '')}/nta-metrics-{monday}.csv'
+    url=f"{URL.replace('/v2', '')}/nta-metrics-{monday}.csv"
     url_new=f'{URL}/nta-metrics-{monday}.csv'
     try:
         df=pd.read_csv(url_new)
