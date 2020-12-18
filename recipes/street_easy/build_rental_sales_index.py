@@ -28,4 +28,4 @@ r = all_rows[all_rows['TYPE']=='rentals'].rename(columns={"index": "rental_index
 s = all_rows[all_rows['TYPE']=='sales'].rename(columns={"index": "sales_index"})
 
 df = r.merge(s, on=['MONTH', 'BOROUGH', 'NAME'], how="outer")
-df.to_csv(sys.stdout, index=False, columns=['MONTH','BOROUGH','NAME','rental_index','sales_index'])
+df.to_csv(sys.stdout, index=False, columns=['MONTH','BOROUGH','NAME','sales_index', 'rental_index'])
