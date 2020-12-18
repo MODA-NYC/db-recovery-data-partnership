@@ -40,7 +40,7 @@ DROP VIEW IF EXISTS :NAME.monthly_rental_sales_index_submkt;
 CREATE VIEW :NAME.monthly_rental_sales_index_submkt AS (
     SELECT * 
     FROM :NAME.:"VERSION"
-    WHERE submarket NOT IN ('Queens', 'Staten Island', 'Manhattan', 'Bronx', 'NYC')
+    WHERE submarket NOT IN ('Queens', 'Staten Island', 'Manhattan', 'Bronx', 'Brooklyn', 'NYC')
 ); 
 
 -- Create view containing boroughs and NYC
@@ -53,5 +53,5 @@ CREATE VIEW :NAME.monthly_rental_sales_index_boro AS (
         sales_index,
         rental_index
     FROM :NAME.:"VERSION"
-    WHERE submarket IN ('Queens', 'Staten Island', 'Manhattan', 'Bronx', 'NYC')
+    WHERE submarket IN ('Queens', 'Staten Island', 'Manhattan', 'Bronx', 'Brooklyn', 'NYC')
 ); 
