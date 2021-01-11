@@ -16,15 +16,16 @@ engine = create_engine(os.environ['RDP_DATA'])
 
 # List all files
 def get_date(title:str) -> str:
-    if '2020' not in title:
-        return '2020' + title.replace('.tar.gz', '').replace('data-cube4', '')
-    return title.replace('.tar.gz', '').replace('data-cube4-', '')
+    if '2021' not in title:
+        return '2021' + title.replace('.tar.gz', '').replace('data-cube', '')
+    return title.replace('.tar.gz', '').replace('data-cube-', '')
 
 file_list = drive.ListFile({'q': f"'{os.environ['GDRIVE_FOURSQUARE']}' in parents and trashed=false"}).GetList()
 df=pd.DataFrame(file_list)
 df.sort_values(by='createdDate',ascending=False, inplace=True)
 df['date'] = df.title.apply(get_date)
 available_dates=df.date.to_list()
+print(available_dates)
 
 # List dates that's already loaded
 loaded=pd.read_sql(sql='''
