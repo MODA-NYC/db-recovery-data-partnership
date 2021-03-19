@@ -12,7 +12,7 @@ ACL=private
     rm -rf output && mkdir -p output
 
 
-    files=$(axway_ls -nrt Met_Museum/Attendance | grep .csv | awk '{print $NF}')
+    files=$(axway_ls -nrt Met_Museum_2/Attendance | grep .csv | awk '{print $NF}')
     output_file="input/attendance_raw.csv"
     for filepath in $files; do
         echo $filepath
@@ -24,7 +24,7 @@ ACL=private
     done
     
 
-    files=$(axway_ls -nrt Met_Museum/Membership | grep .csv | awk '{print $NF}')
+    files=$(axway_ls -nrt Met_Museum_2/Membership | grep .csv | awk '{print $NF}')
     output_file="input/membership_raw.csv"
     for filepath in $files; do
         echo $filepath
@@ -67,8 +67,8 @@ ACL=private
         
     )
 
-    Upload $NAME $VERSION
-    Upload $NAME latest
+    #Upload $NAME $VERSION
+    #Upload $NAME latest
     rm -rf input && rm -rf output
     Version $NAME '' $VERSION $NAME
 )
