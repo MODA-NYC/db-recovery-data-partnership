@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 source $(pwd)/bin/config.sh
 BASEDIR=$(dirname $0)
 NAME=$(basename $BASEDIR)
@@ -12,7 +12,7 @@ ACL=private
     rm -rf output && mkdir -p output
 
 
-    files=$(axway_ls -nrt Met_Museum/Attendance | grep .csv | awk '{print $NF}')
+    files=$(axway_ls -nrt Met_Museum_2/Attendance && grep .csv | awk '{print $NF}') || echo 'axway_ls failed'
     output_file="input/attendance_raw.csv"
     for filepath in $files; do
         echo $filepath
@@ -24,7 +24,7 @@ ACL=private
     done
     
 
-    files=$(axway_ls -nrt Met_Museum/Membership | grep .csv | awk '{print $NF}')
+    files=$(axway_ls -nrt Met_Museum_2/Membership | grep .csv | awk '{print $NF}')
     output_file="input/membership_raw.csv"
     for filepath in $files; do
         echo $filepath
