@@ -12,10 +12,11 @@ ACL=private
     rm -rf output && mkdir -p output
 
 
-    files=$(axway_ls -nrt Met_Museum_2/Attendance && grep .csv | awk '{print $NF}') || echo 'axway_ls failed'
+    files=$(axway_ls -nrt Met_Museum_2/Attendance | grep .csv | awk '{print $NF}') || echo 'axway_ls failed on Attendance'
+    echo "Files: " $files
     output_file="input/attendance_raw.csv"
     for filepath in $files; do
-        echo $filepath
+        echo 'filepath: ' $filepath
         filename=$(basename $filepath)
         echo $filename
         axway_cmd get $filepath input/$filename
@@ -24,7 +25,7 @@ ACL=private
     done
     
 
-    files=$(axway_ls -nrt Met_Museum_2/Membership | grep .csv | awk '{print $NF}')
+    files=$(axway_ls -nrt Met_Museum_2/Membership | grep .csv | awk '{print $NF}') || echo "axway_ls failed on Membership."
     output_file="input/membership_raw.csv"
     for filepath in $files; do
         echo $filepath
