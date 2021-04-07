@@ -9,7 +9,7 @@ VERSION=$DATE
     mkdir -p output
     mkdir -p input
 
-    latest_file=$(axway_ls -nrt LinkedIn && grep .xlsx | tail -1 | awk '{print $NF}') || echo 'axway_ls failed on LinkedIn'
+    latest_file=$(axway_ls -nrt LinkedIn | grep .xlsx | tail -1 | awk '{print $NF}') || echo 'axway_ls failed on LinkedIn'
     echo "$latest_file"
     rm -rf input/raw.xlsx
     axway_cmd get $latest_file input/raw.xlsx
