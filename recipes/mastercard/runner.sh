@@ -5,23 +5,39 @@ NAME=$(basename $BASEDIR)
 VERSION=$DATE
 
 
-( 
+(   
+    #find the filename
+   
     cd $BASEDIR
     mkdir -p input
     mkdir -p output
 
+    
     #pull the directory
 
     #extract
-    unzip -d /input -P $MASTERCARD_PASSWORD $(find $BASEDIR -name "*.zip" | head -1)
+    unzip -d /input -P $MASTERCARD_PASSWORD $(find $BASEDIR -name "*.zip" |
+    head -1 ) 
 
-    #modify csv in python
-    (ulimit -t 300
-    bash -x 
-    python build.py)
-
-    #clean-up
-    rm -f -r input output
+    #find the filename
+    KEY=$(ls /input)
+    FILENAME=$(basename $KEY)
+    echo $FILENAME
+    #send csv to PSQL
+    cat /input/$FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
+    #clean up
+    #rm -rf input
+    (
+        cd output
+        psql $RDP_DATA -c "\COPY(
+            SELECT * FROM $NAME.\"$VERSION\"
+            ) TO stdout DELIMITER ',' CSV HEADER;" > mastercard.csv
+        
+        #Write Version info
+        echo "$VERSION" > version.txt
+    )
+    #Upload mastercard/$NAME $VERSION
+    
 
 
 
