@@ -5,29 +5,20 @@ NAME=$(basename $BASEDIR)
 VERSION=$DATE
 
 
-(   
-    #find the filename
-   
+(      
     cd $BASEDIR
     mkdir -p input
     mkdir -p output
 
     
-    #pull the directory
-
-    #extract
-    
     #For testing purposes
     #unzip -d /input -P $MASTERCARD_PASSWORD $(find $BASEDIR -name "*.zip" |
     #head -1 ) 
 
-    #will download all files from mastercard. Them mastercard will delete after successfull download.
-    sftp -oPort=22022 -o StrictHostKeyChecking=no -b sftp-commands.txt newyorkcity@files.mastercard.com:geoinsights/data/
+    #will download all files from mastercard. Then mastercard will delete after successfull download.
+    sftp -oPort=22022 -o StrictHostKeyChecking=no -b sftp-commands.txt newyorkcity@files.mastercard.com:geoinsights/data
    
-    
-    
-
-    #find the filename
+    #find the filename. Assumes one file.
     KEY=$(ls /input)
     FILENAME=$(basename $KEY)
     echo $FILENAME
@@ -44,7 +35,7 @@ VERSION=$DATE
         #Write Version info
         echo "$VERSION" > version.txt
     )
-    #csv is too large
+    #csv is too large. Must compress.
     gzip output/mastercard.csv
     #Upload mastercard/$NAME $VERSION
     
