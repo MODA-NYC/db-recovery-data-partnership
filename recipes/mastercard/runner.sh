@@ -1,5 +1,6 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
+
 BASEDIR=$(dirname $0)
 NAME=$(basename $BASEDIR)
 VERSION=$DATE
@@ -12,20 +13,26 @@ VERSION=$DATE
 
     
     #For testing purposes
-    #unzip -d /input -P $MASTERCARD_PASSWORD $(find $BASEDIR -name "*.zip" |
-    #head -1 ) 
+    unzip -d /input -P $MASTERCARD_PASSWORD $(find $BASEDIR -name "*.zip" |
+    head -1 ) 
+
 
     #will download all files from mastercard. Then mastercard will delete after successfull download.
-    sftp -oPort=22022 -o StrictHostKeyChecking=no -b sftp-commands.txt newyorkcity@files.mastercard.com:geoinsights/data
-   
+    #sftp -oPort=22022 -o StrictHostKeyChecking=no -b ../sftp-commands.txt newyorkcity@files.mastercard.com:geoinsights/data/fromMC
+    
+    #cd input    
+    #scp newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* /input
+    #unzip -P $MASTERCARD_PASSWORD $(find $BASEDIR/input -name "*.zip" | head -1 )
+    #cd $BASEDIR 
     #find the filename. Assumes one file.
+   
     KEY=$(ls /input)
     FILENAME=$(basename $KEY)
     echo $FILENAME
     #send csv to PSQL
     cat /input/$FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
     #clean up
-    rm -rf input
+    #rm -rf input
     (
         cd output
         psql $RDP_DATA -c "\COPY (
@@ -35,10 +42,14 @@ VERSION=$DATE
         #Write Version info
         echo "$VERSION" > version.txt
     )
-    #csv is too large. Must compress.
-    gzip output/mastercard.csv
-    #Upload mastercard/$NAME $VERSION
+    #can to split the CSVs. Makes a mess.
+    #cat output/mastercard.csv | python3 split_csv.py
     
+    #unsplit csv is too large. Must compress. Gzip not ideal for Windows users.
+    gzip output/mastercard.csv
+    
+    #If you don't remove unsplit csv, sharepoint.py will overflow the RAM and the process killed.
+    rm -rf output/mastercard.csv
     Upload $NAME $VERSION
     Upload $NAME latest
     rm -rf output

@@ -15,7 +15,7 @@ function local_run {
         mkdir -p ~/.ssh || echo 'mkdir failed'
         mc cp spaces/recovery-data-partnership/utils/id_rsa ~/.ssh/id_rsa_axway || echo 'mc cp failed'
         chmod 600 ~/.ssh/id_rsa_axway || echo 'chmod failed'
-        bash /_w/recipes/$1/runner.sh $2 || echo 'runer.sh failed'
+        bash /_w/recipes/$1/runner.sh $2 || echo 'runner.sh failed'
         "
 }
 register 'run' 'local' '{ recipe name }' local_run
