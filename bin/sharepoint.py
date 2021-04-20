@@ -38,10 +38,8 @@ def copy_file(local_path, target_path):
     
     #test for empty df if the data is a CSV (may be other types like shapefile or txt)
     if file_name.split('.')[-1] == 'csv':
-        df = pd.read_csv(BytesIO(file_content))
-        length = df.shape[0]
-        print('csv length: {}'.format(length))
-        if length < 1:
+        df = pd.read_csv(BytesIO(file_content), nrows=10)
+        if df.empty == True:
             raise Exception("The CSV was empty")
         else:
             print("CSV is valid")
