@@ -4,6 +4,8 @@ from office365.runtime.auth.client_credential import ClientCredential
 import sys
 import os
 import glob
+from io import StringIO, BytesIO
+import pandas as pd
 
 def mkdir_recursive(root_folder, path):
     # Similar to mkdir -p <path>
@@ -33,6 +35,17 @@ def copy_file(local_path, target_path):
     # Load in the file to file_content
     with open(local_path, 'rb') as content_file:
         file_content = content_file.read()
+    
+    #test for empty df if the data is a CSV (may be other types like shapefile or txt)
+    if file_name.split('.')[-1] == 'csv':
+        df = pd.read_csv(BytesIO(file_content))
+        length = df.shape[0]
+        print('csv length: {}'.format(length))
+        if length < 1:
+            raise Exception("The CSV was empty")
+        else:
+            print("CSV is valid")
+
     
     # Upload file to target path
     target_folder = ctx.web.get_folder_by_server_relative_url(relative)
