@@ -18,9 +18,7 @@ VERSION=$DATE
 
 
     #will download all files from mastercard. Then mastercard will delete after successfull download.
-    sftp -oPort=22022 -o StrictHostKeyChecking=no -b ../sftp-commands.txt newyorkcity@files.mastercard.com:geoinsights/data/fromMC
-    
-    #cd input    
+   
     scp newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* /input
     unzip -P $MASTERCARD_PASSWORD $(find $BASEDIR/input -name "*.zip" | head -1 )
     cd $BASEDIR 
@@ -45,11 +43,12 @@ VERSION=$DATE
     #can to split the CSVs. Makes a mess.
     #cat output/mastercard.csv | python3 split_csv.py
     
-    #unsplit csv is too large. Must compress. Gzip not ideal for Windows users.
-    gzip output/mastercard.csv
+    #unsplit csv is too large. Must compress.
+    zip -9 output/mastercard_$DATE.zip output/mastercard.csv
     
     #If you don't remove unsplit csv, sharepoint.py will overflow the RAM and the process killed.
     rm -rf output/mastercard.csv
+    
     Upload $NAME $VERSION
     Upload $NAME latest
     rm -rf output
