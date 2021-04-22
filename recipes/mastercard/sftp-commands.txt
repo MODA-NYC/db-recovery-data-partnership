@@ -1,2 +1,0 @@
-get -r fromMC /input
-quit;
