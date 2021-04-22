@@ -24,7 +24,6 @@ ACL=private
         tail -n +2 input/$filename >> $output_file
     done
     
-
     files=$(axway_ls -nrt Met_Museum_2/Membership | grep .csv | awk '{print $NF}') || echo "axway_ls failed on Membership."
     output_file="input/membership_raw.csv"
     for filepath in $files; do
@@ -36,7 +35,8 @@ ACL=private
         tail -n +2 input/$filename >> $output_file
     done
 
-
+    python3 dedup.py
+ 
     cat input/attendance_raw.csv |
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_attendance.sql
 
@@ -67,6 +67,9 @@ ACL=private
         echo "$VERSION" > version.txt
         
     )
+
+    scp -i ~/.ssh/id_rsa_axway input/attendance_raw_named.csv $AXWAY_USER@$AXWAY_HOST:Met_Museum_2/Attendance
+    scp -i ~/.ssh/id_rsa_axway input/membership_raw_named.csv $AXWAY_USER@$AXWAY_HOST:Met_Museum_2/Membership
 
     Upload $NAME $VERSION
     Upload $NAME latest
