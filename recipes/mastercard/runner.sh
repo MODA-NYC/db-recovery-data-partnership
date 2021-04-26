@@ -30,7 +30,7 @@ VERSION=$DATE
     #send csv to PSQL
     cat /input/$FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
     #clean up
-    #rm -rf input
+    rm -rf input
     (
         cd output
         psql $RDP_DATA -c "\COPY (
