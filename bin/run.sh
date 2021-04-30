@@ -66,7 +66,7 @@ case $1 in
             ;;
             esac
     ;;
-    street_easy | kinsa | betanyc | upsolve | linkedin | oats | usl | ioby | met )
+    street_easy | kinsa | betanyc | upsolve | linkedin | oats | usl | ioby | met | mastercard)
         curl --location --request POST 'https://api.github.com/repos/MODA-NYC/db-recovery-data-partnership/dispatches?Accept=application/vnd.github.v3+json&Content-Type=application/json' \
             --header "Authorization: Bearer $GITHUB_TOKEN" \
             --header 'Content-Type: text/plain' \
