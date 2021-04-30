@@ -10,15 +10,39 @@ VERSION=$DATE
     cd $BASEDIR
     mkdir -p input
     mkdir -p output
+
+    #was having trouble writing to input.
     chmod 777 input
     
     #For testing purposes
     #cp Geogrids_NYC_Zip_Code_Level_Jan2019_Feb2021.zip input/
+   
+    #check to verify there is only one file on the mastercard server. 
+    #Files will not download and delete unless there is only one zip file. 
+    ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
+    echo 'rowcount ' $ROWCOUNT
+    if [ $ROWCOUNT -gt 1 ];
+
+    then 
+        echo "Error: There are more than one zip file on the Mastercard sftp server.";
+        exit 2
+    fi
+
+    if [ $ROWCOUNT -lt 1 ];
+
+    then 
+        echo "Error: There are no zip files on the Mastercard sftp server.";
+        exit 3
+    fi
 
     #will download all files from mastercard. Then mastercard will delete after successfull download.
-    scp -v -P 22022  -i /root/.ssh/id_rsa_axway -o "StrictHostKeyChecking=no" newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* /input
-    echo 'file is ' $(find $BASEDIR/input -name "*.zip" ) 
-    unzip -d /input -P $MASTERCARD_PASSWORD $(find $BASEDIR/input -name "*.zip" | head -1 ) 
+    scp -P 22022  -i /root/.ssh/id_rsa_axway -o "StrictHostKeyChecking=no" newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* /input
+    
+    #verify the correct file
+    echo "unzipping " $( ls -ltr input | tail -1 | awk '{print $NF}') 
+    #unzips the first file by chronological order by sorting by modified date, reversed, and taking the tail to avoid the header. Then use awk to select filename.
+    unzip -d /input -P $MASTERCARD_PASSWORD $( ls -ltr input | tail -1 | awk '{print $NF}') 
+    #removes all downloaded zip files.
     rm $(find $BASEDIR/input -name "*.zip")
     #cd $BASEDIR
 
@@ -44,8 +68,6 @@ VERSION=$DATE
         #Write Version info
         echo "$VERSION" > version.txt
     )
-    #can to split the CSVs, but makes a mess.
-    #cat output/mastercard.csv | python3 split_csv.py
     
     #unsplit csv is too large. Must compress.
     zip -9 output/mastercard_$DATE.zip output/mastercard.csv
