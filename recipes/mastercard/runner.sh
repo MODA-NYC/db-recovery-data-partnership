@@ -25,7 +25,7 @@ VERSION=$DATE
 
     then 
         echo "Error: There are more than one zip file on the Mastercard sftp server.";
-        exit 2
+        exit 4
     fi
 
     if [ $ROWCOUNT -lt 1 ];
@@ -35,24 +35,25 @@ VERSION=$DATE
         exit 3
     fi
 
-    #will download all files from mastercard. Then mastercard will delete after successfull download.
+    #will download all files from mastercard (there has already been a check to verify there is one and only one zip file). Then mastercard will delete after successfull download.
     scp -P 22022  -i /root/.ssh/id_rsa_axway -o "StrictHostKeyChecking=no" newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* /input
     
     #verify the correct file
     echo "unzipping " $( ls -ltr input | tail -1 | awk '{print $NF}') 
-    #unzips the first file by chronological order by sorting by modified date, reversed, and taking the tail to avoid the header. Then use awk to select filename.
+    #unzips the first file by chronological order by sorting by modified date, reversed, and taking the tail to avoid the header
+    # (there is a check above to ensure there is only be one zip file so sorting is redundant).
+    # Then use awk to select filename.
     unzip -d /input -P $MASTERCARD_PASSWORD $( ls -ltr input | tail -1 | awk '{print $NF}') 
-    #removes all downloaded zip files.
-    rm $(find $BASEDIR/input -name "*.zip")
+    #removes all downloaded non-csv files.
+    rm $(find $BASEDIR/input -not -name "*.csv")
     #cd $BASEDIR
 
-    #find the filename. Assumes one file. (all compressed files removed, and head selects ony one file,
-    # so there should only be on csv found)
+    #find the filename. Should only be one file. 
     KEY=$(ls /input)
     FILENAME=$(basename $KEY)
     echo $FILENAME
 
-    #upload file to aws: InvalidAccessKeyId error, AWS access key already assigned to the digital ocean account. Need to switch accounts.
+    #upload file to aws: InvalidAccessKeyId error.
     #aws s3 cp /input/$KEY s3://recovery-data-partnership/mastercard/
     
     #send csv to PSQL
@@ -73,9 +74,9 @@ VERSION=$DATE
     zip -9 output/mastercard_$DATE.zip output/mastercard.csv
     
     #If you don't remove unsplit csv, sharepoint.py will overflow the RAM and the process killed when it tries to upload it.
-    #Upload uploads everything in the output folder.
     rm -rf output/mastercard.csv
     
+    #Upload uploads everything in the output folder.
     Upload $NAME $VERSION
     Upload $NAME latest
     rm -rf output
