@@ -15,7 +15,7 @@ VERSION=$DATE
     chmod 777 input
     
     #For testing purposes
-    cp Geogrids_NYC_Zip_Code_Level_Jan2019_Feb2021.zip input/
+    #cp Geogrids_NYC_Zip_Code_Level_Jan2019_Feb2021.zip input/
    
     #check to verify there is only one file on the mastercard server. 
     #Files will not download and delete unless there is only one zip file. 
