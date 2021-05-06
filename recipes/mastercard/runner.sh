@@ -14,8 +14,7 @@ VERSION=$DATE
     #was having trouble writing to input.
     chmod 777 input
     
-    #For testing purposes
-    #cp Geogrids_NYC_Zip_Code_Level_Jan2019_Feb2021.zip input/
+    
    
     #check to verify there is only one file on the mastercard server. 
     #Files will not download and delete unless there is only one zip file. 
@@ -39,7 +38,9 @@ VERSION=$DATE
 
     #will download all files from mastercard (there has already been a check to verify there is one and only one zip file). Then mastercard will delete after successfull download.
     scp -P 22022  -i /root/.ssh/id_rsa_axway -o "StrictHostKeyChecking=no" newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* /input
-    
+    #For testing purposes
+    #cp Geogrids_NYC_Zip_Code_Level_Jan2019_Feb2021.zip input/
+
     #verify the correct file
     echo "unzipping " $( ls -ltr input | tail -1 | awk '{print $NF}') 
     #unzips the first file by chronological order by sorting by modified date, reversed, and taking the tail to avoid the header
