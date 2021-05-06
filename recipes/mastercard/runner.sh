@@ -15,11 +15,13 @@ VERSION=$DATE
     chmod 777 input
     
     #For testing purposes
-    #cp Geogrids_NYC_Zip_Code_Level_Jan2019_Feb2021.zip input/
+    cp Geogrids_NYC_Zip_Code_Level_Jan2019_Feb2021.zip input/
    
     #check to verify there is only one file on the mastercard server. 
     #Files will not download and delete unless there is only one zip file. 
+    #comment out for texting
     ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
+    #ROWCOUNT=1
     echo 'rowcount ' $ROWCOUNT
     if [ $ROWCOUNT -gt 1 ];
 
@@ -45,7 +47,7 @@ VERSION=$DATE
     # Then use awk to select filename.
     unzip -d /input -P $MASTERCARD_PASSWORD $( ls -ltr input | tail -1 | awk '{print $NF}') 
     #removes all downloaded non-csv files.
-    rm $(find $BASEDIR/input -not -name "*.csv")
+    rm $(find $BASEDIR/input -type f -not -name "*.csv")
     #cd $BASEDIR
 
     #find the filename. Should only be one file. 
@@ -75,7 +77,7 @@ VERSION=$DATE
     
     #If you don't remove unsplit csv, sharepoint.py will overflow the RAM and the process killed when it tries to upload it.
     rm -rf output/mastercard.csv
-    
+
     #Upload uploads everything in the output folder.
     Upload $NAME $VERSION
     Upload $NAME latest
