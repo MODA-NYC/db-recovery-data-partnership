@@ -10,12 +10,9 @@ VERSION=$DATE
     cd $BASEDIR
     mkdir -p input
     mkdir -p output
-
-    #was having trouble writing to input.
+    #was having trouble writing to input. Input directory is temporary and will not persist.
     chmod 777 input
     
-    
-   
     #check to verify there is only one file on the mastercard server. 
     #Files will not download and delete unless there is only one zip file. 
     #comment out for texting
@@ -41,6 +38,9 @@ VERSION=$DATE
     #For testing purposes
     #cp Geogrids_NYC_Zip_Code_Level_Jan2019_Feb2021.zip input/
 
+    #upload files to aws: 
+    aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive
+
     #verify the correct file
     echo "unzipping " $( ls -ltr input | tail -1 | awk '{print $NF}') 
     #unzips the first file by chronological order by sorting by modified date, reversed, and taking the tail to avoid the header
@@ -56,9 +56,6 @@ VERSION=$DATE
     FILENAME=$(basename $KEY)
     echo $FILENAME
 
-    #upload file to aws: InvalidAccessKeyId error.
-    #aws s3 cp /input/$KEY s3://recovery-data-partnership/mastercard/
-    
     #send csv to PSQL
     cat /input/$FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
     #clean up
