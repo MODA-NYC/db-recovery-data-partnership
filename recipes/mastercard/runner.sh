@@ -16,7 +16,8 @@ VERSION=$DATE
     #check to verify there is only one file on the mastercard server. 
     #Files will not download and delete unless there is only one zip file. 
     #comment out for texting
-    ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
+    ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
+
     #ROWCOUNT=1
     echo 'rowcount ' $ROWCOUNT
     if [ $ROWCOUNT -gt 1 ];
