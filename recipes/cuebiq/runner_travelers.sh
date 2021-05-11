@@ -39,6 +39,10 @@ function cuebiq_travelers {
             # Write VERSION info
             echo "$VERSION" > version.txt
         )
+        
+        zip output/cuebiq_daily_travelers.zip output/cuebiq_daily_travelers.csv
+        #rm output/cuebiq_daily_travelers.csv
+
         Upload cuebiq/$NAME $VERSION
         Upload cuebiq/$NAME latest
         rm -rf output
