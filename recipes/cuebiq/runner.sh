@@ -23,18 +23,18 @@ sectors=('automotive' 'dining' 'healthcare' 'lifestyle' 'malls' 'retail' 'telco'
 case $TYPE in
 
     mobility)
-        ( cuebiq_mobility ) ;;
+        ( cuebiq_mobility || echo 'cuebiq mobility failed'>&2) ;;
 
     weekly)
-        ( cuebiq_weekly ) ;;
+        ( cuebiq_weekly || echo 'cuebiq weekly failed'>&2) ;;
 
     daily)
-        ( cuebiq_daily ) ;;
+        ( cuebiq_daily || echo 'cuebiq daily failed'>&2) ;;
 
     travelers)
-        ( cuebiq_travelers ) ;;
+        ( cuebiq_travelers || echo 'cuebiq travelers failed'>&2) ;;
     homeswitcher)
-        ( cuebiq_homeswitcher ) ;;
+        ( cuebiq_homeswitcher || echo 'cuebiq homeswitcher failed'>&2) ;;
 
     *)
         echo -n "
