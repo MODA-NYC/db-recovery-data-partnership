@@ -56,7 +56,7 @@ AWS_DEFAULT_REGION=us-east-1
     #upload files to aws for backup. Can handle multiple files.: 
     #getting InvalidAccessKeyIDError. Commented out until resolved.
     echo 'uploading to RDP AWS S3'
-    aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive
+    aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive || AWS_ERROR=1
 
     #verify the correct file
     echo 'listing...\n'
@@ -101,4 +101,9 @@ AWS_DEFAULT_REGION=us-east-1
     Upload $NAME latest
     rm -rf output
     Version $NAME '' $VERSION $NAME
+    if [ "$AWS_ERROR" -eq 1 ]
+    then
+        echo "Sharepoint upload successfull but failed to upload to AWS.";
+        raise 1;
+    fi
 )
