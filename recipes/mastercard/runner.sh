@@ -11,6 +11,7 @@ AWS_DEFAULT_REGION=us-east-1
 
 
 (      
+    
     cd $BASEDIR
     mkdir -p input
     mkdir -p output
@@ -65,7 +66,7 @@ AWS_DEFAULT_REGION=us-east-1
     echo "unzipping " $FULL_FILENAME
     #unzips the first file by chronological order by sorting by modified date, reversed, and taking the tail to avoid the header
     # Then use awk to select filename.
-    unzip -d /input -P $MASTERCARD_PASSWORD $FULL_FILENAME
+    unzip -d /input -P $MASTERCARD_PASSWORD $FULL_FILENAME || exit 519
     #removes all downloaded non-csv files.
     rm $(find $BASEDIR/input -type f -not -name "*.csv")
     #cd $BASEDIR
@@ -104,6 +105,6 @@ AWS_DEFAULT_REGION=us-east-1
     if [ "$AWS_ERROR" -eq 1 ]
     then
         echo "Sharepoint upload successfull but failed to upload to AWS.";
-        raise 1;
+        exit 435;
     fi
 )
