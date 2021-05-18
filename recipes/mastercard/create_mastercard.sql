@@ -8,7 +8,7 @@ CREATE TABLE mastercard.zip_to_borough (
         borocode int
     );
 COMMIT;
-BEGIN TRANSACTION
+BEGIN;
 
  
 INSERT INTO mastercard.zip_to_borough values ('10471','BX',2);
@@ -28,7 +28,6 @@ INSERT INTO mastercard.zip_to_borough values ('10457','BX',2);
 INSERT INTO mastercard.zip_to_borough values ('10460','BX',2);
 INSERT INTO mastercard.zip_to_borough values ('10452','BX',2);
 INSERT INTO mastercard.zip_to_borough values ('10456','BX',2);
-INSERT INTO mastercard.zip_to_borough values ('10471','BX',2);
 INSERT INTO mastercard.zip_to_borough values ('10472','BX',2);
 INSERT INTO mastercard.zip_to_borough values ('10459','BX',2);
 INSERT INTO mastercard.zip_to_borough values ('10451','BX',2);
@@ -260,10 +259,10 @@ INSERT INTO mastercard.zip_to_borough values ('10312','SI',5);
 INSERT INTO mastercard.zip_to_borough values ('10309','SI',5);
 INSERT INTO mastercard.zip_to_borough values ('10307','SI',5);
 INSERT INTO mastercard.zip_to_borough values ('10310','SI',5);
-END TRANSACTION;
+COMMIT;
 
 
-BEGIN TRANSACTION;
+BEGIN;
 CREATE TEMP TABLE tmp_csv (
     yr numeric,
     txn_date date,
@@ -343,4 +342,4 @@ SELECT
 INTO :NAME.:"VERSION"  FROM tmp_csv as tmp 
 INNER JOIN mastercard.zip_to_borough as zip ON tmp.Zip_code = zip.zip_code;
 
-END TRANSACTION;
+COMMIT;
