@@ -8,13 +8,11 @@ VERSION=$DATE
 
 AWS_DEFAULT_REGION=us-east-1
 
-
-
 (      
     
     cd $BASEDIR
+    rm -rf input
     mkdir -p input
-    mkdir -p output
     #was having trouble writing to input. Input directory is temporary and will not persist.
     chmod 777 input
     
@@ -59,52 +57,62 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'uploading to RDP AWS S3'
     aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive || AWS_ERROR=1
 
-    #verify the correct file
-    echo 'listing...\n'
-    ls -ltr input
-    FULL_FILENAME=$( ls -ltr input | tail -1 | awk '{print $NF}') 
-    echo "unzipping " $FULL_FILENAME
-    #unzips the first file by chronological order by sorting by modified date, reversed, and taking the tail to avoid the header
-    # Then use awk to select filename.
-    unzip -d /input -P $MASTERCARD_PASSWORD $FULL_FILENAME || exit 519
-    #removes all downloaded non-csv files.
-    rm $(find $BASEDIR/input -type f -not -name "*.csv")
-    #cd $BASEDIR
+    #loop through all the files and add each to output
+    echo 'listing...'
+    MYFILES=$(ls input | grep .zip)
+    echo "MYFILES:" $MYFILES
+    mkdir -p output
+    for FULL_FILENAME in $MYFILES
+        do 
+        #loop begins
+        
+        FILENAME=${FULL_FILENAME%.*}
 
-    #find the filename. Should only be one file. 
-    KEY=$(ls /input)
-    FILENAME=$(basename $KEY)
-    echo $FILENAME
 
-    #send csv to PSQL
-    cat /input/$FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
-    #clean up
-    rm -rf input
-    (
-        cd output
+        pushd input
+        rm *.csv || echo "Failed to remove any csvs"
+        popd
+        echo "unzipping " $FULL_FILENAME
+        unzip -d ./input -P $MASTERCARD_PASSWORD ./input/$FULL_FILENAME || exit 519
+
+  
+        #find the csv. There should only be one.
+        pushd input
+        CSV_FILENAME=$(ls *.csv)
+        #CSV_FILENAME=$(ls | egrep '\.csv')
+        popd
+        #send csv to PSQL
+        cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
+        
+
+        (
         psql $RDP_DATA -c "\COPY (
             SELECT * FROM $NAME.\"$VERSION\"
-            ) TO stdout DELIMITER ',' CSV HEADER;" > mastercard.csv
+            ) TO stdout DELIMITER ',' CSV HEADER;" > ./output/mastercard_$FILENAME.csv
         
         #Write Version info
-        echo "$VERSION" > version.txt
-    )
+        echo "version: " $VERSION
+        echo "$VERSION_$FILENAME" >> ./output/version.txt
+        )
     
-    #unsplit csv is too large. Must compress.
-    echo "compressing mastercard.csv"
-    zip -9 output/daily_transactions.zip output/mastercard.csv
+        #unsplit csv is too large. Must compress.
+        echo "compressing mastercard_$FILENAME.csv"
+        zip -9 ./output/daily_transactions_$FILENAME.zip output/mastercard_$FILENAME.csv
     
-    #If you don't remove unsplit csv, sharepoint.py will overflow the RAM and the process killed when it tries to upload it.
-    rm -rf output/mastercard.csv
+        #If you don't remove unsplit csv, sharepoint.py will overflow the RAM and the process killed when it tries to upload it.
+        rm -rf output/mastercard_$FILENAME.csv       
+    done
+    #loop ends
 
-    #Upload uploads everything in the output folder.
-    Upload $NAME $VERSION
-    Upload $NAME latest
-    rm -rf output
-    Version $NAME '' $VERSION $NAME
-    if [ "$AWS_ERROR" -eq 1 ]
-    then
-        echo "Sharepoint upload successfull but failed to upload to AWS.";
-        exit 435;
-    fi
+        #Upload uploads everything in the output folder.
+        Upload $NAME $VERSION
+        Upload $NAME latest
+        Version $NAME '' $VERSION $NAME
+        rm -rf output
+
+     if [ "$AWS_ERROR" -eq 1 ]
+        then
+            echo "Sharepoint upload successfull but AWS upload failed.";
+            exit 435;
+        fi
 )

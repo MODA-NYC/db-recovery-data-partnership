@@ -263,7 +263,7 @@ COMMIT;
 
 
 BEGIN;
-CREATE TEMP TABLE tmp_csv (
+CREATE TEMP TABLE tmp_csv(
     yr numeric,
     txn_date date,
     industry text,
@@ -282,7 +282,7 @@ CREATE TEMP TABLE tmp_csv (
     yoy_txn_cnt text
 );
 
-\COPY tmp_csv from PSTDIN DELIMITER '|' CSV HEADER;
+\COPY tmp_csv from PSTDIN DELIMITER '|' CSV HEADER encoding 'UTF8';
 
 --process tmp_processed to remove nulls.
 /*
