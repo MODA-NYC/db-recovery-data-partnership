@@ -263,7 +263,7 @@ COMMIT;
 
 
 BEGIN;
-CREATE TEMP TABLE tmp_csv (
+CREATE TEMP TABLE tmp_csv(
     yr numeric,
     txn_date date,
     industry text,
