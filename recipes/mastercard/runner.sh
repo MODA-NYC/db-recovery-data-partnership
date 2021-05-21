@@ -11,7 +11,8 @@ AWS_DEFAULT_REGION=us-east-1
 (      
     
     cd $BASEDIR
-    rm -rf input
+    #clean up input if already exists because job did not complete. IF remove fails, do nothing (:).
+    rm -rf input || :
     mkdir -p input
     #was having trouble writing to input. Input directory is temporary and will not persist.
     chmod 777 input
@@ -21,23 +22,7 @@ AWS_DEFAULT_REGION=us-east-1
     #decision to not check for single file.
     #comment out for texting
     ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
-    
-    #bypass check for one file. 
-    #Uncomment for testing.
-    #ROWCOUNT=1
-
     echo 'rowcount ' $ROWCOUNT
-    
-    #decision to proceed even if multiple files
-    
-    #if [ $ROWCOUNT -gt 1 ];
-    #
-    #then 
-    #    echo "Error: There are more than one zip file on the Mastercard sftp server.";
-    #    exit 4
-    #fi
-
-    #will still throw error if no zip files
 
     if [ $ROWCOUNT -lt 1 ];
 
@@ -65,10 +50,10 @@ AWS_DEFAULT_REGION=us-east-1
     for FULL_FILENAME in $MYFILES
         do 
         #loop begins
-        
+        #take the base name of the full filename (drop suffix)
         FILENAME=${FULL_FILENAME%.*}
 
-
+        #goes into input directory and removes any csvs. Then unzip one csv into input. We will unzip and process each csv one at a time.
         pushd input
         rm *.csv || echo "Failed to remove any csvs"
         popd
@@ -79,7 +64,6 @@ AWS_DEFAULT_REGION=us-east-1
         #find the csv. There should only be one.
         pushd input
         CSV_FILENAME=$(ls *.csv)
-        #CSV_FILENAME=$(ls | egrep '\.csv')
         popd
         #send csv to PSQL
         cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
@@ -104,15 +88,16 @@ AWS_DEFAULT_REGION=us-east-1
     done
     #loop ends
 
-        #Upload uploads everything in the output folder.
-        Upload $NAME $VERSION
-        Upload $NAME latest
-        Version $NAME '' $VERSION $NAME
-        rm -rf output
+    #Upload uploads everything in the output folder.
+    Upload $NAME $VERSION
+    Upload $NAME latest
+    Version $NAME '' $VERSION $NAME
+    rm -rf output
+    rm -rf input
 
-     if [ "$AWS_ERROR" -eq 1 ]
-        then
-            echo "Sharepoint upload successfull but AWS upload failed.";
-            exit 435;
-        fi
+    if [ "$AWS_ERROR" -eq 1 ]
+    then
+        echo "Sharepoint upload successfull but AWS upload failed.";
+        exit 435;
+    fi
 )

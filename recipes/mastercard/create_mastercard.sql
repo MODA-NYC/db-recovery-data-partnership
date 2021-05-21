@@ -282,7 +282,7 @@ CREATE TEMP TABLE tmp_csv(
     yoy_txn_cnt text
 );
 
-\COPY tmp_csv from PSTDIN DELIMITER '|' CSV HEADER encoding 'UTF8';
+\COPY tmp_csv from PSTDIN DELIMITER '|' CSV HEADER;
 
 --process tmp_processed to remove nulls.
 /*
