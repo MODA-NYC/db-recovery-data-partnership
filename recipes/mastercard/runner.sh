@@ -42,9 +42,11 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'uploading to RDP AWS S3'
     aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive || AWS_ERROR=1
 
-    #loop through all the files and add each to output
+    
     echo 'listing...'
-    MYFILES=$(ls input | grep .zip)
+    #MYFILES=$(ls input | grep .zip)
+    #take the latest zip file.
+    MYFILES=$(ls -tr | grep .zip | tail -n 1)
     echo "MYFILES:" $MYFILES
     mkdir -p output
     for FULL_FILENAME in $MYFILES
