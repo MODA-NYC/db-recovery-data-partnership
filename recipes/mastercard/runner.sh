@@ -44,9 +44,10 @@ AWS_DEFAULT_REGION=us-east-1
 
     
     echo 'listing...'
-    #MYFILES=$(ls input | grep .zip)
+    #MYFILES=$(ls ./input | grep .zip)
     #take the latest zip file.
-    MYFILES=$(ls -tr | grep .zip | tail -n 1)
+    #MYFILES=$(ls -tr | grep .zip | tail -n 1)
+    MYFILES=$(ls ./input -tr | grep .zip | tail -n 1)
     echo "MYFILES:" $MYFILES
     mkdir -p output
     for FULL_FILENAME in $MYFILES
@@ -58,19 +59,16 @@ AWS_DEFAULT_REGION=us-east-1
         #goes into input directory and removes any csvs. Then unzip one csv into input. We will unzip and process each csv one at a time.
         pushd input
         rm *.csv || echo "Failed to remove any csvs"
-        popd
+        
         echo "unzipping " $FULL_FILENAME
-        unzip -d ./input -P $MASTERCARD_PASSWORD ./input/$FULL_FILENAME || exit 519
-
-  
+        unzip -P $MASTERCARD_PASSWORD $FULL_FILENAME || exit 519
+        
         #find the csv. There should only be one.
-        pushd input
         CSV_FILENAME=$(ls *.csv)
         popd
         #send csv to PSQL
         cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
         
-
         (
         psql $RDP_DATA -c "\COPY (
             SELECT * FROM $NAME.\"$VERSION\"
