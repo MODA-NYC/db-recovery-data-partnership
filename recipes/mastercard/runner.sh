@@ -40,7 +40,8 @@ AWS_DEFAULT_REGION=us-east-1
     #upload files to aws for backup. Can handle multiple files.: 
     #getting InvalidAccessKeyIDError. Commented out until resolved.
     echo 'uploading to RDP AWS S3'
-    aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive || AWS_ERROR=1
+    AWS_ERROR=0
+    aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive || $AWS_ERROR=1
 
     
     echo 'listing...'
