@@ -44,33 +44,31 @@ AWS_DEFAULT_REGION=us-east-1
 
     
     echo 'listing...'
-    #MYFILES=$(ls input | grep .zip)
-    #take the latest zip file.
-    MYFILES=$(ls -tr | grep .zip | tail -n 1)
+    #this lists all zip files
+    #MYFILES=$(ls ./input | grep .zip)
+    #This take only the latest zip file.
+    MYFILES=$(ls ./input -tr | grep .zip | tail -n 1)
     echo "MYFILES:" $MYFILES
     mkdir -p output
     for FULL_FILENAME in $MYFILES
         do 
-        #loop begins
+        #loop begins (should be a list of one)
         #take the base name of the full filename (drop suffix)
         FILENAME=${FULL_FILENAME%.*}
 
         #goes into input directory and removes any csvs. Then unzip one csv into input. We will unzip and process each csv one at a time.
         pushd input
         rm *.csv || echo "Failed to remove any csvs"
-        popd
+        
         echo "unzipping " $FULL_FILENAME
-        unzip -d ./input -P $MASTERCARD_PASSWORD ./input/$FULL_FILENAME || exit 519
-
-  
-        #find the csv. There should only be one.
-        pushd input
+        unzip -P $MASTERCARD_PASSWORD $FULL_FILENAME || exit 519
+        
+        #find the csv. There should only be one because you greped the tail.
         CSV_FILENAME=$(ls *.csv)
         popd
         #send csv to PSQL
         cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
         
-
         (
         psql $RDP_DATA -c "\COPY (
             SELECT * FROM $NAME.\"$VERSION\"
@@ -92,6 +90,11 @@ AWS_DEFAULT_REGION=us-east-1
 
     #Upload uploads everything in the output folder.
     Upload $NAME $VERSION
+  
+    #uploading the single latest file to all data. Assumes the program has previously uploaded the other files into the directory. 
+    Upload $NAME all_data
+    #rename the file to 'mastercard_latest' and upload to latest
+    mv ./output/daily_transactions_$FILENAME.zip ./output/mastercard_latest.zip
     Upload $NAME latest
     Version $NAME '' $VERSION $NAME
     rm -rf output
@@ -99,7 +102,7 @@ AWS_DEFAULT_REGION=us-east-1
 
     if [ "$AWS_ERROR" -eq 1 ]
     then
-        echo "Sharepoint upload successfull but AWS upload failed.";
+        echo "Sharepoint upload successful but AWS upload failed.";
         exit 435;
     fi
 )
