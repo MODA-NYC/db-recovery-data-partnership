@@ -38,3 +38,13 @@ jobs:
         docker push nycplanning/rdp:$DATE
         docker tag nycplanning/rdp:$DATE nycplanning/rdp:latest
         docker push nycplanning/rdp:latest
+
+    - name: Report Status
+      if: always()
+      uses: ravsamhq/notify-slack-action@master
+      with:
+        status: ${{ job.status }}
+        mention_users: 'U01RHB6SAQ5,U01J189FNNP'
+        mention_users_when: 'failure,warnings'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}

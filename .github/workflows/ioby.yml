@@ -33,3 +33,4 @@ jobs:
         run: |
           rm ~/.ssh/id_rsa_axway
           rm .env
+
