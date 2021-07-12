@@ -24,8 +24,8 @@ AWS_DEFAULT_REGION=us-east-1
 
     echo 'assiging rowcount'
     #need to connect to proxy
-    #ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
-    ROWCOUNT=1
+    ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
+    #ROWCOUNT=1
     echo 'rowcount ' $ROWCOUNT
 
     if [ $ROWCOUNT -lt 1 ];
