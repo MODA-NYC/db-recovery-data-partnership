@@ -38,7 +38,7 @@ AWS_DEFAULT_REGION=us-east-1
     
     #will download all files from mastercard. Then mastercard will delete after successfull download. May be more than one file without check.
     echo 'downloading from mastercard'
-    scp -P 22022 -i /root/.ssh/id_rsa_axway -o "StrictHostKeyChecking=no" newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* ./input
+    scp -P 22022 -i ~/.ssh/id_rsa_axway -o "StrictHostKeyChecking=no" newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* ./input
     #For testing purposes
     #cp Geogrids_NYC_Zip_Codes_Level_01Jan2019_25Apr2021_Final.zip input/
     
