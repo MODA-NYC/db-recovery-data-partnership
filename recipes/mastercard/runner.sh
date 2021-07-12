@@ -36,15 +36,17 @@ AWS_DEFAULT_REGION=us-east-1
     scp -P 22022 -i /root/.ssh/id_rsa_axway -o "StrictHostKeyChecking=no" newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* ./input
     #For testing purposes
     #cp Geogrids_NYC_Zip_Codes_Level_01Jan2019_25Apr2021_Final.zip input/
-
+    
+    #trying to find where it fails.
+    exit 123
+    
     #upload files to aws for backup. Can handle multiple files.: 
     #getting InvalidAccessKeyIDError. Commented out until resolved.
     echo 'uploading to RDP AWS S3'
     AWS_ERROR=0
     aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive || $AWS_ERROR=1
     
-    #trying to find where it fails.
-    exit 123
+  
     
     echo 'listing...'
     #this lists all zip files
