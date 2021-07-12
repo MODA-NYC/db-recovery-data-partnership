@@ -30,15 +30,17 @@ AWS_DEFAULT_REGION=us-east-1
         echo "Error: There are no zip files on the Mastercard sftp server.";
         exit 3
     fi
-
+    
+    #trying to find where it fails.
+    exit 123
+    
     #will download all files from mastercard. Then mastercard will delete after successfull download. May be more than one file without check.
     echo 'downloading from mastercard'
     scp -P 22022 -i /root/.ssh/id_rsa_axway -o "StrictHostKeyChecking=no" newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* ./input
     #For testing purposes
     #cp Geogrids_NYC_Zip_Codes_Level_01Jan2019_25Apr2021_Final.zip input/
     
-    #trying to find where it fails.
-    exit 123
+    
     
     #upload files to aws for backup. Can handle multiple files.: 
     #getting InvalidAccessKeyIDError. Commented out until resolved.
