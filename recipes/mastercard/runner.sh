@@ -21,10 +21,10 @@ AWS_DEFAULT_REGION=us-east-1
     #Files will not download and delete unless there is at least one zip file. 
     #decision to not check for single file.
     #comment out for texting
-    cat ~/.ssh/id_rsa_axway
+
     echo 'assiging rowcount'
-    #ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
-    ROWCOUNT=1
+    ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
+    #ROWCOUNT=1
     echo 'rowcount ' $ROWCOUNT
 
     if [ $ROWCOUNT -lt 1 ];
