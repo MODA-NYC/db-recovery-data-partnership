@@ -9,8 +9,7 @@ VERSION=$DATE
 AWS_DEFAULT_REGION=us-east-1
 
 (   
-    #trying to find where it fails.
-    #exit 123
+
     cd $BASEDIR
     #clean up input if already exists because job did not complete. IF remove fails, do nothing (:).
     rm -rf input || :
@@ -43,7 +42,9 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'uploading to RDP AWS S3'
     AWS_ERROR=0
     aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive || $AWS_ERROR=1
-
+    
+    #trying to find where it fails.
+    exit 123
     
     echo 'listing...'
     #this lists all zip files
