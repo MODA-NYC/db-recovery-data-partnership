@@ -23,7 +23,7 @@ AWS_DEFAULT_REGION=us-east-1
     #comment out for texting
 
     echo 'assiging rowcount'
-    ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
+    ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -o ProxyCommand='/usr/bin/nc --proxy-type http --proxy bcpxy.nycnet:8080 %h %p' -i ~/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
     #ROWCOUNT=1
     echo 'rowcount ' $ROWCOUNT
 
@@ -33,9 +33,6 @@ AWS_DEFAULT_REGION=us-east-1
         echo "Error: There are no zip files on the Mastercard sftp server.";
         exit 3
     fi
-    
-    #trying to find where it fails.
-    #exit 123
     
     #will download all files from mastercard. Then mastercard will delete after successfull download. May be more than one file without check.
     echo 'downloading from mastercard'
