@@ -11,3 +11,4 @@ gspread
 oauth2client
 pydrive
 office365-rest-client
+openpyxl

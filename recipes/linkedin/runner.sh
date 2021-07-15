@@ -4,6 +4,10 @@ BASEDIR=$(dirname $0)
 NAME=$(basename $BASEDIR)
 VERSION=$DATE
 
+# install new dependency
+# added to requirements.txt also, but it won't work until the docker image is rebuilt
+pip install openpyxl
+
 (
     cd $BASEDIR
     mkdir -p output
