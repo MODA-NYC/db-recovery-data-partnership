@@ -9,8 +9,6 @@ VERSION=$DATE
 AWS_DEFAULT_REGION=us-east-1
 
 (   
-    echo "USER: " 
-    whoami
     cd $BASEDIR
     #clean up input if already exists because job did not complete. IF remove fails, do nothing (:).
     rm -rf input || :
