@@ -45,7 +45,7 @@ AWS_DEFAULT_REGION=us-east-1
     
     for FILENAME in $MASTERCARD_LS
         do
-             $(curl -v --insecure -x $PROXY_IP -u "newyorkcity": --key /.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
+             $(curl -v --insecure -x $PROXY_IP -u "newyorkcity": --key /.ssh/id_rsa_axway --pubkey /.ssh/id_rsa.pub sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
     done
     
     
