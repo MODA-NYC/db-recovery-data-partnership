@@ -25,7 +25,7 @@ AWS_DEFAULT_REGION=us-east-1
     #need to connect to proxy
     #ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
     MASTERCARD_LS=$(curl -v --insecure -x $PROXY_IP -u "newyorkcity": --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/ -l | grep ".zip")
-    ROWCOUNT=$($MASTERCARD_LS | wc -l)
+    ROWCOUNT=$(echo $MASTERCARD_LS | wc -l)
     
     #ROWCOUNT=1
     echo 'rowcount ' $ROWCOUNT
