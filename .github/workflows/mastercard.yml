@@ -21,6 +21,7 @@ jobs:
         run: |
           ./rdp setup
           mkdir -p ~/.ssh
+          mc cp spaces/recovery-data-partnership/utils/id_rsa.pub ~/.ssh/id_rsa.pub
           mc cp spaces/recovery-data-partnership/utils/id_rsa ~/.ssh/id_rsa_axway
           mc cp spaces/recovery-data-partnership/utils/.env .env
           chmod 600 ~/.ssh/id_rsa_axway
