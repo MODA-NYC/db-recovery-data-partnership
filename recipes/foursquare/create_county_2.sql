@@ -37,7 +37,7 @@ Late Night: 3am to 5:59am
 BEGIN;
 
 CREATE TEMP TABLE tmp (
-    date date,
+    data_date date,
     country text,
     state text,
     county text,
@@ -70,8 +70,8 @@ CREATE TEMP TABLE tmp (
 CREATE SCHEMA IF NOT EXISTS :NAME;
 DROP TABLE IF EXISTS :NAME.:"VERSION" CASCADE;
 SELECT 
-    --SPLIT_PART(tmp.date, '-', 1)::date as date,
-    date,
+    data_date,
+    to_char(data_date::date, 'IYYY-IW') as year_week,
     country,
     state,
     county,
@@ -108,86 +108,41 @@ SELECT
 INTO :NAME.:"VERSION" FROM tmp
 WHERE state = 'New York' AND county IN ('Bronx', 'Kings', 'New York', 'Queens', 'Richmond'); 
 
-/* ---this is from create_county.sql
-
-DROP TABLE IF EXISTS :NAME.daily_county CASCADE;
-SELECT 
-    date,
-    borough,
-    borocode,
-    category,
-    SUM(visits_all) AS visits_all,
-    SUM(visits_u65) AS visits_u65,
-    SUM(visits_o65) AS visits_o65,
-    ROUND(SUM(duration_avg_all*visits_all)/SUM(visits_all), 2) as duration_avg_all,
-    ROUND(SUM(duration_avg_u65*visits_u65)/SUM(visits_u65), 2) as duration_avg_u65,
-    ROUND(SUM(duration_avg_o65*visits_o65)/SUM(visits_o65), 2)as duration_avg_o65
-INTO :NAME.daily_county
-FROM :NAME.:"VERSION"
-GROUP BY date, borough, borocode, category;
-
-DROP TABLE IF EXISTS :NAME.weekly_county CASCADE;
-SELECT 
-    to_char(date::date, 'IYYY-IW') year_week,
-    borough, 
-    borocode,
-    category, 
-    AVG(visits_all) AS visits_avg_all,
-    AVG(visits_u65) AS visits_avg_u65,
-    AVG(visits_o65) AS visits_avg_o65,
-    ROUND(SUM(duration_avg_all*visits_all)/SUM(visits_all), 2) as duration_avg_all,
-    ROUND(SUM(duration_avg_u65*visits_u65)/SUM(visits_u65), 2) as duration_avg_u65,
-    ROUND(SUM(duration_avg_o65*visits_o65)/SUM(visits_o65), 2)as duration_avg_o65
-INTO :NAME.weekly_county
-FROM :NAME.:"VERSION"
-GROUP BY year_week, borough, borocode, category;
-
-DROP VIEW IF EXISTS :NAME.latest;
-CREATE VIEW :NAME.latest AS (
-    SELECT :'VERSION' as v, * 
-    FROM :NAME.:"VERSION"
-);
-*/
-
-/* Insert records into the Main table */
---DELETE FROM :NAME.main WHERE date = :'VERSION';
---INSERT INTO :NAME.main SELECT * FROM :NAME.:"VERSION";
-
 DROP TABLE IF EXISTS :NAME.daily_county CASCADE;
 SELECT
-    date,
+    data_date,
     country,
     state,
     county,
     borough,
     borocode,
     categoryname,
-    AVG(visits) as visits,
-    AVG(avgDuration) as avgDuration,
-    AVG(medianDuration) as medianDuration,
-    AVG(pctTo10Mins) as pctTo10Mins,
-    AVG(pctTo20Mins) as pctTo20Mins,
-    AVG(pctTo30Mins) as pctTo30Mins,
-    AVG(pctTo60Mins) as pctTo60Mins,
-    AVG(pctTo2Hours) as pctTo2Hours,
-    AVG(pctTo4Hours) as pctTo4Hours,
-    AVG(pctTo8Hours) as pctTo8Hours,
-    AVG(pctOver8Hours) as pctOver8Hours
+    visits,
+    avgDuration,
+    medianDuration,
+    pctTo10Mins,
+    pctTo20Mins,
+    pctTo30Mins,
+    pctTo60Mins,
+    pctTo2Hours,
+    pctTo4Hours,
+    pctTo8Hours,
+    pctOver8Hours
 INTO :NAME.daily_county
-FROM :NAME.:"VERSION"
-GROUP BY date, country, state, county, borough, borocode, categoryname;
+FROM :NAME.:"VERSION";
+
 
 
 DROP TABLE IF EXISTS :NAME.weekly_county CASCADE;
 SELECT 
-    to_char(date::date, 'IYYY-IW') year_week,
+    year_week,
     country,
     state,
     county,
     borough,
     borocode,
     categoryname,
-    AVG(visits) as visits,
+    SUM(visits) as visits,
     AVG(avgDuration) as avgDuration,
     AVG(medianDuration) as medianDuration,
     AVG(pctTo10Mins) as pctTo10Mins,
@@ -202,4 +157,43 @@ INTO :NAME.weekly_county
 FROM :NAME.:"VERSION"
 GROUP BY year_week, country, state, county, borough, borocode, categoryname;   
 
-COMMIT;
+
+DROP VIEW IF EXISTS :NAME.latest;
+CREATE VIEW :NAME.latest AS (
+    SELECT :"VERSION" as v, * 
+    FROM :NAME.:"VERSION"
+    );
+END TRANSACTION;
+-- Need to commit weekly_county before the function if_version_valid_make_weekly
+BEGIN;
+/* Insert records into the Main tables */
+--First the daily data
+DELETE FROM :NAME.main_county_daily WHERE data_date = :'VERSION';
+INSERT INTO :NAME.main_county_daily 
+    SELECT * FROM :NAME.daily_county;
+
+--receiving bad version data such as '1989' that break naming conventions and preventing a cast to date to extract the week component.
+
+CREATE function if_version_valid_make_weekly(v text, n text)
+   RETURNS int 
+   language plpgsql
+AS
+$$
+BEGIN
+    IF LENGTH(v) = 10 THEN
+        DELETE FROM foursquare_county.main_county_weekly WHERE  year_week = to_char(v::date, 'IYYY-IW');
+        INSERT INTO foursquare_county.main_county_weekly 
+            SELECT * FROM foursquare_county.weekly_county;
+        
+        RETURN 0;
+    END IF;
+RETURN 1;
+END $$;
+
+--Call function.
+SELECT if_version_valid_make_weekly( v => :'VERSION', n => :'NAME');
+--Drop the function. It will be re-defined every time the script runs.
+DROP function if_version_valid_make_weekly;
+END TRANSACTION;
+
+
