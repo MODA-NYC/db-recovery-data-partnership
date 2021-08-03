@@ -1,7 +1,7 @@
 #!/bin/bash
 source $(pwd)/bin/config.sh
 source $(pwd)/recipes/foursquare/runner_zipcode.sh
-source $(pwd)/recipes/foursquare/runner_county.sh
+source $(pwd)/recipes/foursquare/runner_county_2.sh
 TYPE=$1 # zipcode/county
 
 case $TYPE in
@@ -11,6 +11,6 @@ case $TYPE in
     ;;
     county)
         # updating foursquare county
-        foursquare_county
+        foursquare_county_2
     ;;
 esac

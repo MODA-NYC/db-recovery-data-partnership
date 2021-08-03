@@ -1,12 +1,17 @@
 DO $$
 DECLARE
     _main boolean;
+    _main_county_daily boolean;
+    _main_county_weekly boolean;
     _latest boolean;
     _view_weekly_zipcode boolean;
     _view_daily_zipcode boolean;
     _view_daily_zipcode_timeofday boolean;
+    
 BEGIN
     SELECT 'foursquare_zipcode.main' IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _main;    
+    SELECT 'foursquare_county.main_county_daily' IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _main_county_daily;    
+    SELECT 'foursquare_county.main_county_weekly' IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _main_county_weekly;    
     SELECT 'foursquare_zipcode.latest' IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _latest;    
     SELECT 'foursquare_zipcode.daily_zipcode'  IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _view_daily_zipcode;
     SELECT 'foursquare_zipcode.weekly_zipcode' IN (SELECT table_schema||'.'||table_name FROM information_schema.tables) INTO _view_weekly_zipcode;
@@ -34,6 +39,59 @@ BEGIN
         );
         RAISE NOTICE 'Creating foursquare_zipcode.main';
     ELSE RAISE NOTICE 'foursquare_zipcode.main is created';
+    END IF;
+
+     IF NOT _main_county_daily THEN
+        CREATE SCHEMA IF NOT EXISTS foursquare_county;
+        CREATE TABLE foursquare_county.main_county_daily (
+            data_date date,
+            country text,
+            state text,
+            county text,
+            borough text NULL,
+            borocode int NULL,
+            categoryname text,
+            visits numeric,
+            avgduration numeric,
+            medianduration numeric,
+            pctto10mins numeric,
+            pctto20mins numeric,
+            pctto30mins numeric,
+            pctto60mins numeric,
+            pctto2hours numeric,
+            pctto4hours numeric,
+            pctto8hours numeric,
+            pctover8hours numeric
+        );
+        RAISE NOTICE 'Creating main_county_daily';
+    ELSE RAISE NOTICE 'main_county_daily already created';
+    END IF;
+
+    IF NOT _main_county_weekly THEN
+        CREATE SCHEMA IF NOT EXISTS foursquare_county;
+        CREATE TABLE foursquare_county.main_county_weekly (
+            year_week text,
+            country text,
+            state text,
+            county text,
+            borough text NULL,
+            borocode int NULL,
+            categoryname text,
+            visits numeric,
+            avgduration numeric,
+            medianduration numeric,
+            pctto10mins numeric,
+            pctto20mins numeric,
+            pctto30mins numeric,
+            pctto60mins numeric,
+            pctto2hours numeric,
+            pctto4hours numeric,
+            pctto8hours numeric,
+            pctover8hours numeric
+        );
+
+        RAISE NOTICE 'Creating main_county_weekly';
+    ELSE RAISE NOTICE 'main_county_weekly already created';
     END IF;
 
     IF NOT _latest THEN

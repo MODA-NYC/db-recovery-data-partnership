@@ -4,6 +4,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from sqlalchemy import create_engine
 import pandas as pd
 import os
+import re
 
 # Authenticate google api service
 gauth = GoogleAuth()
@@ -40,7 +41,11 @@ loaded=pd.read_sql(sql='''
 loaded_dates=loaded.table_name.to_list()
 
 for i in available_dates:
+    #remove the below statement and all data will load for all available dates.
     if i not in loaded_dates:
+        #check to make sure date format is valid.
+        if ((re.search(r'\d{4}-\d{2}-\d{2}', i)) is None):
+            continue
         print(f'pulling date {i}')
         file_id=df.loc[df.date == i, 'id'].to_list()[0]
         file_name=f'{i}.tar.gz'
@@ -51,4 +56,4 @@ for i in available_dates:
         # Write content string to directory
         with open(f'input/{file_name}', 'wb') as fi:
             fi.write(content_string)
-    
+    #if available date is in loaded dates, nothing will write to input, and runner will say "the database is up-to-date!"
