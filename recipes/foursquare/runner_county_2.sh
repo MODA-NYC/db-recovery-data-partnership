@@ -45,22 +45,22 @@ function foursquare_county_2 {
                 cd output
                    
             # Export to CSV
-            psql $RDP_DATA -c "\COPY (
-                SELECT * FROM $NAME.daily_county
-            ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_latest_daily_county.csv
+            #psql $RDP_DATA -c "\COPY (
+            #    SELECT * FROM $NAME.daily_county
+            #) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_latest_daily_county.csv
 
-            psql $RDP_DATA -c "\COPY (
-                SELECT * FROM $NAME.weekly_county
-            ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_latest_weekly_county.csv
+            #psql $RDP_DATA -c "\COPY (
+            #    SELECT * FROM $NAME.weekly_county
+            #) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_latest_weekly_county.csv
             
         
             psql $RDP_DATA -c "\COPY (
                     SELECT * FROM $NAME.main_county_daily
-            ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_main_county_daily.csv
+            ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_daily_county.csv
 
             psql $RDP_DATA -c "\COPY (
                     SELECT * FROM $NAME.main_county_weekly
-            ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_main_county_weekly.csv
+            ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_weekly_county.csv
             
             # Write VERSION info
             echo "$VERSION" > version.txt
