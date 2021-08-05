@@ -42,18 +42,18 @@ loaded_dates=loaded.table_name.to_list()
 
 for i in available_dates:
     #remove the below statement and all data will load for all available dates.
-    if i not in loaded_dates:
-        #check to make sure date format is valid.
-        if ((re.search(r'\d{4}-\d{2}-\d{2}', i)) is None):
-            continue
-        print(f'pulling date {i}')
-        file_id=df.loc[df.date == i, 'id'].to_list()[0]
-        file_name=f'{i}.tar.gz'
-        target_file = drive.CreateFile({'id': file_id})
-        target_file.FetchContent()
-        content_string = target_file.content.getvalue()
+    #if i not in loaded_dates:
+    #check to make sure date format is valid.
+    if ((re.search(r'\d{4}-\d{2}-\d{2}', i)) is None):
+        continue
+    print(f'pulling date {i}')
+    file_id=df.loc[df.date == i, 'id'].to_list()[0]
+    file_name=f'{i}.tar.gz'
+    target_file = drive.CreateFile({'id': file_id})
+    target_file.FetchContent()
+    content_string = target_file.content.getvalue()
 
-        # Write content string to directory
-        with open(f'input/{file_name}', 'wb') as fi:
-            fi.write(content_string)
+    # Write content string to directory
+    with open(f'input/{file_name}', 'wb') as fi:
+        fi.write(content_string)
     #if available date is in loaded dates, nothing will write to input, and runner will say "the database is up-to-date!"
