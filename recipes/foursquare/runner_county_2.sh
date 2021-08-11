@@ -13,7 +13,7 @@ function foursquare_county_2 {
 
         psql $RDP_DATA -f init.sql
         
-        python3 datacube.py
+        python3 datacube.py county
 
         if [ "$(ls -A input)" ]; then
             (

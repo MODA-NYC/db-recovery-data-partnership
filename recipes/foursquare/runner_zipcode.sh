@@ -13,7 +13,7 @@ function foursquare_zipcode {
 
         psql $RDP_DATA -f init.sql
         
-        python3 datacube.py
+        python3 datacube.py zipcode
 
         if [ "$(ls -A input)" ]; then
             (
