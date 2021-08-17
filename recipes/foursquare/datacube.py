@@ -5,6 +5,9 @@ from sqlalchemy import create_engine
 import pandas as pd
 import os
 import re
+import sys
+
+zip_or_county = sys.argv[0]
 
 # Authenticate google api service
 gauth = GoogleAuth()
@@ -35,9 +38,9 @@ available_dates=df.date.to_list()
 loaded=pd.read_sql(sql='''
     SELECT table_name 
     FROM information_schema.tables 
-    WHERE table_schema = 'foursquare_zipcode'
+    WHERE table_schema = 'foursquare_{}'
     AND table_name not in ('main', 'latest')
-''', con=engine)
+'''.format(zip_or_county), con=engine)
 loaded_dates=loaded.table_name.to_list()
 
 for i in available_dates:
