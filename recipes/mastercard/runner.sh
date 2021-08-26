@@ -60,8 +60,8 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'listing...'
     #this lists all zip files
     #MYFILES=$(ls ./input | grep .zip)
-    #This take only the latest zip file.
-    MYFILES=$(ls ./input -tr | grep .zip | tail -n 1)
+    #Change, removed '| tail -n 1'. So now there may be multiple files.
+    MYFILES=$(ls ./input -tr | grep .zip)
     echo "MYFILES:" $MYFILES
     mkdir -p output
     for FULL_FILENAME in $MYFILES
@@ -105,10 +105,10 @@ AWS_DEFAULT_REGION=us-east-1
     #Upload uploads everything in the output folder.
     Upload $NAME $VERSION
   
-    #uploading the single latest file to all data. Assumes the program has previously uploaded the other files into the directory. 
+    #uploading all the files to all data. Assumes the program has previously saved the other files into output directory. 
     Upload $NAME all_data
-    #rename the file to 'mastercard_latest' and upload to latest
-    mv ./output/daily_transactions_$FILENAME.zip ./output/mastercard_latest.zip
+    # this will not work because filename not defined (part of loop)
+    #mv ./output/daily_transactions_$FILENAME.zip ./output/mastercard_latest.zip
     Upload $NAME latest
     Version $NAME '' $VERSION $NAME
     rm -rf output
