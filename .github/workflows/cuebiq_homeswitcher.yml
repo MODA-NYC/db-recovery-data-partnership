@@ -1,5 +1,6 @@
 name: Cuebiq Home Switcher
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [cuebiq_homeswitcher]
   schedule:

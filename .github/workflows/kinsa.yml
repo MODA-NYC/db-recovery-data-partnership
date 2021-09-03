@@ -1,5 +1,6 @@
 name: Kinsa
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [kinsa]
   schedule:

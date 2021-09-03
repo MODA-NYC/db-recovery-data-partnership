@@ -1,5 +1,6 @@
 name: Opportunity Insights - Weekly
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [opportunity_insights_weekly]
   schedule:

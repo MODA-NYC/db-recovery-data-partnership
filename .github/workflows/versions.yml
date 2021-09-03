@@ -1,5 +1,6 @@
 name: All Current Versions
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [versions]
   schedule:
