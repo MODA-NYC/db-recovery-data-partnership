@@ -1,5 +1,6 @@
 name: StreetEasy
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [street_easy]
   schedule:

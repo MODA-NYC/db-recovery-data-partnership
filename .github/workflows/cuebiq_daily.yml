@@ -1,5 +1,6 @@
 name: Cuebiq Daily
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [cuebiq_daily]
   schedule:

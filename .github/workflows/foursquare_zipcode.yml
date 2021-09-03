@@ -1,5 +1,6 @@
 name: Foursquare Zipcode
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [foursquare_zipcode]
   schedule:

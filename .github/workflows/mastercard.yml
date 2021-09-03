@@ -1,5 +1,6 @@
 name: Mastercard
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [mastercard]
   schedule:
