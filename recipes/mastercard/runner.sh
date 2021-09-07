@@ -46,6 +46,7 @@ AWS_DEFAULT_REGION=us-east-1
     for FILENAME in $MASTERCARD_LS
         do
              $(curl -v --insecure -x $PROXY_IP -u "newyorkcity":  --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
+
     done
     
     
@@ -54,8 +55,6 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'uploading to RDP AWS S3'
     AWS_ERROR=0
     aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive || AWS_ERROR=1
-    
-  
     
     echo 'listing...'
     #this lists all zip files
@@ -96,7 +95,11 @@ AWS_DEFAULT_REGION=us-east-1
         #unsplit csv is too large. Must compress.
         echo "compressing mastercard_$FILENAME.csv"
         zip -9 ./output/daily_transactions_$FILENAME.zip output/mastercard_$FILENAME.csv
-    
+
+        #before you close, upload a copy to AWS
+        aws s3 cp output/mastercard_$FILENAME.csv s3://recovery-data-partnership/mastercard_processed/mastercard_$FILENAME.csv || AWS_ERROR=1
+
+
         #If you don't remove unsplit csv, sharepoint.py will overflow the RAM and the process killed when it tries to upload it.
         rm -rf output/mastercard_$FILENAME.csv       
     done
