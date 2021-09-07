@@ -14,6 +14,17 @@ function foursquare_county_2 {
         psql $RDP_DATA -f init.sql
         
         python3 datacube.py county
+        
+        if [ -z "$VERSION" ]
+        then
+            # If VERSION is not set, then run asof.py to get version
+            VERSION=$(python3 asof.py)
+        else
+            # If VERSION is set, then ignore asof.py (this is for github actions)
+            echo "$VERSION is set!"
+        fi
+        
+        echo "pulling version: $VERSION"
 
         if [ "$(ls -A input)" ]; then
             (
@@ -25,9 +36,9 @@ function foursquare_county_2 {
                     (
                         echo $file
 
-                        VERSION=${file%%.*}
-                        file_name=$(tar tf $file | grep .csv.gz)
-                        tar -xvzf $file $file_name -O > $VERSION.csv.gz
+                        #VERSION=${file%%.*}
+                        #file_name=$(tar tf $file | grep .csv.gz)
+                        #tar -xvzf $file $file_name -O > $VERSION.csv.gz
                         
                         gunzip -dc $VERSION.csv.gz | 
                         psql $RDP_DATA \
@@ -69,9 +80,9 @@ function foursquare_county_2 {
             VERSION=$(cat output/version.txt)
             Upload foursquare/$NAME $VERSION
             Upload foursquare/$NAME latest
+            Version $PARTNER $NAME $VERSION $NAME
             rm -rf input && rm -rf output
             rm creds.json
-            Version $PARTNER $NAME $VERSION $NAME
         else
             echo "the database is up-to-date!"
             rm -rf input && rm -rf output
