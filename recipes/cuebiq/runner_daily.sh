@@ -12,6 +12,9 @@ function cuebiq_daily {
         cd $BASEDIR
         NAME=cuebiq_daily
         export VERSION=$(aws s3 ls --recursive s3://cuebiq-dataset-nv/offline-intelligence/index=cvi/sector=malls/country=US/ | tail -n 1 | awk '{print $1}')
+        echo "version"
+        echo $VERSION
+
         (
             cd input 
             ls 
@@ -37,10 +40,12 @@ function cuebiq_daily {
             zip -9 cuebiq_daily_visits.zip $NAME.csv
             rm $NAME.csv
             
+            # Write VERSION info
+            echo "$VERSION" > version.txt
+            
         )
         Upload cuebiq/$NAME $VERSION
-        Upload cuebiq/$NAME latest
-        rm -rf output
         Version $PARTNER $NAME $VERSION $NAME
+        rm -rf output
     )   
 }
