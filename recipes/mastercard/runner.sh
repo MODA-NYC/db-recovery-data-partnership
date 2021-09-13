@@ -16,7 +16,7 @@ AWS_DEFAULT_REGION=us-east-1
     mkdir -p input
     #was having trouble writing to input. Input directory is temporary and will not persist.
     chmod 777 input
-    python save_mastercard_master_csv.py
+    #python save_mastercard_master_csv.py
     #check to verify there is a file on the mastercard server.
     #Files will not download and delete unless there is at least one zip file. 
     #decision to not check for single file.
