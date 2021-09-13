@@ -10,12 +10,13 @@ AWS_DEFAULT_REGION=us-east-1
 
 (   
     cd $BASEDIR
+    pip install boto3
     #clean up input if already exists because job did not complete. IF remove fails, do nothing (:).
     rm -rf input || :
     mkdir -p input
     #was having trouble writing to input. Input directory is temporary and will not persist.
     chmod 777 input
-    
+    python save_mastercard_master_csv.py
     #check to verify there is a file on the mastercard server.
     #Files will not download and delete unless there is at least one zip file. 
     #decision to not check for single file.
@@ -105,6 +106,9 @@ AWS_DEFAULT_REGION=us-east-1
     done
     #loop ends
 
+    #save S3 DB to csv.
+    python save_mastercard_master_csv.py
+    
     #Upload uploads everything in the output folder.
     Upload $NAME $VERSION
   
