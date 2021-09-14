@@ -63,7 +63,7 @@ jobs:
         uses: ravsamhq/notify-slack-action@master
         with:
           status: ${{ job.status }}
-          mention_users: 'U01RHB6SAQ5,U01J189FNNP'
+          mention_users: 'U01J189FNNP'
           mention_users_when: 'failure,warnings'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}
