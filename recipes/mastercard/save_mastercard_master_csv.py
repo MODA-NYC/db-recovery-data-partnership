@@ -21,7 +21,8 @@ SELECT *
 FROM mastercard.extracted_2
 ORDER BY txn_date DESC
 '''
-output_csv_path =f"output/dev/mastercard/mastercard_master_latest.csv"
+#has to be a zip
+output_csv_path =f"output/dev/mastercard/mastercard_master_latest.zip"
 aws.execute_query(
     query=query,
     database="safegraph",
