@@ -45,6 +45,7 @@ function cuebiq_daily {
             
         )
         Upload cuebiq/$NAME $VERSION
+        #don't delete this line.
         Upload cuebiq/$NAME latest
         Version $PARTNER $NAME $VERSION $NAME
         rm -rf output
