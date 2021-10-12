@@ -17,8 +17,15 @@ function foursquare_county_2 {
         
         if [ -z "$VERSION" ]
         then
-            # If VERSION is not set, then run asof.py to get version
-            VERSION=$(python3 asof.py)
+            # If VERSION is not set, then run asof.py to get version. But asofpy deprecated.
+            VERSION=$(
+                #note: this is querying zipcode version for county run.
+                    psql $RDP_DATA -At -c "
+                    SELECT MAX(table_name::date) 
+                    FROM information_schema.tables 
+                    where table_schema = 'foursquare_zipcode'
+                    AND table_name !~* 'latest|main|zipcode'"
+                )
         else
             # If VERSION is set, then ignore asof.py (this is for github actions)
             echo "$VERSION is set!"
@@ -74,10 +81,10 @@ function foursquare_county_2 {
             ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_weekly_county.csv
             
             # Write VERSION info
-            echo "$VERSION" > version.txt
+            echo "$VERSION" > version_county.txt
             
             )
-            VERSION=$(cat output/version.txt)
+            VERSION=$(cat output/version_county.txt)
             Upload foursquare/$NAME $VERSION
             Upload foursquare/$NAME latest
             Version $PARTNER $NAME $VERSION $NAME
