@@ -6,6 +6,7 @@ import pandas as pd
 import os
 import re
 import sys
+import warnings
 
 zip_or_county = sys.argv[0]
 
@@ -49,7 +50,7 @@ for i in available_dates:
         #check to make sure date format is valid.
         if ((re.search(r'\d{4}-\d{2}-\d{2}', i)) is None):
             continue
-        print(f'pulling date {i}')
+        #print(f'pulling date {i}')
         file_id=df.loc[df.date == i, 'id'].to_list()[0]
         file_name=f'{i}.tar.gz'
         target_file = drive.CreateFile({'id': file_id})
@@ -58,5 +59,16 @@ for i in available_dates:
 
         # Write content string to directory
         with open(f'input/{file_name}', 'wb') as fi:
+            #print(file_name)
             fi.write(content_string)
         #if available date is in loaded dates, nothing will write to input, and runner will say "the database is up-to-date!"
+
+#run it again
+loaded=pd.read_sql(sql='''
+    SELECT table_name 
+    FROM information_schema.tables 
+    WHERE table_schema = 'foursquare_{}'
+    AND table_name not in ('main', 'latest')
+'''.format(zip_or_county), con=engine)
+loaded_dates=loaded.table_name.to_list()
+print(max(loaded_dates), file=sys.stdout)

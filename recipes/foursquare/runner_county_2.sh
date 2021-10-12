@@ -13,12 +13,16 @@ function foursquare_county_2 {
 
         psql $RDP_DATA -f init.sql
         
-        python3 datacube.py county
+        #datacube modified to return list of all dates.
+        VERSION=$(python3 datacube.py county)
         
         if [ -z "$VERSION" ]
         then
             # If VERSION is not set, then run asof.py to get version
-            VERSION=$(python3 asof.py)
+            #asof.py is deprecated.
+            echo "Where is $VERSION?"
+            #VERSION=$(python3 asof.py)
+            
         else
             # If VERSION is set, then ignore asof.py (this is for github actions)
             echo "$VERSION is set!"
