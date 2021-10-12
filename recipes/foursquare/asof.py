@@ -8,6 +8,8 @@ import sys
 # version info will be used to pull raw data e.g. 
 # https://data.visitdata.org/processed/vendor/foursquare/asof/20200726-v0/NewYork_StatenIsland.csv
 
+#visitdata.org is no longer a functional Site!
+raise("visitdata.org is not being maintained.")
 site_url = 'https://visitdata.org/data-noncommercial'
 html_doc = requests.get(site_url).content
 soup = BeautifulSoup(html_doc, 'html.parser')

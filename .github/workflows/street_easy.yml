@@ -4,7 +4,7 @@ on:
   repository_dispatch:
     types: [street_easy]
   schedule:
-    - cron: 0 0 * * 3
+    - cron: 0 4 * * 3
 
 jobs:
   build:
