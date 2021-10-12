@@ -4,7 +4,7 @@ on:
   repository_dispatch:
     types: [upsolve]
   schedule:
-    - cron: 0 0 */2 * *
+    - cron: 30 4 */2 * *
 
 jobs:
   build:
