@@ -9,9 +9,18 @@ import sys
 # https://data.visitdata.org/processed/vendor/foursquare/asof/20200726-v0/NewYork_StatenIsland.csv
 
 #visitdata.org is no longer a functional Site!
-raise("visitdata.org is not being maintained.")
+VERSION=$(
+    psql $RDP_DATA -At -c "
+    SELECT MAX(table_name::date) 
+    FROM information_schema.tables 
+    where table_schema = 'foursquare_zipcode'
+    AND table_name !~* 'latest|main|zipcode';"
+             )
+'''
 site_url = 'https://visitdata.org/data-noncommercial'
 html_doc = requests.get(site_url).content
 soup = BeautifulSoup(html_doc, 'html.parser')
 asof = soup.find_all('h2')[0].string[-12:-1]
+'''
+asof = $VERSION
 print(asof, file=sys.stdout)
