@@ -23,7 +23,7 @@ def main():
         FROM information_schema.tables 
         WHERE table_schema = 'foursquare_{}'
         AND table_name not in ('main', 'latest')
-    '''.format(zip_or_county), con=engine)
+    '''.format(zipcode_or_county), con=engine)
     loaded_dates=loaded.table_name.to_list()
     VERSION = max(loaded_dates)
     '''
