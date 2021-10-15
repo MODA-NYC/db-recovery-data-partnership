@@ -16,6 +16,7 @@ jobs:
       - name: install dependencies
         run: |
           pip3 install beautifulsoup4 requests
+          pip3 install sqlalchemy create_engine
           
       - name: get asof (foursquare)
         id: asof
