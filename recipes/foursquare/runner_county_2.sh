@@ -5,6 +5,7 @@ PARTNER=$(basename $BASEDIR)
 
 function foursquare_county_2 {
     (
+        pip install sqlalchemy
         cd $BASEDIR
         NAME=foursquare_county
         
