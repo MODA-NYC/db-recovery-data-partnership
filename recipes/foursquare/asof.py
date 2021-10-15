@@ -8,7 +8,7 @@ from sys import argv
 def main():
     #supposedly asof is needed for workflow and github actions?
     zipcode_or_county = argv[0]
-    RDP_DATA = os.getenv("RDP_DATA", "RDP_DATA environment variable does not exist")
+    RDP_DATA = os.getenv("RDP_DATA_SQL_ALCHEMY", "RDP_DATA_SQL_ALCHEMY environment variable does not exist!")
     engine = create_engine(RDP_DATA)
     # To simplify credential management we will identify the latest version 
     # name by heading to the data website: https://visitdata.org/data-noncommercial
