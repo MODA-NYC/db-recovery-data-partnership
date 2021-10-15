@@ -15,8 +15,8 @@ function foursquare_county_2 {
         
         python3 datacube.py county
         
-        if [ -z "$VERSION" ]
-        then
+        #if [ -z "$VERSION" ]
+        #then
             # If VERSION is not set, then run asof.py to get version. But asofpy deprecated.
             VERSION=$(
                 #note: this is querying zipcode version for county run.
@@ -26,10 +26,10 @@ function foursquare_county_2 {
                     where table_schema = 'foursquare_zipcode'
                     AND table_name !~* 'latest|main|zipcode'"
                 )
-        else
+        #else
             # If VERSION is set, then ignore asof.py (this is for github actions)
-            echo "$VERSION is set!"
-        fi
+         #   echo "$VERSION is set!"
+        #fi
         
         echo "pulling version: $VERSION"
 

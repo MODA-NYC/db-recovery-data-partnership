@@ -21,7 +21,7 @@ jobs:
         id: asof
         working-directory: recipes/foursquare
         run: |
-          VERSION=$(python3 asof.py)
+          VERSION=$(python3 asof.py county)
           echo ::set-output name=VERSION::$VERSION
 
   build:

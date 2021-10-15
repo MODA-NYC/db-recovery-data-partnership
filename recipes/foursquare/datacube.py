@@ -33,7 +33,7 @@ available_dates=df.date.to_list()
 
 
 
-
+print("selecting table_name")
 # List dates that's already loaded
 loaded=pd.read_sql(sql='''
     SELECT table_name 
