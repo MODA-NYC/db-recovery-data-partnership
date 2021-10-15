@@ -31,7 +31,7 @@ def main():
     loaded_dates=loaded.table_name.to_list()
     VERSION = max(loaded_dates)
     '''
-    VERSION = "01-01-1900"
+    VERSION = "1900-01-01"
     asof = VERSION
     print(asof, file=sys.stdout)
     #raise(Exception("stopping here"))
