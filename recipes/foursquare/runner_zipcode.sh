@@ -73,9 +73,9 @@ function foursquare_zipcode {
                 rm foursquare_daily_zipcode_raw.csv
                 
                 # Write VERSION info
-                echo "$VERSION" > version.txt
+                echo "$VERSION" > version_zipcode.txt
             )
-            VERSION=$(cat output/version.txt)
+            VERSION=$(cat output/version_zipcode.txt)
             Upload foursquare/$NAME $VERSION
             Upload foursquare/$NAME latest
             rm -rf input && rm -rf output
