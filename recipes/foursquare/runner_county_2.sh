@@ -46,7 +46,7 @@ function foursquare_county_2 {
                             -f ../create_county_2.sql
                         rm $file
                         rm $VERSION.csv.gz
-                    )  # the ampersand makes it run asynchronously
+                    )  & # the ampersand makes it run asynchronously
                 done
                 wait
             )
