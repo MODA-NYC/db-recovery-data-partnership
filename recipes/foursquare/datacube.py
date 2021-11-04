@@ -7,7 +7,7 @@ import os
 import re
 import sys
 
-zip_or_county = sys.argv[0]
+zip_or_county = sys.argv[1]
 
 # Authenticate google api service
 gauth = GoogleAuth()
@@ -39,7 +39,6 @@ loaded=pd.read_sql(sql='''
     AND table_name not in ('main', 'latest')
 '''.format(zip_or_county), con=engine)
 loaded_dates=loaded.table_name.to_list()
-#loaded dates four county is an empty list. This is a problem because it will load all dates and be slow (2 hours).
 for i in available_dates:
     #remove the below statement and all data will load for all available dates.
     if i not in loaded_dates:
