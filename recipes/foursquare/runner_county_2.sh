@@ -19,20 +19,10 @@ function foursquare_county_2 {
         #if [ -z "$VERSION" ]
         #then
             # If VERSION is not set, then run asof.py to get version. But asofpy deprecated.
-            VERSION=$(
-                #note: this is querying zipcode version for county run.
-                    psql $RDP_DATA -At -c "
-                    SELECT MAX(table_name::date) 
-                    FROM information_schema.tables 
-                    where table_schema = 'foursquare_zipcode'
-                    AND table_name !~* 'latest|main|zipcode'"
-                )
-        #else
-            # If VERSION is set, then ignore asof.py (this is for github actions)
-         #   echo "$VERSION is set!"
+            #get version later
         #fi
         
-        echo "pulling version: $VERSION"
+        
 
         if [ "$(ls -A input)" ]; then
             (
@@ -44,9 +34,10 @@ function foursquare_county_2 {
                     (
                         echo $file
 
-                        #VERSION=${file%%.*}
-                        #file_name=$(tar tf $file | grep .csv.gz)
-                        #tar -xvzf $file $file_name -O > $VERSION.csv.gz
+                        VERSION=${file%%.*}
+                        echo "Version:" $file
+                        file_name=$(tar tf $file | grep .csv.gz)
+                        tar -xvzf $file $file_name -O > $VERSION.csv.gz
                         
                         gunzip -dc $VERSION.csv.gz | 
                         psql $RDP_DATA \
@@ -55,7 +46,7 @@ function foursquare_county_2 {
                             -f ../create_county_2.sql
                         rm $file
                         rm $VERSION.csv.gz
-                    ) &
+                    )  # the ampersand makes it run asynchronously
                 done
                 wait
             )

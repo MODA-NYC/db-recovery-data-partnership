@@ -30,9 +30,6 @@ df.sort_values(by='createdDate',ascending=False, inplace=True)
 df['date'] = df.title.apply(get_date)
 available_dates=df.date.to_list()
 
-
-
-
 print("selecting table_name")
 # List dates that's already loaded
 loaded=pd.read_sql(sql='''
@@ -42,7 +39,7 @@ loaded=pd.read_sql(sql='''
     AND table_name not in ('main', 'latest')
 '''.format(zip_or_county), con=engine)
 loaded_dates=loaded.table_name.to_list()
-
+#loaded dates four county is an empty list. This is a problem because it will load all dates and be slow (2 hours).
 for i in available_dates:
     #remove the below statement and all data will load for all available dates.
     if i not in loaded_dates:
@@ -55,6 +52,7 @@ for i in available_dates:
         target_file = drive.CreateFile({'id': file_id})
         target_file.FetchContent()
         content_string = target_file.content.getvalue()
+        
 
         # Write content string to directory
         with open(f'input/{file_name}', 'wb') as fi:
