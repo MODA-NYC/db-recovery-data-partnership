@@ -40,7 +40,7 @@ loaded=pd.read_sql(sql='''
 '''.format(zip_or_county), con=engine)
 loaded_dates=loaded.table_name.to_list()
 #null out loaded dates to load all
-loaded_dates = None
+loaded_dates = []
 for i in available_dates:
     #remove the below statement and all data will load for all available dates.
     if i not in loaded_dates:
