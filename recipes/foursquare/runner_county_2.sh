@@ -62,8 +62,14 @@ function foursquare_county_2 {
             #psql $RDP_DATA -c "\COPY (
             #    SELECT * FROM $NAME.weekly_county
             #) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_latest_weekly_county.csv
-            
-        
+            #now that the zipcodes have uploaded, get the version from the zipcodes.
+            VERSION=$(
+                    psql $RDP_DATA -At -c "
+                    SELECT MAX(table_name::date) 
+                    FROM information_schema.tables 
+                    where table_schema = 'foursquare_county'
+                    AND table_name !~* 'latest|main|zipcode'"
+                )
             psql $RDP_DATA -c "\COPY (
                     SELECT * FROM $NAME.main_county_daily
             ) TO stdout DELIMITER ',' CSV HEADER;" > foursquare_daily_county.csv
