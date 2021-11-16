@@ -18,7 +18,7 @@ aws = Aws(
 #get dataframe from Athena
 query = '''
 SELECT * 
-FROM mastercard.extracted_2
+FROM mastercard.mep_mastercard_processed
 ORDER BY txn_date DESC
 '''
 #has to be a zip
