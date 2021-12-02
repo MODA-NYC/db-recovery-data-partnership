@@ -4,7 +4,7 @@ on:
   repository_dispatch:
     types: [cuebiq_homeswitcher]
   schedule:
-    - cron: 20 2 * * *
+    - cron: 20 8 * * *
 
 jobs:
   build:

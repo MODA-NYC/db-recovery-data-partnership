@@ -4,7 +4,7 @@ on:
   repository_dispatch:
     types: [cuebiq_daily]
   schedule:
-    - cron: 0 2 * * *
+    - cron: 0 8 * * *
 
 jobs:
   build:

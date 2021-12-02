@@ -4,7 +4,7 @@ on:
   repository_dispatch:
     types: [mastercard]
   schedule:
-    - cron: 0 4 * * 1,4
+    - cron: 0 10 * * 1,4
 
 jobs:
   build:

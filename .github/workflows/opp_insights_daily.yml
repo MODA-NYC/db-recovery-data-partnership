@@ -4,7 +4,7 @@ on:
   repository_dispatch:
     types: [opportunity_insights_daily]
   schedule:
-    - cron: 30 3 * * *
+    - cron: 30 9 * * *
 
 jobs:
   build:
