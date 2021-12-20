@@ -18,7 +18,7 @@ pip install openpyxl
     rm -rf input/raw.xlsx
     axway_cmd get $latest_file input/raw.xlsx
 
-    python3 build.py | 
+    python3 build.py #| 
     #psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
     #rm -rf input
     #
