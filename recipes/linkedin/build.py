@@ -6,7 +6,8 @@ if exists('input/raw.xlsx'):
     print("raw.xlsx in fact exists")
 else:
     raise Exception("'raw.xlsx' does not exist!")
-df = pd.read_excel(open('input/raw.xlsx', 'rb'), 0)
+df = pd.read_excel('input/raw.xlsx', 0)
+print(df.info())
 cols = ['month_begin_date','hiring_rate_sa','mom_change','yoy_change']
 for col in cols:
     assert col in df.columns
