@@ -1,4 +1,4 @@
-fro os import getcwd
+from os import getcwd
 from os.path import exists, join
 import pandas as pd
 import sys
