@@ -13,10 +13,10 @@ pip install openpyxl
     mkdir -p output
     mkdir -p input
 
-    latest_file=$(axway_ls -nrt LinkedIn | grep .xlsx | tail -1 | awk '{print $NF}') || echo 'axway_ls failed on LinkedIn'
+    latest_file=$(axway_ls -nrt LinkedIn | grep .csv | tail -1 | awk '{print $NF}') || echo 'axway_ls failed on LinkedIn'
     echo "$latest_file"
-    rm -rf input/raw.xlsx
-    axway_cmd get $latest_file input/raw.xlsx
+    rm -rf input/raw.csv
+    axway_cmd get $latest_file input/raw.csv
 
     python3 build.py |
     psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create.sql
