@@ -3,8 +3,7 @@ on:
   workflow_dispatch:
   repository_dispatch:
     types: [cuebiq_weekly]
-  schedule:
-    - cron: 50 8 * * *
+
 
 jobs:
   build:

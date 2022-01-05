@@ -3,8 +3,7 @@ on:
   workflow_dispatch:
   repository_dispatch:
     types: [cuebiq_mobility]
-  schedule:
-    - cron: 30 8 */2 * *
+
 
 jobs:
   build:
