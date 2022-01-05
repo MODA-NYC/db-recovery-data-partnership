@@ -3,8 +3,7 @@ on:
   workflow_dispatch:
   repository_dispatch:
     types: [cuebiq_homeswitcher]
-  schedule:
-    - cron: 20 8 * * *
+
 
 jobs:
   build:
