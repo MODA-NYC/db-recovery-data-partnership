@@ -4,6 +4,7 @@ on:
   repository_dispatch:
     types: [mastercard]
   schedule:
+    # At 10:00 AM, only on Monday, Wednesday, and Thursday
     - cron: 0 10 * * 1,3,4
 
 jobs:
