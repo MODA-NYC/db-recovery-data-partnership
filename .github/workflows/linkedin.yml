@@ -4,7 +4,8 @@ on:
   repository_dispatch:
     types: [linkedin]
   schedule:
-    - cron: 10 9 */7 * *
+    # At 9:10 AM, every Monday.
+    - cron: 10 9 * * 1
 
 jobs:
   build:
