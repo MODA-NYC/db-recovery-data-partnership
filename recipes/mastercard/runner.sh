@@ -41,7 +41,7 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'downloading from mastercard'
     #scp -P 22022 -i ~/.ssh/id_rsa_axway -o "StrictHostKeyChecking=no" newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* ./input
     #For testing purposes 
-    cp test_data.zip input/
+    #cp test_data.zip input/
     
     for FILENAME in $MASTERCARD_LS
         do
