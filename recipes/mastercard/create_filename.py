@@ -5,7 +5,6 @@ import sys
 
 def reduce_csv(csv_name):
     df = pd.read_csv(csv_name, delimiter='|')
-    zipcodes = pd.read_csv(Path.cwd() / 'zipcode.csv')
     max_date = df['txn_date'].max()
     min_date = df['txn_date'].min()
     sys.stdout.write(f"mastercard_{min_date}_to_{max_date}.csv" )
