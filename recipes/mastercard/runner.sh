@@ -40,8 +40,8 @@ AWS_DEFAULT_REGION=us-east-1
     #will download all files from mastercard. Then mastercard will delete after successfull download. May be more than one file without check.
     echo 'downloading from mastercard'
     #scp -P 22022 -i ~/.ssh/id_rsa_axway -o "StrictHostKeyChecking=no" newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* ./input
-    #For testing purposes
-    #cp Geogrids_NYC_Zip_Codes_Level_01Jan2019_25Apr2021_Final.zip input/
+    #For testing purposes 
+    cp test_data.zip input/
     
     for FILENAME in $MASTERCARD_LS
         do
@@ -82,26 +82,28 @@ AWS_DEFAULT_REGION=us-east-1
         #send csv to PSQL
         cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
         
+        #create a new fileneame based on start and end dates.
+        NEW_FILENAME = python create_filename.py $FULL_FILENAME
         (
         psql $RDP_DATA -c "\COPY (
             SELECT * FROM $NAME.\"$VERSION\"
-            ) TO stdout DELIMITER ',' CSV HEADER;" > ./output/mastercard_$FILENAME.csv
+            ) TO stdout DELIMITER ',' CSV HEADER;" > ./output/$NEW_FILENAME.csv
         
         #Write Version info
         echo "version: " $VERSION
-        echo "$VERSION_$FILENAME" >> ./output/version.txt
+        echo "$VERSION_$NEW_FILENAME" >> ./output/version.txt
         )
     
         #unsplit csv is too large. Must compress.
-        echo "compressing mastercard_$FILENAME.csv"
-        zip -9 ./output/daily_transactions_$FILENAME.zip output/mastercard_$FILENAME.csv
+        echo "compressing $NEW_FILENAME.csv"
+        zip -9 ./output/$NEW_FILENAME output/$NEW_FILENAME.csv
 
         #before you close, upload a copy to AWS
-        aws s3 cp output/mastercard_$FILENAME.csv s3://recovery-data-partnership/mastercard_processed/mastercard_$FILENAME.csv || AWS_ERROR=1
+        aws s3 cp output/$NEW_FILENAME.csv s3://recovery-data-partnership/mastercard_processed/$NEW_FILENAME.csv || AWS_ERROR=1
 
 
         #If you don't remove unsplit csv, sharepoint.py will overflow the RAM and the process killed when it tries to upload it.
-        rm -rf output/mastercard_$FILENAME.csv       
+        rm -rf output/$NEW_FILENAME.csv       
     done
     #loop ends
 
