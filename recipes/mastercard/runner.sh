@@ -94,31 +94,28 @@ AWS_DEFAULT_REGION=us-east-1
         echo "$VERSION_$NEW_FILENAME" >> ./output/version.txt
         )
     
-        #unsplit csv is too large. Must compress.
-        echo "compressing $NEW_FILENAME.csv"
-        zip -9 ./output/$NEW_FILENAME output/$NEW_FILENAME.csv
+        #don't need to compress anymore
 
         #before you close, upload a copy to AWS
         aws s3 cp output/$NEW_FILENAME.csv s3://recovery-data-partnership/mastercard_processed/$NEW_FILENAME.csv || AWS_ERROR=1
 
-
-        #If you don't remove unsplit csv, sharepoint.py will overflow the RAM and the process killed when it tries to upload it.
-        rm -rf output/$NEW_FILENAME.csv       
     done
     #loop ends
 
     #save S3 DB to csv. 
     python save_mastercard_master_csv.py
-    
-    #Upload uploads everything in the output folder.
-    Upload $NAME $VERSION
   
     #uploading all the files to all data. Assumes the program has previously saved the other files into output directory. 
     Upload $NAME all_data
     # this will not work because filename not defined (part of loop)
     #mv ./output/daily_transactions_$FILENAME.zip ./output/mastercard_latest.zip
-    Upload $NAME latest
     Version $NAME '' $VERSION $NAME
+    #list all csvs, find the latest, and rename them to 'mastercard_latest'
+    mv $(find ./output -name '*.csv' -print0 | xargs -0 ls -1 -t | head -1) ./output/mastercard_latest.csv
+    #remove all files that do not match the latest.
+    rm $(ls -I mastercard_latest.csv)
+    Upload $NAME latest
+    
     rm -rf output
     rm -rf input
 
