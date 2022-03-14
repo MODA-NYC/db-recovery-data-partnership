@@ -109,7 +109,7 @@ AWS_DEFAULT_REGION=us-east-1
     Upload $NAME all_data
     # this will not work because filename not defined (part of loop)
     #mv ./output/daily_transactions_$FILENAME.zip ./output/mastercard_latest.zip
-    Version $NAME '' $VERSION $NAME
+    
     #list all csvs, find the latest, and rename them to 'mastercard_latest'
     cd output
     mv $(find . -name '*.csv' -print0 | xargs -0 ls -1 -t | head -1) mastercard_latest.csv
@@ -117,8 +117,9 @@ AWS_DEFAULT_REGION=us-east-1
     rm -rf -I mastercard_latest.csv
     cd ..
     Upload $NAME latest
-    
+
     rm -rf output
+    Version $NAME '' $VERSION $NAME
     rm -rf input
 
     if [ "$AWS_ERROR" -eq 1 ]
