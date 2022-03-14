@@ -114,7 +114,7 @@ AWS_DEFAULT_REGION=us-east-1
     cd output
     mv $(find . -name '*.csv' -print0 | xargs -0 ls -1 -t | head -1) mastercard_latest.csv
     #remove all files that do not match the latest.
-    rm -rf -I mastercard_latest.csv
+    rm -I mastercard_latest.csv
     cd ..
     Upload $NAME latest
 
