@@ -41,7 +41,7 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'downloading from mastercard'
     #scp -P 22022 -i ~/.ssh/id_rsa_axway -o "StrictHostKeyChecking=no" newyorkcity@files.mastercard.com:geoinsights/data/fromMC/* ./input
     #For testing purposes 
-    #cp test_data.zip input/
+    cp test_data.zip input/
     
     for FILENAME in $MASTERCARD_LS
         do
@@ -111,10 +111,12 @@ AWS_DEFAULT_REGION=us-east-1
     #mv ./output/daily_transactions_$FILENAME.zip ./output/mastercard_latest.zip
     
     #list all csvs, find the latest, and rename them to 'mastercard_latest'
+
     cd output
     mv $(find . -name '*.csv' -print0 | xargs -0 ls -1 -t | head -1) mastercard_latest.csv
-    #remove all files that do not match the latest.
+    #remove all files that do not match the latest or version.
     find . -type f -not -name 'mastercard_latest.csv' -not -name 'version.txt' -delete
+
     cd ..
     Upload $NAME latest
 
