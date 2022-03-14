@@ -111,9 +111,11 @@ AWS_DEFAULT_REGION=us-east-1
     #mv ./output/daily_transactions_$FILENAME.zip ./output/mastercard_latest.zip
     Version $NAME '' $VERSION $NAME
     #list all csvs, find the latest, and rename them to 'mastercard_latest'
-    mv $(find ./output -name '*.csv' -print0 | xargs -0 ls -1 -t | head -1) ./output/mastercard_latest.csv
+    cd output
+    mv $(find . -name '*.csv' -print0 | xargs -0 ls -1 -t | head -1) mastercard_latest.csv
     #remove all files that do not match the latest.
-    rm $(ls -I mastercard_latest.csv)
+    rm -rf -I mastercard_latest.csv
+    cd ..
     Upload $NAME latest
     
     rm -rf output
