@@ -12,10 +12,10 @@ import pandas as pd
 #load_dotenv()
 
 settings=dict(
-        url=os.environ['SHAREPOINT_URL'],
+        url=os.environ['TEST_SHAREPOINT_URL'],
         client_credentials=dict(
-            client_id=os.environ.get('SHAREPOINT_CLIENT_ID', ''),
-            client_secret=os.environ.get('SHAREPOINT_CLIENT_SECRET', '')
+            client_id=os.environ.get('TEST_SHAREPOINT_CLIENT_ID', ''),
+            client_secret=os.environ.get('TEST_SHAREPOINT_CLIENT_SECRET', '')
         )
     )
 
