@@ -23,7 +23,7 @@ jobs:
       - name: Run recipes
         shell: bash
         run: |
-          ./rdp run recipe sharepoint-connectivity-test
+          ./rdp run recipe sharepoint-test
       
       - name: Clean up
         shell: bash
