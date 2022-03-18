@@ -22,3 +22,8 @@ settings=dict(
 ctx = ClientContext(settings['url']).with_credentials(
 ClientCredential(settings['client_credentials']['client_id'],
                  settings['client_credentials']['client_secret']))
+
+web = ctx.web
+ctx.load(web)
+ctx.execute_query()
+print("Web title: {0}".format(web.properties['Title']))
