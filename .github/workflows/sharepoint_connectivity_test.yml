@@ -1,4 +1,4 @@
-name: Kinsa
+name: Sharepoint Connectivity Test
 on:
   workflow_dispatch:
   repository_dispatch:
