@@ -1,0 +1,40 @@
+name: Kinsa
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [sharepoint_test]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    container: nycplanning/rdp:latest
+          
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set Up
+        shell: bash
+        run: |
+          ./rdp setup
+          mkdir -p ~/.ssh
+          mc cp spaces/recovery-data-partnership/utils/id_rsa ~/.ssh/id_rsa_axway
+          mc cp spaces/recovery-data-partnership/utils/.env .env
+          chmod 600 ~/.ssh/id_rsa_axway
+      - name: Run recipes
+        shell: bash
+        run: |
+          ./rdp run recipe sharepoint-connectivity-test
+      
+      - name: Clean up
+        shell: bash
+        run: |
+          rm .env
+      - name: Report Status
+        if: always()
+        uses: ravsamhq/notify-slack-action@master
+        with:
+          status: ${{ job.status }}
+          mention_users: 'U01J189FNNP'
+          mention_users_when: 'failure,warnings'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}
