@@ -111,9 +111,10 @@ AWS_DEFAULT_REGION=us-east-1
     #mv ./output/daily_transactions_$FILENAME.zip ./output/mastercard_latest.zip
     
     #list all csvs, find the latest, and rename them to 'mastercard_latest'
-
+    #the latest is named in alphabetical order from python. just need the last one
     cd output
-    mv $(find . -name '*.csv' -print0 | xargs -0 ls -1 -t | head -1) mastercard_latest.csv
+    #mv $(find . -name '*.csv' -print0 | xargs -0 ls -1 -t | head -1) mastercard_latest.csv
+    mv $(find . -name '*.csv' -print0 | xargs -0 ls -1 -r | head -1) mastercard_latest.csv
     #remove all files that do not match the latest or version.
     find . -type f -not -name 'mastercard_latest.csv' -not -name 'version.txt' -delete
 
