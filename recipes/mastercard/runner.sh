@@ -8,6 +8,26 @@ VERSION=$DATE
 
 AWS_DEFAULT_REGION=us-east-1
 
+function retry {
+  local retries=$1
+  shift
+
+  local count=0
+  until "$@"; do
+    exit=$?
+    wait=$((2 ** $count))
+    count=$(($count + 1))
+    if [ $count -lt $retries ]; then
+      echo "Retry $count/$retries exited $exit, retrying in $wait seconds..."
+      sleep $wait
+    else
+      echo "Retry $count/$retries exited $exit, no more retries left."
+      return $exit
+    fi
+  done
+  return 0
+}
+
 (   
     cd $BASEDIR
     pip install boto3
@@ -24,7 +44,7 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'assiging rowcount'
     #need to connect to proxy
     #ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
-    MASTERCARD_LS=$(curl -v --insecure -x $PROXY_IP -u "newyorkcity": --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/ -l | grep ".zip")
+    MASTERCARD_LS=$(retry 5 $(curl -v --insecure -x $PROXY_IP -u "newyorkcity": --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/ -l | grep ".zip"))
     ROWCOUNT=$(echo $MASTERCARD_LS | wc -l)
     
     #ROWCOUNT=1
@@ -45,7 +65,7 @@ AWS_DEFAULT_REGION=us-east-1
     
     for FILENAME in $MASTERCARD_LS
         do
-             $(curl -v --insecure -x $PROXY_IP -u "newyorkcity":  --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
+             retry 5 $(curl -v --insecure -x $PROXY_IP -u "newyorkcity":  --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
 
     done
     
@@ -54,7 +74,7 @@ AWS_DEFAULT_REGION=us-east-1
     #getting InvalidAccessKeyIDError. Commented out until resolved.
     echo 'uploading to RDP AWS S3'
     AWS_ERROR=0
-    aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive || AWS_ERROR=1
+    retry 5 $(aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive || AWS_ERROR=1)
     
     echo 'listing...'
     #this lists all zip files
@@ -80,7 +100,7 @@ AWS_DEFAULT_REGION=us-east-1
         CSV_FILENAME=$(ls *.csv)
         popd
         #send csv to PSQL
-        cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
+        retry 5 $(cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql)
         
         #create a new fileneame based on start and end dates.
         NEW_FILENAME=$(python create_filename.py ./input/$FULL_FILENAME)
@@ -97,7 +117,7 @@ AWS_DEFAULT_REGION=us-east-1
         #don't need to compress anymore
 
         #before you close, upload a copy to AWS
-        aws s3 cp output/$NEW_FILENAME.csv s3://recovery-data-partnership/mastercard_processed/$NEW_FILENAME.csv || AWS_ERROR=1
+        retry 5 $(aws s3 cp output/$NEW_FILENAME.csv s3://recovery-data-partnership/mastercard_processed/$NEW_FILENAME.csv || AWS_ERROR=1)
 
     done
     #loop ends
@@ -106,7 +126,7 @@ AWS_DEFAULT_REGION=us-east-1
     python save_mastercard_master_csv.py
   
     #uploading all the files to all data. Assumes the program has previously saved the other files into output directory. 
-    Upload $NAME all_data
+    retry 5 $(Upload $NAME all_data)
     # this will not work because filename not defined (part of loop)
     #mv ./output/daily_transactions_$FILENAME.zip ./output/mastercard_latest.zip
     
@@ -119,7 +139,7 @@ AWS_DEFAULT_REGION=us-east-1
     find . -type f -not -name 'mastercard_latest.csv' -not -name 'version.txt' -delete
 
     cd ..
-    Upload $NAME latest
+    retry 5 $(Upload $NAME latest)
 
     rm -rf output
     Version $NAME '' $VERSION $NAME
