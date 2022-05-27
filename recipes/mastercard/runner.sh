@@ -87,13 +87,14 @@ AWS_DEFAULT_REGION=us-east-1
         
         #create a new fileneame based on start and end dates.
         NEW_FILENAME=$(python create_filename.py ./input/$FULL_FILENAME)
-        (
-        psql $RDP_DATA -c "\COPY (
-            SELECT * FROM $NAME.\"$VERSION\"
-            ) TO stdout DELIMITER ',' CSV HEADER;" > ./output/$NEW_FILENAME.csv
+        #no network, no db.
+        #(
+        #psql $RDP_DATA -c "\COPY (
+        #    SELECT * FROM $NAME.\"$VERSION\"
+        #    ) TO stdout DELIMITER ',' CSV HEADER;" > ./output/$NEW_FILENAME.csv
         
         #Write Version info
-        echo "version: " $VERSION
+        #echo "version: " $VERSION
         echo "$VERSION_$NEW_FILENAME" >> ./output/version.txt
         )
     
