@@ -96,7 +96,7 @@ AWS_DEFAULT_REGION=us-east-1
         #Write Version info
         #echo "version: " $VERSION
         echo "$VERSION_$NEW_FILENAME" >> ./output/version.txt
-        )
+        
     
         #don't need to compress anymore
 
@@ -110,7 +110,9 @@ AWS_DEFAULT_REGION=us-east-1
     python save_mastercard_master_csv.py
   
     #uploading all the files to all data. Assumes the program has previously saved the other files into output directory. 
-    Upload $NAME all_data
+    #comment out because no sharepoint
+    #Upload $NAME all_data
+    
     # this will not work because filename not defined (part of loop)
     #mv ./output/daily_transactions_$FILENAME.zip ./output/mastercard_latest.zip
     
@@ -123,7 +125,8 @@ AWS_DEFAULT_REGION=us-east-1
     find . -type f -not -name 'mastercard_latest.csv' -not -name 'version.txt' -delete
 
     cd ..
-    Upload $NAME latest
+    #no sharepoint in github hosted runner
+    #Upload $NAME latest
 
     rm -rf output
     Version $NAME '' $VERSION $NAME
