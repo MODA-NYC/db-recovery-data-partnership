@@ -83,7 +83,8 @@ AWS_DEFAULT_REGION=us-east-1
         CSV_FILENAME=$(ls *.csv)
         popd
         #send csv to PSQL
-        cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
+        #no db available in github
+        #cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
         
         #create a new fileneame based on start and end dates.
         NEW_FILENAME=$(python create_filename.py ./input/$FULL_FILENAME)
