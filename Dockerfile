@@ -42,6 +42,10 @@ RUN pip install --upgrade pip\
 
 ENV http_proxy=http://mspapi-ctwbcp01.nycnet
 ENV https_proxy=http://mspapi-ctwbcp01.nycnet
-    
-RUN export http_proxy=${http_proxy}
-RUN export https_proxy=${https_proxy}
+
+#The noted way makes the proxy available only for this RUN instruction.
+#If the whole image should use the proxy the ENV instruction should be used:
+
+
+#RUN export http_proxy=${http_proxy}
+#RUN export https_proxy=${https_proxy}
