@@ -4,6 +4,9 @@ ENV RELEASE=20c
 ENV MAJOR=20
 ENV MINOR=3
 
+ENV http_proxy=http://mspapi-ctwbcp01.nycnet
+ENV https_proxy=http://mspapi-ctwbcp01.nycnet
+
 RUN apt update\
     && apt install -y curl git zip unzip gdal-bin gnupg jq\
     && apt autoclean -y
