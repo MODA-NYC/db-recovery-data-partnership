@@ -3,6 +3,7 @@ FROM python:3.8-slim-buster
 ENV RELEASE=20c
 ENV MAJOR=20
 ENV MINOR=3
+ENV GIT_TRACE_CURL=1
 
 RUN apt update\
     && apt install -y curl git zip unzip gdal-bin gnupg jq\
