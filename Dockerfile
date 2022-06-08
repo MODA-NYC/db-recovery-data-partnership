@@ -44,7 +44,7 @@ RUN pip install --upgrade pip\
 ENV http_proxy=http://mspapi-ctwbcp01.nycnet:8080
 ENV https_proxy=http://mspapi-ctwbcp01.nycnet:8080
 ENV ssh_proxy='ProxyCommand=connect -H http://mspapi-ctwbcp01.nycnet:8080 %h %p'
-RUN git config --global core.sshCommand "ssh -o $ssh_proxy"
+RUN git config --global core.sshCommand "ssh -o '$ssh_proxy'"
 #The noted way makes the proxy available only for this RUN instruction.
 #If the whole image should use the proxy the ENV instruction should be used:
 
