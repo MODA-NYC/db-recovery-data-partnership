@@ -41,8 +41,8 @@ COPY requirements.txt /requirements.txt
 RUN pip install --upgrade pip\
     && pip install -r requirements.txt
 
-ENV http_proxy=http://mspapi-ctwbcp01.nycnet
-ENV https_proxy=http://mspapi-ctwbcp01.nycnet
+ENV http_proxy=http://mspapi-ctwbcp01.nycnet:8080
+ENV https_proxy=http://mspapi-ctwbcp01.nycnet:8080
 
 #The noted way makes the proxy available only for this RUN instruction.
 #If the whole image should use the proxy the ENV instruction should be used:
