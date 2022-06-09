@@ -56,6 +56,6 @@ RUN pip install --upgrade pip\
 #RUN export https_proxy=${https_proxy}
 
 #lets try this 
-RUN git config --global http.proxy http://mspapi-ctwbcp01.nycnet:8080
-RUN git config --global https.proxy http://mspapi-ctwbcp01.nycnet:8080
-RUN git config --global core.sshCommand "ssh -o http://mspapi-ctwbcp01.nycnet:8080"
+#RUN git config --global http.proxy http://mspapi-ctwbcp01.nycnet:8080
+#RUN git config --global https.proxy http://mspapi-ctwbcp01.nycnet:8080
+#RUN git config --global core.sshCommand "ssh -o http://mspapi-ctwbcp01.nycnet:8080"
