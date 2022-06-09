@@ -41,8 +41,11 @@ COPY requirements.txt /requirements.txt
 RUN pip install --upgrade pip\
     && pip install -r requirements.txt
 
-ENV http_proxy=http://mspapi-ctwbcp01.nycnet:8080
-ENV https_proxy=http://mspapi-ctwbcp01.nycnet:8080
+### you should set environment variables on the client ###
+### /home/Ubuntu/docker/config.json                    ###
+ 
+#ENV http_proxy=http://mspapi-ctwbcp01.nycnet:8080
+#ENV https_proxy=http://mspapi-ctwbcp01.nycnet:8080
 #ENV ssh_proxy='ProxyCommand=connect -H http://mspapi-ctwbcp01.nycnet:1080 %h %p'
 #RUN git config --global core.sshCommand "ssh -o '$ssh_proxy'"
 #The noted way makes the proxy available only for this RUN instruction.
