@@ -89,11 +89,12 @@ AWS_DEFAULT_REGION=us-east-1
         
         #create a new fileneame based on start and end dates.
         NEW_FILENAME=$(python create_filename.py ./input/$FULL_FILENAME)
+        echo "New filename: " $NEW_FILENAME 
 
 
         #Write Version info
         echo "version: " $VERSION
-        echo "$VERSION_$NEW_FILENAME CREATED OUTSIDE PROXY DIFFERENT SCHEMA" >> ./output/version.txt
+        echo "$VERSION_$NEW_FILENAME CREATED OUTSIDE PROXY" >> ./output/version.txt
         
     
         #don't need to compress anymore
