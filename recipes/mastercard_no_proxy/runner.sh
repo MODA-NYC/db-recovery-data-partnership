@@ -94,7 +94,7 @@ AWS_DEFAULT_REGION=us-east-1
         #Write Version info
         echo "version: " $VERSION
         echo "$VERSION_$NEW_FILENAME CREATED OUTSIDE PROXY DIFFERENT SCHEMA" >> ./output/version.txt
-        )
+        
     
         #don't need to compress anymore
 
