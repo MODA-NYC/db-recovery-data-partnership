@@ -1,0 +1,58 @@
+name: Mastercard Outside Proxy
+#on:
+#  workflow_dispatch:
+#  repository_dispatch:
+#    types: [mastercard-outside-proxy]
+#  schedule:
+#    # At 11:00 AM, only on Monday, Wednesday, and Thursday
+#    - cron: 0 7 * * 1,3,4
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [mastercard-outside-proxy]
+  schedule:
+    # At 11:00 AM, only on Monday, Wednesday, and Thursday
+    - cron: 0 7 * * 1,3,4
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: nycplanning/rdp:latest
+    env:
+      AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set Up
+        shell: bash
+        run: |
+          ./rdp setup
+          mkdir -p ~/.ssh
+          mc cp spaces/recovery-data-partnership/utils/id_rsa.pub ~/.ssh/id_rsa.pub
+          mc cp spaces/recovery-data-partnership/utils/id_rsa ~/.ssh/id_rsa_axway
+          mc cp spaces/recovery-data-partnership/utils/.env .env
+          chmod 600 ~/.ssh/id_rsa_axway
+
+      - name: Run recipes
+        shell: bash
+        run: |
+          ./rdp run recipe mastercard_no_proxy
+      
+      - name: Clean up
+        shell: bash
+        run: |
+          rm ~/.ssh/id_rsa_axway
+          rm .env
+
+      - name: Report Status
+        if: always()
+        uses: ravsamhq/notify-slack-action@master
+        with:
+          status: ${{ job.status }}
+          mention_users: 'U01J189FNNP'
+          mention_users_when: 'failure,warnings'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}

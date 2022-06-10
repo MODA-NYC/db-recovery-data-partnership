@@ -23,12 +23,13 @@ AWS_DEFAULT_REGION=us-east-1
 
     echo 'assiging rowcount'
     #need to connect to proxy
-    #ROWCOUNT=$(echo 'ls -l' | sftp -q -oPort=22022 -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_axway newyorkcity@files.mastercard.com:geoinsights/data/fromMC | grep .zip | wc -l)
     #to build libcurl with sftp support: https://bugs.launchpad.net/ubuntu/+source/curl/+bug/311029
-    MASTERCARD_LS=$(curl -v --insecure -x $PROXY_IP -u "newyorkcity": --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/ -l | grep ".zip")
+    #you will need to upload id_rsa.pub to github and source in yaml.
+    MASTERCARD_LS=$(curl -v --insecure -u "newyorkcity": --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/ -l | grep ".zip")
     ROWCOUNT=$(echo $MASTERCARD_LS | wc -l)
     
-    #ROWCOUNT=1
+    #for testing
+    ROWCOUNT=1
     echo 'rowcount ' $ROWCOUNT
 
     if [ $ROWCOUNT -lt 1 ];
@@ -40,13 +41,14 @@ AWS_DEFAULT_REGION=us-east-1
     
     #will download all files from mastercard. Then mastercard will delete after successfull download. May be more than one file without check.
     echo 'downloading from mastercard'
+        
     #For testing purposes 
-    #cp test_data.zip input/
+    cp test_data.zip input/
     
     for FILENAME in $MASTERCARD_LS
         do
-             $(curl -v --insecure -x $PROXY_IP -u "newyorkcity":  --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
-
+             #$(curl -v --insecure -x --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
+             echo "Testing"
     done
     
     
@@ -80,18 +82,18 @@ AWS_DEFAULT_REGION=us-east-1
         CSV_FILENAME=$(ls *.csv)
         popd
         #send csv to PSQL
-        cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
+        #cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
+        
+        #this writes munges and writes the file to output. It uses the same filename as NEW_FILENAME
+        python process_mastercard_main.py ./input/$CSV_FILENAME
         
         #create a new fileneame based on start and end dates.
         NEW_FILENAME=$(python create_filename.py ./input/$FULL_FILENAME)
-        (
-        psql $RDP_DATA -c "\COPY (
-            SELECT * FROM $NAME.\"$VERSION\"
-            ) TO stdout DELIMITER ',' CSV HEADER;" > ./output/$NEW_FILENAME.csv
-        
+
+
         #Write Version info
         echo "version: " $VERSION
-        echo "$VERSION_$NEW_FILENAME" >> ./output/version.txt
+        echo "$VERSION_$NEW_FILENAME CREATED OUTSIDE PROXY DIFFERENT SCHEMA" >> ./output/version.txt
         )
     
         #don't need to compress anymore
@@ -103,31 +105,14 @@ AWS_DEFAULT_REGION=us-east-1
     #loop ends
 
     #save S3 DB to csv. 
-    python save_mastercard_master_csv.py
-  
-    #uploading all the files to all data. Assumes the program has previously saved the other files into output directory. 
-    Upload $NAME all_data
-    # this will not work because filename not defined (part of loop)
-    #mv ./output/daily_transactions_$FILENAME.zip ./output/mastercard_latest.zip
+    #python save_mastercard_master_csv.py
     
-    #list all csvs, find the latest, and rename them to 'mastercard_latest'
-    #the latest is named in alphabetical order from python. just need the last one
-    cd output
-    #mv $(find . -name '*.csv' -print0 | xargs -0 ls -1 -t | head -1) mastercard_latest.csv
-    mv $(find . -name '*.csv' -print0 | xargs -0 ls -1 -r | head -1) mastercard_latest.csv
-    #remove all files that do not match the latest or version.
-    find . -type f -not -name 'mastercard_latest.csv' -not -name 'version.txt' -delete
-
-    cd ..
-    Upload $NAME latest
-
-    rm -rf output
-    Version $NAME '' $VERSION $NAME
-    rm -rf input
+    #this is all SharePoint. Can't so sharepoint outside proxy.
+  
 
     if [ "$AWS_ERROR" -eq 1 ]
     then
-        echo "Sharepoint upload successful but AWS upload failed.";
+        echo "AWS upload failed.";
         exit 435;
     fi
 )
