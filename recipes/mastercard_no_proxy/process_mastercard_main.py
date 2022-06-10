@@ -8,4 +8,4 @@ if __name__ == "__main__":
     writes the CSV to stdout for bash to process             
     """
     csv_name = sys.argv[1]
-    stdout.write(reduce_csv(csv_name))
+    stdout.write(reduce_csv(csv_name).to_string())
