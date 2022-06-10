@@ -29,7 +29,7 @@ AWS_DEFAULT_REGION=us-east-1
     ROWCOUNT=$(echo $MASTERCARD_LS | wc -l)
     
     #for testing
-    ROWCOUNT=1
+    #ROWCOUNT=1
     echo 'rowcount ' $ROWCOUNT
 
     if [ $ROWCOUNT -lt 1 ];
@@ -43,7 +43,7 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'downloading from mastercard'
         
     #For testing purposes 
-    cp test_data.zip input/
+    #cp test_data.zip input/
     
     for FILENAME in $MASTERCARD_LS
         do
