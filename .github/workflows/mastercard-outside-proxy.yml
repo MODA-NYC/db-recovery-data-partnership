@@ -1,4 +1,12 @@
 name: Mastercard Outside Proxy
+#on:
+#  workflow_dispatch:
+#  repository_dispatch:
+#    types: [mastercard-outside-proxy]
+#  schedule:
+#    # At 11:00 AM, only on Monday, Wednesday, and Thursday
+#    - cron: 0 7 * * 1,3,4
+
 on:
   workflow_dispatch:
   repository_dispatch:
