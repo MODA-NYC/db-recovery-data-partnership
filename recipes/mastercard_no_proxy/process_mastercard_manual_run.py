@@ -6,7 +6,7 @@ import pandas as pd
 
 def reduce_csv(csv_name):
     df = pd.read_csv(csv_name, delimiter='|')
-    df['Zip_code'] = df['Zip_Code'].astype('str')
+    df['Zip_code'] = df['Zip_code'].astype('str')
     zipcodes = pd.read_csv(Path.cwd() / 'zipcode.csv')
     max_date = df['txn_date'].max()
     min_date = df['txn_date'].min()
