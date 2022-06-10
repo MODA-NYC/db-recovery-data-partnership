@@ -43,7 +43,7 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'downloading from mastercard'
         
     #For testing purposes 
-    #cp test_data.zip input/
+    cp test_data2.zip input/
     
     for FILENAME in $MASTERCARD_LS
         do
