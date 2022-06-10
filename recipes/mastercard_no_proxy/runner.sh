@@ -62,7 +62,7 @@ AWS_DEFAULT_REGION=us-east-1
     #this lists all zip files
     #MYFILES=$(ls ./input | grep .zip)
     #Change, removed '| tail -n 1'. So now there may be multiple files.
-    MYFILES=$(ls ./input -tr | grep .zip)
+    MYFILES=$(ls ./input -tr | grep .zip) || echo "error listing files"
     echo "MYFILES:" $MYFILES
     mkdir -p output
     for FULL_FILENAME in $MYFILES
@@ -70,7 +70,7 @@ AWS_DEFAULT_REGION=us-east-1
         #loop begins (should be a list of one)
         #take the base name of the full filename (drop suffix)
         FILENAME=${FULL_FILENAME%.*}
-
+        echo $FILENAME
         #goes into input directory and removes any csvs. Then unzip one csv into input. We will unzip and process each csv one at a time.
         pushd input
         rm *.csv || echo "Failed to remove any csvs"
