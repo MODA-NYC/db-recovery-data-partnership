@@ -100,7 +100,7 @@ AWS_DEFAULT_REGION=us-east-1
         #don't need to compress anymore
 
         #before you close, upload a copy to AWS
-        aws s3 cp output/$NEW_FILENAME.csv s3://recovery-data-partnership/mastercard_processed/$NEW_FILENAME.csv || AWS_ERROR=1
+        aws s3 cp ./output/$NEW_FILENAME.csv s3://recovery-data-partnership/mastercard_processed/$NEW_FILENAME.csv || AWS_ERROR=1
 
     done
     #loop ends
