@@ -85,13 +85,13 @@ AWS_DEFAULT_REGION=us-east-1
         #cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
         
         #this writes munges and writes the file to output. It uses the same filename as NEW_FILENAME
-        python process_mastercard_main.py ./input/$CSV_FILENAME
+        
         
         #create a new fileneame based on start and end dates.
         NEW_FILENAME=$(python create_filename.py ./input/$FULL_FILENAME)
         echo "New filename: " $NEW_FILENAME 
 
-
+        python process_mastercard_main.py ./input/$CSV_FILENAME >> ./output/$NEW_FILENAME.csv
         #Write Version info
         echo "version: " $VERSION
         echo "$VERSION_$NEW_FILENAME CREATED OUTSIDE PROXY" >> ./output/version.txt
