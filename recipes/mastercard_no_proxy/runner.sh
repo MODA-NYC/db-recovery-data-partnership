@@ -24,7 +24,7 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'assiging rowcount'
     #need to connect outside proxy
     #to build libcurl with sftp support: https://bugs.launchpad.net/ubuntu/+source/curl/+bug/311029
-    MASTERCARD_LS=$(curl -v --insecure --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/ -l | grep ".zip")
+    MASTERCARD_LS=$(curl -v --insecure --key ~/.ssh/id_rsa_axway -u "newyorkcity": --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/ -l | grep ".zip")
     ROWCOUNT=$(echo $MASTERCARD_LS | wc -l)
     
     #for testing
@@ -46,7 +46,7 @@ AWS_DEFAULT_REGION=us-east-1
     
     for FILENAME in $MASTERCARD_LS
         do
-             $(curl -v --insecure -x --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
+             $(curl -v --insecure -u "newyorkcity": --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
              #echo "Testing"
     done
     
