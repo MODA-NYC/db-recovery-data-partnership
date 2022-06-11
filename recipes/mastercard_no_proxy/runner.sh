@@ -25,7 +25,7 @@ AWS_DEFAULT_REGION=us-east-1
     #need to connect to proxy
     #to build libcurl with sftp support: https://bugs.launchpad.net/ubuntu/+source/curl/+bug/311029
     #you will need to upload id_rsa.pub to github and source in yaml.
-    MASTERCARD_LS=$(curl -v --insecure -u "newyorkcity": --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/ -l | grep ".zip")
+    MASTERCARD_LS=$(curl -v --insecure --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/ -l | grep ".zip")
     ROWCOUNT=$(echo $MASTERCARD_LS | wc -l)
     
     #for testing
