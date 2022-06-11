@@ -82,12 +82,9 @@ AWS_DEFAULT_REGION=us-east-1
         #find the csv. There should only be one because you greped the tail.
         CSV_FILENAME=$(ls *.csv)
         popd
-        #send csv to PSQL
-        #cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
-        
+
         #this writes munges and writes the file to output. It uses the same filename as NEW_FILENAME
-        
-        
+                
         #create a new fileneame based on start and end dates.
         NEW_FILENAME=$(python create_filename.py ./input/$FULL_FILENAME)
         echo "New filename: " $NEW_FILENAME 
@@ -97,19 +94,13 @@ AWS_DEFAULT_REGION=us-east-1
         echo "version: " $VERSION
         echo "$VERSION_$NEW_FILENAME CREATED OUTSIDE PROXY" >> ./output/version.txt
         
-    
-        #don't need to compress anymore
-
         #before you close, upload a copy to AWS
         aws s3 cp ./output/$NEW_FILENAME.csv s3://recovery-data-partnership/mastercard_processed/$NEW_FILENAME.csv || AWS_ERROR=1
 
     done
     #loop ends
 
-    #save S3 DB to csv. 
-    #python save_mastercard_master_csv.py
-    
-    #this is all SharePoint. Can't so sharepoint outside proxy.
+    #Can't so sharepoint outside proxy.
   
 
     if [ "$AWS_ERROR" -eq 1 ]
