@@ -56,8 +56,7 @@ AWS_DEFAULT_REGION=us-east-1
     #getting InvalidAccessKeyIDError. Commented out until resolved.
     echo 'uploading to RDP AWS S3'
     AWS_ERROR=0
-    MY_OUTPUT=$(aws s3 cp --recursive ./input/ s3://recovery-data-partnership/mastercard/ )
-    echo $MY_OUTPUT
+    aws s3 cp --recursive --debug ./input/ s3://recovery-data-partnership/mastercard/ 
     echo "Stop here"
     exit 9999
     echo 'listing...'
