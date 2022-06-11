@@ -43,7 +43,7 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'downloading from mastercard'
         
     #For testing purposes 
-    cp test_data2.zip input/
+    cp test_data2.zip ./input/test_data2.zip
     
     for FILENAME in $MASTERCARD_LS
         do
@@ -57,7 +57,8 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'uploading to RDP AWS S3'
     AWS_ERROR=0
     aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive || AWS_ERROR=1
-    
+    echo "Stop here"
+    exit 9999
     echo 'listing...'
     #this lists all zip files
     #MYFILES=$(ls ./input | grep .zip)
