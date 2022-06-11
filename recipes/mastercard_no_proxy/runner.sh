@@ -43,19 +43,19 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'downloading from mastercard'
         
     #For testing purposes 
-    cp test_data2.zip ./input/test_data2.zip
+    #cp test_data2.zip ./input/test_data2.zip
     
     for FILENAME in $MASTERCARD_LS
         do
-             #$(curl -v --insecure -x --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
-             echo "Testing"
+             $(curl -v --insecure -x --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
+             #echo "Testing"
     done
     
     
     #upload files to aws for backup. Can handle multiple files.: 
     #getting InvalidAccessKeyIDError. Commented out until resolved.
     echo 'uploading to RDP AWS S3'
-    AWS_ERROR=0
+
     aws s3 cp --recursive --region $AWS_DEFAULT_REGION ./input/ s3://recovery-data-partnership/mastercard/ 
     echo 'listing...'
     #this lists all zip files
@@ -90,7 +90,7 @@ AWS_DEFAULT_REGION=us-east-1
         python process_mastercard_main.py ./input/$CSV_FILENAME >> ./output/$NEW_FILENAME.csv
         #Write Version info
         echo "version: " $VERSION
-        echo "$VERSION_$NEW_FILENAME CREATED OUTSIDE PROXY" >> ./output/version.txt
+        echo "$VERSION_$NEW_FILENAME. There are $ROWCOUNT files in this batch" >> ./output/version.txt
         
         #before you close, upload a copy to AWS
         aws s3 cp --region $AWS_DEFAULT_REGION ./output/$NEW_FILENAME.csv s3://recovery-data-partnership/mastercard_processed/$NEW_FILENAME.csv || AWS_ERROR=1
@@ -99,11 +99,4 @@ AWS_DEFAULT_REGION=us-east-1
     #loop ends
 
     #Can't so sharepoint outside proxy.
-  
-
-    if [ "$AWS_ERROR" -eq 1 ]
-    then
-        echo "AWS upload failed.";
-        exit 435;
-    fi
 )
