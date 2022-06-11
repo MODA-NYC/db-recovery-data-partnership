@@ -22,14 +22,13 @@ AWS_DEFAULT_REGION=us-east-1
     #comment out for texting
 
     echo 'assiging rowcount'
-    #need to connect to proxy
+    #need to connect outside proxy
     #to build libcurl with sftp support: https://bugs.launchpad.net/ubuntu/+source/curl/+bug/311029
-    #you will need to upload id_rsa.pub to github and source in yaml.
-    MASTERCARD_LS=$(curl -v --insecure -u "newyorkcity": --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/ -l | grep ".zip")
+    MASTERCARD_LS=$(curl -v --insecure --key ~/.ssh/id_rsa_axway -u "newyorkcity": --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/ -l | grep ".zip")
     ROWCOUNT=$(echo $MASTERCARD_LS | wc -l)
     
     #for testing
-    ROWCOUNT=1
+    #ROWCOUNT=1
     echo 'rowcount ' $ROWCOUNT
 
     if [ $ROWCOUNT -lt 1 ];
@@ -43,26 +42,25 @@ AWS_DEFAULT_REGION=us-east-1
     echo 'downloading from mastercard'
         
     #For testing purposes 
-    cp test_data.zip input/
+    #cp test_data2.zip ./input/test_data2.zip
     
     for FILENAME in $MASTERCARD_LS
         do
-             #$(curl -v --insecure -x --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
-             echo "Testing"
+             $(curl -v --insecure -u "newyorkcity": --key ~/.ssh/id_rsa_axway --pubkey ~/.ssh/id_rsa.pub  sftp://files.mastercard.com:22022/geoinsights/data/fromMC/$FILENAME --output ./input/$FILENAME)
+             #echo "Testing"
     done
     
     
     #upload files to aws for backup. Can handle multiple files.: 
     #getting InvalidAccessKeyIDError. Commented out until resolved.
     echo 'uploading to RDP AWS S3'
-    AWS_ERROR=0
-    aws s3 cp ./input/ s3://recovery-data-partnership/mastercard/ --recursive || AWS_ERROR=1
-    
+
+    aws s3 cp --recursive --region $AWS_DEFAULT_REGION ./input/ s3://recovery-data-partnership/mastercard/ 
     echo 'listing...'
     #this lists all zip files
     #MYFILES=$(ls ./input | grep .zip)
     #Change, removed '| tail -n 1'. So now there may be multiple files.
-    MYFILES=$(ls ./input -tr | grep .zip)
+    MYFILES=$(ls ./input -tr | grep .zip) || echo "error listing files"
     echo "MYFILES:" $MYFILES
     mkdir -p output
     for FULL_FILENAME in $MYFILES
@@ -70,7 +68,7 @@ AWS_DEFAULT_REGION=us-east-1
         #loop begins (should be a list of one)
         #take the base name of the full filename (drop suffix)
         FILENAME=${FULL_FILENAME%.*}
-
+        echo $FILENAME
         #goes into input directory and removes any csvs. Then unzip one csv into input. We will unzip and process each csv one at a time.
         pushd input
         rm *.csv || echo "Failed to remove any csvs"
@@ -81,38 +79,23 @@ AWS_DEFAULT_REGION=us-east-1
         #find the csv. There should only be one because you greped the tail.
         CSV_FILENAME=$(ls *.csv)
         popd
-        #send csv to PSQL
-        #cat ./input/$CSV_FILENAME | psql $RDP_DATA -v NAME=$NAME -v VERSION=$VERSION -f create_mastercard.sql
-        
+
         #this writes munges and writes the file to output. It uses the same filename as NEW_FILENAME
-        python process_mastercard_main.py ./input/$CSV_FILENAME
-        
+                
         #create a new fileneame based on start and end dates.
         NEW_FILENAME=$(python create_filename.py ./input/$FULL_FILENAME)
+        echo "New filename: " $NEW_FILENAME 
 
-
+        python process_mastercard_main.py ./input/$CSV_FILENAME >> ./output/$NEW_FILENAME.csv
         #Write Version info
         echo "version: " $VERSION
-        echo "$VERSION_$NEW_FILENAME CREATED OUTSIDE PROXY DIFFERENT SCHEMA" >> ./output/version.txt
-        )
-    
-        #don't need to compress anymore
-
+        echo "$VERSION_$NEW_FILENAME. There are $ROWCOUNT files in this batch" >> ./output/version.txt
+        
         #before you close, upload a copy to AWS
-        aws s3 cp output/$NEW_FILENAME.csv s3://recovery-data-partnership/mastercard_processed/$NEW_FILENAME.csv || AWS_ERROR=1
+        aws s3 cp --region $AWS_DEFAULT_REGION ./output/$NEW_FILENAME.csv s3://recovery-data-partnership/mastercard_processed/$NEW_FILENAME.csv || AWS_ERROR=1
 
     done
     #loop ends
 
-    #save S3 DB to csv. 
-    #python save_mastercard_master_csv.py
-    
-    #this is all SharePoint. Can't so sharepoint outside proxy.
-  
-
-    if [ "$AWS_ERROR" -eq 1 ]
-    then
-        echo "AWS upload failed.";
-        exit 435;
-    fi
+    #Can't so sharepoint outside proxy.
 )
