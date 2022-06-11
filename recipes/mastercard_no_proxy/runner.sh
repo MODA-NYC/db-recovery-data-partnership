@@ -56,7 +56,7 @@ AWS_DEFAULT_REGION=us-east-1
     #getting InvalidAccessKeyIDError. Commented out until resolved.
     echo 'uploading to RDP AWS S3'
     AWS_ERROR=0
-    aws s3 cp --recursive --debug ./input/ s3://recovery-data-partnership/mastercard/ 
+    aws s3 cp --recursive --debug --retion $AWS_DEFAULT_REGION ./input/ s3://recovery-data-partnership/mastercard/ 
     echo "Stop here"
     exit 9999
     echo 'listing...'
@@ -95,7 +95,7 @@ AWS_DEFAULT_REGION=us-east-1
         echo "$VERSION_$NEW_FILENAME CREATED OUTSIDE PROXY" >> ./output/version.txt
         
         #before you close, upload a copy to AWS
-        aws s3 cp ./output/$NEW_FILENAME.csv s3://recovery-data-partnership/mastercard_processed/$NEW_FILENAME.csv || AWS_ERROR=1
+        aws s3 cp --debug --region $AWS_DEFAULT_REGION ./output/$NEW_FILENAME.csv s3://recovery-data-partnership/mastercard_processed/$NEW_FILENAME.csv || AWS_ERROR=1
 
     done
     #loop ends
