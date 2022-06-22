@@ -81,11 +81,6 @@ AWS_DEFAULT_REGION=us-east-1
         #find the csv. There should only be one because you greped the tail.
         CSV_FILENAME=$(find . -name "*.csv")
         popd
-
-
-e you greped the tail.
-        CSV_FILENAME=$(ls *.csv)
-the same filename as NEW_FILENAME
                 
         #create a new fileneame based on start and end dates.
         NEW_FILENAME=$(python create_filename.py ./input/$FULL_FILENAME)
