@@ -71,16 +71,16 @@ AWS_DEFAULT_REGION=us-east-1
         echo $FILENAME
         #goes into input directory and removes any csvs. Then unzip one csv into input. We will unzip and process each csv one at a time.
         pushd input
-        rm *.csv || echo "Failed to remove any csvs"
         
+        #rm *.csv || echo "Failed to remove any csvs"
+        find . -name "*.csv" -delete
+
         echo "unzipping " $FULL_FILENAME
         unzip -P $MASTERCARD_PASSWORD $FULL_FILENAME || exit 519
         
         #find the csv. There should only be one because you greped the tail.
-        CSV_FILENAME=$(ls *.csv)
+        CSV_FILENAME=$(find . -name "*.csv")
         popd
-
-        #this writes munges and writes the file to output. It uses the same filename as NEW_FILENAME
                 
         #create a new fileneame based on start and end dates.
         NEW_FILENAME=$(python create_filename.py ./input/$FULL_FILENAME)
