@@ -3,9 +3,7 @@ on:
   workflow_dispatch:
   repository_dispatch:
     types: [street_easy]
-  schedule:
-    # 10:00 AM UTC on Wednesdays.
-    - cron: 0 10 * * 3
+=
 
 jobs:
   build:
