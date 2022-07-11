@@ -3,9 +3,7 @@ on:
   workflow_dispatch:
   repository_dispatch:
     types: [linkedin]
-  schedule:
-    # At 9:10 AM GMT, every Monday.
-    - cron: 10 9 * * 1
+#disabled
 
 jobs:
   build:
