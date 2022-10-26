@@ -4,9 +4,7 @@ on:
   workflow_dispatch:
   repository_dispatch:
     types: [mastercard-outside-proxy]
-  schedule:
-    # At, only on Monday, Wednesday, and Thursday
-    - cron: 0 6 * * 1,3,4
+#unscheduled
 
 jobs:
   build:
